@@ -1,6 +1,6 @@
 <?php
-	require_once("database.php");
-	include_once("functions.php");
+	include("database.php");
+	include("nav2.html");
 	date_default_timezone_set ("America/New_York");
 	$date = date("Y-m-d");
 	
@@ -61,34 +61,23 @@
 		$fresh = true;
 		$subEmps[] = $empNames[$i];
 	}
-		
-	
-
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 
 	<head>
 		<title>Recap</title>
-		
-		
 		<link rel="apple-touch-icon-precomposed" href="http://tsidisaster.net/recap-touch-icon-114.png">
 		<link rel="icon" type="image/png" href="http://tsidisaster.net/favicon.ico">
 		<script type="text/javascript">
-
 			var FIELD_COUNT = 30;
-			var clicks = 0;
-
 			function checkChecks(){
 				showHide('expenses', 'box');
 				showHide('cHours', 'cHoursb');
 				showHide('cHours2', 'cHoursb2');
 				showHide('odo', 'odoc');
 				showHide('expenses2', 'box2');
-				showHide('moreHours', 'multhours');
-				
-				//make same job as cookie's job
-				makeSameJob();
+				showHide('moreHours', 'multhours')
 			}
 			
 			function insertEmail(senderName){
@@ -134,14 +123,10 @@
 			
 			function showHide(div_id, sender) {
 				if(document.getElementById(sender).checked) {
-					//document.getElementById(div_id).style.display = 'block';
-					document.getElementById(div_id).style.position = 'relative';
-					document.getElementById(div_id).style.left = '0px';
+					document.getElementById(div_id).style.display = 'block';
 				}
 				else {
-					//document.getElementById(div_id).style.display='none';
-					document.getElementById(div_id).style.position='absolute;';
-					document.getElementById(div_id).style.left = '-9999px';
+					document.getElementById(div_id).style.display='none';
 				}
 			}
 			
@@ -220,11 +205,11 @@
 			function validate(){
 				var success = 1;	//true/false replacement for return false
 				var message;		//message to show in alert when validation fails
-				clicks++;
-				//document.getElementById("upload").disabled = true;	//disable button to reduce duplicates
+				document.getElementById("upload").disabled = true;	//disable button to reduce duplicates
 			
 				if(document.getElementById("name").value == "" && document.getElementById("noList").checked){
 					message = "Fill out your name";
+					document.getElementById("name").focus();
 					success = 0;
 				}
 				else if(document.getElementById("noList").checked == false && document.getElementById("nameDrop").value == "---Select Name---"){
@@ -247,7 +232,6 @@
 					document.getElementById("hours").focus();	
 					success = 0;
 				}
-				
 				else if(document.getElementById("job").value == 0){
 					message = "Fill out your job";
 					document.getElementById("job").focus();				
@@ -264,11 +248,6 @@
 						document.getElementById("hours" + i).focus();	
 						success = 0;
 					}
-					if(document.getElementById("sub" + i).value > 24){
-						message = "Too many hours, there just isn't enough time in the Day. Let's fix that.";
-						document.getElementById("sub" + i).focus();	
-						success = 0;
-					}
 					if (i<5){
 						if(document.getElementById("hoursm" + i).value > 24){
 							message = "Too many hours, there just isn't enough time in the Day. Let's fix that.";
@@ -279,28 +258,9 @@
 				}
 				
 				for (i=1; i<=FIELD_COUNT; i++) {
-					//check for empty hours for employees
 					if(document.getElementById("employee" + i).value != "---Select Employee---" && document.getElementById("hours" + i).value == ""){
 						message = "Please enter the number of hours for " + document.getElementById("employee" + i).value + " in the space next to his name.";
 						document.getElementById("hours" + i).focus();
-						success = 0;
-					}
-					//check for empty hours for subs
-					if(document.getElementById("semployee" + i).value != "---Select Employee---" && document.getElementById("sub" + i).value == ""){
-						message = "Please enter the number of hours for " + document.getElementById("semployee" + i).value + " in the space next to his name.";
-						document.getElementById("sub" + i).focus();
-						success = 0;
-					}
-					//check for empty job numbers for employees
-					if(document.getElementById("employee" + i).value != "---Select Employee---" && document.getElementById("job" + i).value == ""){
-						message = "Please enter the job number for " + document.getElementById("employee" + i).value;
-						document.getElementById("job" + i).focus();
-						success = 0;
-					}
-					//check for empty job numbers for subs
-					if(document.getElementById("semployee" + i).value != "---Select Employee---" && document.getElementById("sjob" + i).value == ""){
-						message = "Please enter the job number for " + document.getElementById("semployee" + i).value;
-						document.getElementById("sjob" + i).focus();
 						success = 0;
 					}
 				}
@@ -334,7 +294,6 @@
 				}
 				
 				
-				
 				if(boolSwitch == true && document.getElementById("noList").checked){
 					message = "Please enter full name";
 					document.getElementById("name").focus();
@@ -345,19 +304,12 @@
 				if(success == 0){
 					alert(message);
 					document.getElementById("upload").disabled = false;
-					document.getElementById("theButton").disabled = false;
 					return false;
 				}
-				else{
-					//submit the form
-					document.getElementById("email").disabled = false;
-					document.forms["recapForm"].submit();
-				}
 				
-				//document.getElementById("upload").disabled = false;
-				//document.getElementById("theButton").disabled = true;
-				//document.getElementById("theButton").style.position='absolute;';	//hide on success to reduce duplicates
-				//document.getElementById("theButton").style.left = '-9999px';
+				document.getElementById("upload").disabled = false;
+				document.getElementById("theButton").style.position='absolute;';	//hide on success to reduce duplicates
+				document.getElementById("theButton").style.left = '-9999px';
 							
 			}
 			//Capitalize 1st letter in name
@@ -380,15 +332,6 @@
 					for(i=1; i<11; i++){
 						document.getElementById("ejob" + i).value = theJob;
 					}
-					if(theJob == 192){
-						document.getElementById("thedata").checked = true;
-						showHide("data", "thedata")
-					}
-					else{
-						document.getElementById("thedata").checked = false;
-						showHide("data", "thedata")
-					}
-					
 				//}
 			}
 			
@@ -409,9 +352,8 @@
 				var lens = elems.length;
 				
 				if(dd != ddd || mm != dmm || yyyy != dyyyy){
-					//document.getElementById("messageDiv").style.display = 'block';
-					document.getElementById(div_id).style.position = 'relative';
-					document.getElementById("messageDiv").style.left = '0px';
+					document.getElementById("messageDiv").style.display = 'block';
+					//document.getElementById("messageDiv").style.left = '0px';
 					//disable form, show buttons
 					document.recapForm.action = "past.php";
 					document.getElementById("dateHere").innerHTML = dmm+"-"+ddd+"-"+dyyyy;
@@ -424,9 +366,8 @@
 					}
 				}
 				else{
-					//document.getElementById("messageDiv").style.display='none';
-					document.getElementById(div_id).style.position='absolute;';
-					document.getElementById("messageDiv").style.left = '-9999px';
+					document.getElementById("messageDiv").style.display='none';
+					//document.getElementById("messageDiv").style.left = '-9999px';
 					for (var i = 0; i < len; i++) {
 					    elems[i].disabled = false;
 					}
@@ -443,83 +384,80 @@
 				font-family: sans-serif;
 			}
 			.hide{
-				position: absolute;
-				left: -9999px;
+				display: none;
 			}
 		</style>
 	</head>
-	<body onload="checkChecks(); putToDay();">
-		<? include("nav2.html"); 		?>
-		<form action="recap.php" name="recapForm" method="post" enctype="multipart/form-data">
-	<table cellspacing="15px"><tr><td valign="top" width="500px">
-		<table>
-			<th>Month</th><th>Day</th><th>Year</th><th></th>
-			<tr><td><select name='Month' id="Month" onchange="dateCheck(); showStyle()" selected="<?php echo $_POST['Month']?>">
-				<option value='01'>01</option>
-				<option value='02'>02</option>
-				<option value='03'>03</option>
-				<option value='04'>04</option>
-				<option value='05'>05</option>
-				<option value='06'>06</option>
-				<option value='07'>07</option>
-				<option value='08'>08</option>
-				<option value='09'>09</option>
-				<option value='10'>10</option>
-				<option value='11'>11</option>
-				<option value='12'>12</option>
-			</select></td>
+	<body onload="checkChecks(); putToDay(); test()">
+	<table cellspacing="15px"><tr><td valign="top">
+		<form action="<?php if ($_POST['summary'] != ""){echo "recap_edit.php";} else{echo "recap.php";}?>" name="recapForm" method="post" enctype="multipart/form-data">
+		<table><th>Month</th><th>Day</th><th>Year</th><th></th>
+		<tr><td><select name='Month' id="Month" onchange="dateCheck(); showStyle()" selected="<?php echo $_POST['Month']?>">
+			<option value='01'>01</option>
+			<option value='02'>02</option>
+			<option value='03'>03</option>
+			<option value='04'>04</option>
+			<option value='05'>05</option>
+			<option value='06'>06</option>
+			<option value='07'>07</option>
+			<option value='08'>08</option>
+			<option value='09'>09</option>
+			<option value='10'>10</option>
+			<option value='11'>11</option>
+			<option value='12'>12</option>
+		</select></td>
+	
+		<td><select name='Day' id="Day" onchange="dateCheck(); showStyle()" selected="<?php echo $_POST['Day']?>">
+			<option value='01' id="1">01</option>
+			<option value='02' id="2">02</option>
+			<option value='03' id="3">03</option>
+			<option value='04' id="4">04</option>
+			<option value='05' id="5">05</option>
+			<option value='06' id="6">06</option>
+			<option value='07' id="7">07</option>
+			<option value='08' id="8">08</option>
+			<option value='09' id="9">09</option>
+			<option value='10' id="10">10</option>
+			<option value='11' id="11">11</option>
+			<option value='12' id="12">12</option>
+			<option value='13' id="13">13</option>
+			<option value='14' id="14">14</option>
+			<option value='15' id="15">15</option>
+			<option value='16' id="16">16</option>
+			<option value='17' id="17">17</option>
+			<option value='18' id="18">18</option>
+			<option value='19' id="19">19</option>
+			<option value='20' id="20">20</option>
+			<option value='21' id="21">21</option>
+			<option value='22' id="22">22</option>
+			<option value='23' id="23">23</option>
+			<option value='24' id="24">24</option>
+			<option value='25' id="25">25</option>
+			<option value='26' id="26">26</option>
+			<option value='27' id="27">27</option>
+			<option value='28' id="28">28</option>
+			<option value='29' id="29">29</option>
+			<option value='30' id="30">30</option>
+			<option value='31' id="31">31</option>
+		</select>
+		</td>
 		
-			<td><select name='Day' id="Day" onchange="dateCheck(); showStyle()" selected="<?php echo $_POST['Day']?>">
-				<option value='01' id="1">01</option>
-				<option value='02' id="2">02</option>
-				<option value='03' id="3">03</option>
-				<option value='04' id="4">04</option>
-				<option value='05' id="5">05</option>
-				<option value='06' id="6">06</option>
-				<option value='07' id="7">07</option>
-				<option value='08' id="8">08</option>
-				<option value='09' id="9">09</option>
-				<option value='10' id="10">10</option>
-				<option value='11' id="11">11</option>
-				<option value='12' id="12">12</option>
-				<option value='13' id="13">13</option>
-				<option value='14' id="14">14</option>
-				<option value='15' id="15">15</option>
-				<option value='16' id="16">16</option>
-				<option value='17' id="17">17</option>
-				<option value='18' id="18">18</option>
-				<option value='19' id="19">19</option>
-				<option value='20' id="20">20</option>
-				<option value='21' id="21">21</option>
-				<option value='22' id="22">22</option>
-				<option value='23' id="23">23</option>
-				<option value='24' id="24">24</option>
-				<option value='25' id="25">25</option>
-				<option value='26' id="26">26</option>
-				<option value='27' id="27">27</option>
-				<option value='28' id="28">28</option>
-				<option value='29' id="29">29</option>
-				<option value='30' id="30">30</option>
-				<option value='31' id="31">31</option>
-			</select>
+		<td colspan="1"><select name='Year' id="Year" onchange="dateCheck(); showStyle()" selected="<?php echo $_POST['Year']?>">
+			<option value='2014'>2014</option>
+			<option value='2015'>2015</option>
+			<option value='2016'>2016</option>
+			<option value='2017'>2017</option>
+			<option value='2018'>2018</option>
+			<option value='2019'>2019</option>
+			<option value='2020'>2020</option>
+		</select></td>
+		<tr>
+			<td colspan="3" align="center">
+				<div id="messageDiv" class="hide"><p id="message" style="color: red; font-size: 20;">Not Today's Date</p>
+				Are you sure you want to enter a past recap for <br><b><span style="color: red; font-size: 20;"><span id="dateHere" name="dateHere"></span></span></b><br>
+				<button>Yes</button>&nbsp&nbsp&nbsp&nbsp&nbsp<button type="button" onclick="putToDay(), showStyle()">No</button>
+				</div>
 			</td>
-			
-			<td colspan="1"><select name='Year' id="Year" onchange="dateCheck(); showStyle()" selected="<?php echo $_POST['Year']?>">
-				<option value='2014'>2014</option>
-				<option value='2015'>2015</option>
-				<option value='2016'>2016</option>
-				<option value='2017'>2017</option>
-				<option value='2018'>2018</option>
-				<option value='2019'>2019</option>
-				<option value='2020'>2020</option>
-			</select></td>
-			<tr>
-				<td colspan="3" align="center">
-					<div id="messageDiv" class="hide"><p id="message" style="color: red; font-size: 20;">Not Today's Date</p>
-					Are you sure you want to enter a past recap for <br><b><span style="color: red; font-size: 20;"><span id="dateHere" name="dateHere"></span></span></b><br>
-					<button>Yes</button>&nbsp&nbsp&nbsp&nbsp&nbsp<button type="button" onclick="putToDay(), showStyle()">No</button>
-					</div>
-				</td>
 		</tr>
 		</table>
 		
@@ -530,28 +468,22 @@
 				<?php
 					$tmp = mysqli_query($con,"SELECT Name FROM employees where recap != '' ORDER BY Name");
 					while($row = mysqli_fetch_array($tmp)) {
-						echo "<option value ='" . $row['Name']."'";
-						
-						if($row["Name"] == $_COOKIE["name"]){
-							echo " selected";
-						}
-						
-						echo ">" . $row['Name']."</option>";
+						echo "<option value ='" . $row['Name'] . "'>" . $row['Name'];
 					}
 				?>
 			</select>
 			<input placeholder="Name" name="name" id="name" type="text" onchange="nameFix()" required value="<?php echo $_POST['name'] ?>" style="display: none"/>
-			<input type="email" name="email" id="email" placeholder="email" disabled="true" required value="<?php echo $_COOKIE['email'] ?>">
+			<input type="email" name="email" id="email" placeholder="email" disabled="true" required value="<?php echo $_POST['email'] ?>">
 			
 			<input type="checkbox" id="noList" name="noList" onchange="showHideName()">Name Not Listed<br />
 
-			 <input placeholder="Hours" name="hours" id="hours" type="number" step="any" required value="<?php echo $_POST['hours'] ?>"/>
+			 <input placeholder="Hours" name="hours" id="hours" type="number" step="any" onchange="test()" required value="<?php echo $_POST['hours'] ?>"/>
 
 			<select name="job" id="job" onchange="makeSameJob()">
 				<?php
-					$job = mysqli_query($con,"SELECT * FROM Jobs WHERE Status = 1 ORDER BY Number");
+					$job = mysqli_query($con,"SELECT * FROM Jobs ORDER BY Number");
 					while($row = mysqli_fetch_array($job)) {
-						if($_COOKIE['job'] == $row['Number']){
+						if($_POST['job'] == $row['Number']){
 							echo "<option selected value='". $row['Number'] . "'>" . $row['Number'] . " " . $row['Name'] . "</option>";
 						}
 						else{
@@ -1700,37 +1632,20 @@
 			<!input type="file" name="userfile" id="file"> <br />
 
 			<div id="theButton" style="position: relative; left: 0px;">
-			<input type="button" id="upload" onclick="validate()" value="Submit" style="color: #f61c1c;">
+			<input type="submit" id="upload" onclick="return validate()" value="<?php if($_POST['summary']==""){echo "Submit";} else{echo "Change";} ?>">
 			</div>
 			
 			
-		
-		<? //include("recap.php"); ?>
+		</form>
 		</td>
-		<td valign="top">
-			<input type="checkbox" name="thedata" id="thedata" class="hide">
-			<div id="data" name="data" class="hide">
-				<h2 style="color:red;">Kensington Data Required</h2>
-				<p>Please input exact quantities for work performed today.</p>
-				<input type="number" name="fabric" id="fabric" placeholder="Filter fabric placed">Linear feet<br>
-				<input type="number" name="geowebPlaced" id="geowebPlaced" placeholder="Geoweb placed">Linear feet<br>
-				<input type="number" name="fillPlaced" id="fillPlaced" placeholder="Fill dirt placed">Cubic Yard<br>
-				<input type="number" name="grading" id="grading" placeholder="Graded slope">Linear feet<br>
-				<input type="number" name="tieins" id="tieins" placeholder="Number of tie-ins">Each<br>
-				<input type="number" name="rockPlaced" id="rockPlaced" placeholder="Rock placed">Linear feet<br>
-				<input type="number" name="topsoilPlaced" id="topsoilPlaced" placeholder="Topsoil placed">Linear feet<br>
-				<input type="number" name="sodPlaced" id="sodPlaced" placeholder="Sod placed">Linear feet<br>
-				<input type="number" name="fillDelivered" id="fillDelivered" placeholder="Fill dirt delivered">Square feet<br>
-				<input type="number" name="rockDelivered" id="rockDelivered" placeholder="Rock delivered">Tons<br>
-				<input type="number" name="topsoilDelivered" id="topsoilDelivered" placeholder="Topsoil delivered">Cubic Yards<br>
-				</form>
-			</div>
-			<? include_once("news.html"); ?>
+		<td valign="top" align="center" width="300px">
+			<? include("news.html"); ?>
 		</td>
 		<td>
-			<!insert exception request here>	
+			<!insert exception request here>		
 		</td>
 		</tr>
 		</table>
+		
 	</body>
 </html>

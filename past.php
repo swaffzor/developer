@@ -1,8 +1,8 @@
 <?php
-	require_once("database.php");
-	include_once("functions.php");
+	include("nav2.html");
 	date_default_timezone_set ("America/New_York");
-	$date = date("Y-m-d");
+	$date = $_POST['Year'] ."-".$_POST['Month'] ."-".$_POST['Day'];
+	include("database.php");
 	
 	// Check connection
 	if (mysqli_connect_errno()) {
@@ -60,266 +60,139 @@
 		}
 		$fresh = true;
 		$subEmps[] = $empNames[$i];
-	}
-		
-	
-
-?>
+	}?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 
 	<head>
 		<title>Recap</title>
-		
-		
 		<link rel="apple-touch-icon-precomposed" href="http://tsidisaster.net/recap-touch-icon-114.png">
 		<link rel="icon" type="image/png" href="http://tsidisaster.net/favicon.ico">
 		<script type="text/javascript">
-
 			var FIELD_COUNT = 30;
-			var clicks = 0;
-
 			function checkChecks(){
 				showHide('expenses', 'box');
 				showHide('cHours', 'cHoursb');
 				showHide('cHours2', 'cHoursb2');
 				showHide('odo', 'odoc');
 				showHide('expenses2', 'box2');
-				showHide('moreHours', 'multhours');
-				
-				//make same job as cookie's job
-				makeSameJob();
-			}
-			
-			function insertEmail(senderName){
-				var names = [
-					<?
-					$count=0;
-					$tmp = mysqli_query($con,"SELECT * FROM employees where recap != '' ORDER BY Name");
-					while($row = mysqli_fetch_array($tmp)) {
-						echo "'".$row['Name'] . "',";
-						$count++;
-					}
-					?>
-				''];
-				var emails = [
-					<?
-					$tmp = mysqli_query($con,"SELECT * FROM employees where recap != '' ORDER BY Name");
-					while($row = mysqli_fetch_array($tmp)) {
-						echo "'".$row['email'] . "',";
-					}
-					?>
-				''];
-				var COUNT = <? echo $count; ?>;
-				
-				for(i=0; i<COUNT; i++){
-					if (document.getElementById("nameDrop").value == names[i]){
-						document.getElementById("email").value = emails[i];
-					}
-				}
-			}
-			
-			function showHideName(){
-				if (document.getElementById("noList").checked){
-					document.getElementById("nameDrop").style.display = 'none';
-					document.getElementById("name").style.display = 'inline';
-					document.getElementById("email").disabled = false;
-				}
-				else{
-					document.getElementById("nameDrop").style.display = 'inline';
-					document.getElementById("name").style.display = 'none';	
-					document.getElementById("email").disabled = true;				
-				}
+				showHide('moreHours', 'multhours')
 			}
 			
 			function showHide(div_id, sender) {
 				if(document.getElementById(sender).checked) {
-					//document.getElementById(div_id).style.display = 'block';
 					document.getElementById(div_id).style.position = 'relative';
 					document.getElementById(div_id).style.left = '0px';
 				}
 				else {
-					//document.getElementById(div_id).style.display='none';
 					document.getElementById(div_id).style.position='absolute;';
 					document.getElementById(div_id).style.left = '-9999px';
 				}
 			}
 			
-			function putToDay(){
-				var toDay = new Date();
-				var dd = toDay.getDate();
-				var mm = toDay.getMonth() + 1; //January is 0!
-				var yyyy = toDay.getFullYear();
+			function putToday(){
+				var today = new Date();
+				var dd = today.getDate();
+				var mm = today.getMonth() + 1; //January is 0!
+				var yyyy = today.getFullYear();
+				var ddd = document.getElementById("day").value;
+				var dmm = document.getElementById("month").value;
+				var dyyyy = document.getElementById("year").value;
 				
 				if(mm < 10){
-					document.getElementById("Month").value = "0" + mm;
+					document.getElementById("month").value = "0" + mm;
 				}
 				else{
-					document.getElementById("Month").value = mm;
+					document.getElementById("month").value = mm;
 				}
 				
 				if(dd < 10){
-					document.getElementById("Day").value = "0" + dd;
+					document.getElementById("day").value = "0" + dd;
 				}
 				else{
-					document.getElementById("Day").value = dd;
+					document.getElementById("day").value = dd;
 				}
 				
-				document.getElementById("Year").value = yyyy;
+				document.getElementById("year").value = yyyy;
 				
-				var ddd = document.getElementById("Day").value;
-				var dmm = document.getElementById("Month").value;
-				var dyyyy = document.getElementById("Year").value;
-				
-				dateCheck();
-				//*/
 			}
-			
-			function dateCheck(){
-				var toDay = new Date();
-				var dd = toDay.getDate();
-				var mm = toDay.getMonth() + 1; //January is 0!
-				var yyyy = toDay.getFullYear();
-				var ddd = document.getElementById("Day").value;
-				var dmm = document.getElementById("Month").value;
-				var dyyyy = document.getElementById("Year").value;
-				
-				//disable future dates
-				//Day
-				var op = document.getElementById("Day").getElementsByTagName("option");
-				for (var i = 0; i < op.length; i++) {
-					if (op[i].value > dd && dmm == mm) {
-						op[i].disabled = true;
-					}
-					else{
-						op[i].disabled = false;
-					}
-				}
-				//Month
-				var op = document.getElementById("Month").getElementsByTagName("option");
-				for (var i = 0; i < op.length; i++) {
-					if (op[i].value > mm && dyyyy == yyyy) {
-						op[i].disabled = true;
-					}
-					else{
-						op[i].disabled = false;
-					}
-				}
-				//Year
-				var op = document.getElementById("Year").getElementsByTagName("option");
-				for (var i = 0; i < op.length; i++) {
-					if (op[i].value > yyyy) {
-						op[i].disabled = true;
-					}
-					else{
-						op[i].disabled = false;
-					}
+			//Capitalize 1st letter in name
+			function nameFix(){
+				var eName = document.getElementById("name").value;
+				document.getElementById("name").value = toTitleCase(eName);
+				function toTitleCase(str){
+				    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 				}
 			}
 			
 			function validate(){
-				var success = 1;	//true/false replacement for return false
-				var message;		//message to show in alert when validation fails
-				clicks++;
-				//document.getElementById("upload").disabled = true;	//disable button to reduce duplicates
-			
-				if(document.getElementById("name").value == "" && document.getElementById("noList").checked){
-					message = "Fill out your name";
-					success = 0;
-				}
-				else if(document.getElementById("noList").checked == false && document.getElementById("nameDrop").value == "---Select Name---"){
-					message = "Select your name";
-					document.getElementById("nameDrop").focus();
-					success = 0;
+				document.getElementById("month").disabled = false;
+				document.getElementById("day").disabled = false;
+				document.getElementById("year").disabled = false;	
+				
+				if(document.getElementById("name").value == ""){
+					alert("Fill out your name");
+					document.getElementById("name").focus();
+					return false;
 				}
 				else if(document.getElementById("email").value == ""){
-					message = "Fill out your email";
+					alert("Fill out your email");
 					document.getElementById("email").focus();
-					success = 0;
+					return false;
 				}
 				else if(document.getElementById("hours").value == ""){
-					message = "Fill out your hours";
+					alert("Fill out your hours");
 					document.getElementById("hours").focus();	
-					success = 0;
+					return false;
 				}
 				else if(document.getElementById("hours").value > 24){
-					message = "Too many hours, there just isn't enough time in the Day. Let's fix that.";
+					alert("Too many hours, there just isn't enough time in the day. Let's fix that.");
 					document.getElementById("hours").focus();	
-					success = 0;
+					return false;
 				}
-				
 				else if(document.getElementById("job").value == 0){
-					message = "Fill out your job";
+					alert("Fill out your job");	
 					document.getElementById("job").focus();				
-					success = 0;
+					return false;
 				}
 				else if(document.getElementById("summary").value == ""){
-					message = "Fill out the summary";
+					alert("Fill out the summary");
 					document.getElementById("summary").focus();	
-					success = 0;
+					return false;
 				}
 				for (i=1; i<=FIELD_COUNT; i++) {
 					if(document.getElementById("hours" + i).value > 24){
-						message = "Too many hours, there just isn't enough time in the Day. Let's fix that.";
+						alert("Too many hours, there just isn't enough time in the day. Let's fix that.");
 						document.getElementById("hours" + i).focus();	
-						success = 0;
-					}
-					if(document.getElementById("sub" + i).value > 24){
-						message = "Too many hours, there just isn't enough time in the Day. Let's fix that.";
-						document.getElementById("sub" + i).focus();	
-						success = 0;
+						return false;
 					}
 					if (i<5){
 						if(document.getElementById("hoursm" + i).value > 24){
-							message = "Too many hours, there just isn't enough time in the Day. Let's fix that.";
+							alert("Too many hours, there just isn't enough time in the day. Let's fix that.");
 							document.getElementById("hoursm" + i).focus();	
-							success = 0;
+							return false;
 						}
 					}
 				}
 				
 				for (i=1; i<=FIELD_COUNT; i++) {
-					//check for empty hours for employees
 					if(document.getElementById("employee" + i).value != "---Select Employee---" && document.getElementById("hours" + i).value == ""){
-						message = "Please enter the number of hours for " + document.getElementById("employee" + i).value + " in the space next to his name.";
+						alert("Please enter the number of hours for " + document.getElementById("employee" + i).value + " in the space next to his name.");
 						document.getElementById("hours" + i).focus();
-						success = 0;
-					}
-					//check for empty hours for subs
-					if(document.getElementById("semployee" + i).value != "---Select Employee---" && document.getElementById("sub" + i).value == ""){
-						message = "Please enter the number of hours for " + document.getElementById("semployee" + i).value + " in the space next to his name.";
-						document.getElementById("sub" + i).focus();
-						success = 0;
-					}
-					//check for empty job numbers for employees
-					if(document.getElementById("employee" + i).value != "---Select Employee---" && document.getElementById("job" + i).value == ""){
-						message = "Please enter the job number for " + document.getElementById("employee" + i).value;
-						document.getElementById("job" + i).focus();
-						success = 0;
-					}
-					//check for empty job numbers for subs
-					if(document.getElementById("semployee" + i).value != "---Select Employee---" && document.getElementById("sjob" + i).value == ""){
-						message = "Please enter the job number for " + document.getElementById("semployee" + i).value;
-						document.getElementById("sjob" + i).focus();
-						success = 0;
+						return false;
 					}
 				}
 				
 				
 				if (document.getElementById("startodo").value != "" && document.getElementById("endodo").value == ""){
-					message = "Fill out the ending odometer";
+					alert("Fill out the ending odometer");
 					document.getElementById("endodo").focus();	
-					success = 0;
+					return false;
 				}
 				else if (document.getElementById("endodo").value != "" && document.getElementById("startodo").value == ""){
-					message = "Fill out the starting odometer";	
+					alert("Fill out the starting odometer");	
 					document.getElementById("startodo").focus();
-					success = 0;
-				}
-				if (document.getElementById("endodo").value == document.getElementById("startodo").value && document.getElementById("startodo").value != 0 && document.getElementById("endodo").value != 0){
-					message = "What spacecraft did you drive today? Your starting and end odometer are the same.";
-					document.getElementById("startodo").focus();
-					success = 0;
+					return false;
 				}
 				
 				//check for full name
@@ -334,224 +207,82 @@
 				}
 				
 				
-				
-				if(boolSwitch == true && document.getElementById("noList").checked){
-					message = "Please enter full name";
+				if(boolSwitch == true){
+					alert("Please enter full name");
 					document.getElementById("name").focus();
-					success = 0;
-				}
-				
-				//if validation fails, show the message, return false and enable the button for retry
-				if(success == 0){
-					alert(message);
-					document.getElementById("upload").disabled = false;
-					document.getElementById("theButton").disabled = false;
 					return false;
 				}
-				else{
-					//submit the form
-					document.getElementById("email").disabled = false;
-					document.forms["recapForm"].submit();
-				}
 				
-				//document.getElementById("upload").disabled = false;
-				//document.getElementById("theButton").disabled = true;
-				//document.getElementById("theButton").style.position='absolute;';	//hide on success to reduce duplicates
-				//document.getElementById("theButton").style.left = '-9999px';
-							
 			}
-			//Capitalize 1st letter in name
-			function nameFix(){
-				var eName = document.getElementById("name").value;
-				document.getElementById("name").value = toTitleCase(eName);
-				function toTitleCase(str){
-				    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-				}
-			}
+			
 			function makeSameJob(){
 				//if(document.getElementById("sameJob").checked){
 					var theJob = document.getElementById("job").value;
 					for(i=1; i<31; i++){
 						document.getElementById("job" + i).value = theJob;
 					}
-					for(i=1; i<31; i++){
-						document.getElementById("sjob" + i).value = theJob;
-					}
 					for(i=1; i<11; i++){
 						document.getElementById("ejob" + i).value = theJob;
 					}
-					if(theJob == 192){
-						document.getElementById("thedata").checked = true;
-						showHide("data", "thedata")
-					}
-					else{
-						document.getElementById("thedata").checked = false;
-						showHide("data", "thedata")
-					}
-					
 				//}
 			}
 			
-			
 			function showStyle(){
-				var toDay = new Date();
-				var dd = toDay.getDate();
-				var mm = toDay.getMonth() + 1; //January is 0!
-				var yyyy = toDay.getFullYear();
-				var ddd = document.getElementById("Day").value;
-				var dmm = document.getElementById("Month").value;
-				var dyyyy = document.getElementById("Year").value;
-				var elems = document.getElementsByTagName('input');
-				var len = elems.length;
-				var elemst = document.getElementsByTagName('textarea');
-				var lent = elems.length;
-				var elemss = document.getElementsByTagName('select');
-				var lens = elems.length;
+				var today = new Date();
+				var dd = today.getDate();
+				var mm = today.getMonth() + 1; //January is 0!
+				var yyyy = today.getFullYear();
+				var ddd = document.getElementById("day").value;
+				var dmm = document.getElementById("month").value;
+				var dyyyy = document.getElementById("year").value;
 				
 				if(dd != ddd || mm != dmm || yyyy != dyyyy){
-					//document.getElementById("messageDiv").style.display = 'block';
-					document.getElementById(div_id).style.position = 'relative';
+					document.getElementById("messageDiv").style.position = 'relative';
 					document.getElementById("messageDiv").style.left = '0px';
-					//disable form, show buttons
-					document.recapForm.action = "past.php";
-					document.getElementById("dateHere").innerHTML = dmm+"-"+ddd+"-"+dyyyy;
-					
-					for (var i = 0; i < len; i++) {
-					    elems[i].disabled = true;
-					}
-					for (var i = 0; i < lent; i++) {
-					    elemst[i].disabled = true;
-					}
 				}
 				else{
-					//document.getElementById("messageDiv").style.display='none';
-					document.getElementById(div_id).style.position='absolute;';
+					document.getElementById("messageDiv").style.position='absolute;';
 					document.getElementById("messageDiv").style.left = '-9999px';
-					for (var i = 0; i < len; i++) {
-					    elems[i].disabled = false;
-					}
-					for (var i = 0; i < lent; i++) {
-					    elemst[i].disabled = false;
-					}
 				}
 			}
 			
 		</script>
 		
-		<style>
-			body{
-				font-family: sans-serif;
-			}
-			.hide{
-				position: absolute;
-				left: -9999px;
-			}
-		</style>
 	</head>
-	<body onload="checkChecks(); putToDay();">
-		<? include("nav2.html"); 		?>
-		<form action="recap.php" name="recapForm" method="post" enctype="multipart/form-data">
-	<table cellspacing="15px"><tr><td valign="top" width="500px">
-		<table>
-			<th>Month</th><th>Day</th><th>Year</th><th></th>
-			<tr><td><select name='Month' id="Month" onchange="dateCheck(); showStyle()" selected="<?php echo $_POST['Month']?>">
-				<option value='01'>01</option>
-				<option value='02'>02</option>
-				<option value='03'>03</option>
-				<option value='04'>04</option>
-				<option value='05'>05</option>
-				<option value='06'>06</option>
-				<option value='07'>07</option>
-				<option value='08'>08</option>
-				<option value='09'>09</option>
-				<option value='10'>10</option>
-				<option value='11'>11</option>
-				<option value='12'>12</option>
-			</select></td>
+	<body onload="checkChecks();">
+	<table cellspacing="15px"><tr><td>
+		<form action="<?php if ($_POST['summary'] != ""){echo "recap_edit.php";} else{echo "recap.php";}?>" method="post" enctype="multipart/form-data" onsubmit="return validate()">
+		<table><th>Month</th><th>Day</th><th>Year</th>
+		<tr><td><select name='Month' disabled="true" id="month" onchange="showStyle()" selected="<?php echo $_POST['month']?>">
+			<option value="<?php echo $_POST['Month'] ?>"><?php echo $_POST['Month'] ?></option>
+		</select></td>
+	
+		<td><select name='Day' id="day" disabled="true" onchange="showStyle()" selected="<?php echo $_POST['day']?>">
+			<option value="<?php echo $_POST['Day'] ?>"><?php echo $_POST['Day'] ?></option>
+		</select>
+		</td>
 		
-			<td><select name='Day' id="Day" onchange="dateCheck(); showStyle()" selected="<?php echo $_POST['Day']?>">
-				<option value='01' id="1">01</option>
-				<option value='02' id="2">02</option>
-				<option value='03' id="3">03</option>
-				<option value='04' id="4">04</option>
-				<option value='05' id="5">05</option>
-				<option value='06' id="6">06</option>
-				<option value='07' id="7">07</option>
-				<option value='08' id="8">08</option>
-				<option value='09' id="9">09</option>
-				<option value='10' id="10">10</option>
-				<option value='11' id="11">11</option>
-				<option value='12' id="12">12</option>
-				<option value='13' id="13">13</option>
-				<option value='14' id="14">14</option>
-				<option value='15' id="15">15</option>
-				<option value='16' id="16">16</option>
-				<option value='17' id="17">17</option>
-				<option value='18' id="18">18</option>
-				<option value='19' id="19">19</option>
-				<option value='20' id="20">20</option>
-				<option value='21' id="21">21</option>
-				<option value='22' id="22">22</option>
-				<option value='23' id="23">23</option>
-				<option value='24' id="24">24</option>
-				<option value='25' id="25">25</option>
-				<option value='26' id="26">26</option>
-				<option value='27' id="27">27</option>
-				<option value='28' id="28">28</option>
-				<option value='29' id="29">29</option>
-				<option value='30' id="30">30</option>
-				<option value='31' id="31">31</option>
-			</select>
+		<td><select name='Year' id="year" disabled="true" onchange="showStyle()" selected="<?php echo $_POST['year']?>">
+			<option value="<?php echo $_POST['Year'] ?>"><?php echo $_POST['Year'] ?></option>
+		</select></td>
+		<td>To change the date, press the back button</td>
+		<tr>
+			<td colspan="3" align="center">
+				<div id="messageDiv"><p id="message" style="color: red; font-size: 20;">Not Today's Date</p></div>
 			</td>
-			
-			<td colspan="1"><select name='Year' id="Year" onchange="dateCheck(); showStyle()" selected="<?php echo $_POST['Year']?>">
-				<option value='2014'>2014</option>
-				<option value='2015'>2015</option>
-				<option value='2016'>2016</option>
-				<option value='2017'>2017</option>
-				<option value='2018'>2018</option>
-				<option value='2019'>2019</option>
-				<option value='2020'>2020</option>
-			</select></td>
-			<tr>
-				<td colspan="3" align="center">
-					<div id="messageDiv" class="hide"><p id="message" style="color: red; font-size: 20;">Not Today's Date</p>
-					Are you sure you want to enter a past recap for <br><b><span style="color: red; font-size: 20;"><span id="dateHere" name="dateHere"></span></span></b><br>
-					<button>Yes</button>&nbsp&nbsp&nbsp&nbsp&nbsp<button type="button" onclick="putToDay(), showStyle()">No</button>
-					</div>
-				</td>
 		</tr>
 		</table>
 		
-			<?//!name
-			?>
-			<select onchange="insertEmail(this.value)" id="nameDrop" name="nameDrop" style="display: inline">
-				<option>---Select Name---</option>
-				<?php
-					$tmp = mysqli_query($con,"SELECT Name FROM employees where recap != '' ORDER BY Name");
-					while($row = mysqli_fetch_array($tmp)) {
-						echo "<option value ='" . $row['Name']."'";
-						
-						if($row["Name"] == $_COOKIE["name"]){
-							echo " selected";
-						}
-						
-						echo ">" . $row['Name']."</option>";
-					}
-				?>
-			</select>
-			<input placeholder="Name" name="name" id="name" type="text" onchange="nameFix()" required value="<?php echo $_POST['name'] ?>" style="display: none"/>
-			<input type="email" name="email" id="email" placeholder="email" disabled="true" required value="<?php echo $_COOKIE['email'] ?>">
-			
-			<input type="checkbox" id="noList" name="noList" onchange="showHideName()">Name Not Listed<br />
+			<input placeholder="Name" name="name" id="name" type="text" onchange="nameFix()" autofocus required value="<?php echo $_POST['name'] ?>"/>
+			<input type="email" name="email" id="email" placeholder="email" required value="<?php echo $_POST['email'] ?>"><br />
 
-			 <input placeholder="Hours" name="hours" id="hours" type="number" step="any" required value="<?php echo $_POST['hours'] ?>"/>
+			 <input placeholder="Hours" name="hours" id="hours" type="number" step="any" onchange="test()" required value="<?php echo $_POST['hours'] ?>"/>
 
 			<select name="job" id="job" onchange="makeSameJob()">
 				<?php
-					$job = mysqli_query($con,"SELECT * FROM Jobs WHERE Status = 1 ORDER BY Number");
+					$job = mysqli_query($con,"SELECT * FROM Jobs ORDER BY Number");
 					while($row = mysqli_fetch_array($job)) {
-						if($_COOKIE['job'] == $row['Number']){
+						if($_POST['job'] == $row['Number']){
 							echo "<option selected value='". $row['Number'] . "'>" . $row['Number'] . " " . $row['Name'] . "</option>";
 						}
 						else{
@@ -562,7 +293,7 @@
 			Multiple jobs<input type="checkbox" <?php if(isset($_POST['multhours']) == 1){echo "checked";} ?> value="value1" name ="multhours" id="multhours" onclick="showHide('moreHours', 'multhours')"><br />
 			
 			<!MORE HOURS>
-			<div id="moreHours" class="hide">
+			<div id="moreHours" style="position: absolute; left: -9999px;">
 				<input placeholder="Hours" name="hoursm1" id="hoursm1" type="number" step="any"  value="<?php echo $_POST['hoursm1']?>"/>
 				<select name="jobm1">
 					<?php
@@ -619,7 +350,7 @@
 			
 			<!CREW HOURS>
 			<input type="checkbox" name="cHoursb" <?php if(isset($_POST['cHoursb']) == 1){echo "checked";} ?> id="cHoursb" onclick="showHide('cHours', 'cHoursb')">Crew Hours
-			<div id="cHours" class="hide">
+			<div id="cHours" style="position: absolute; left: -9999px;">
 				<!--input type="checkbox" name="sameJob" id="sameJob" onclick="makeSameJob()">Same Job<br-->
 				
 				<select name="employee1" id="employee1" value="<?php echo $_POST['employee1'] ?>"><?php
@@ -797,7 +528,7 @@
 					}?>
 				</select><br />
 					<input type="checkbox" name="cHoursb2" <?php if(isset($_POST['cHoursb2']) == 1){echo "checked";} ?> id="cHoursb2" onclick="showHide('cHours2', 'cHoursb2')">More Crew Hours
-					<div id="cHours2" class="hide">
+					<div id="cHours2" style="position: absolute; left: -9999px;">
 						<select name="employee11" id="employee11" value="<?php echo $_POST['employee11'] ?>"><?php
 							for ($i=0; $i<count($emps); $i++){
 								echo "<option value='" . $emps[$i] . "' ".$disabled[$i].">" . $emps[$i] . "</option>";
@@ -1094,7 +825,8 @@
 			</div><br />
 			
 			<input type="checkbox" name="ssubb" <?php if(isset($_POST['ssubb']) == 1){echo "checked";} ?> id="ssubb" onclick="showHide('ssub', 'ssubb')">Sub Hours
-			<div id="ssub" class="hide">
+				<span style="color:red;">&nbsp*New</span>
+			<div id="ssub" style="position: absolute; left: -9999px;">
 				<!--input type="checkbox" name="sameJob" id="sameJob" onclick="makeSameJob()">Same Job<br-->
 				
 				<select name="semployee1" id="semployee1" value="<?php echo $_POST['employee1'] ?>"><?php
@@ -1272,7 +1004,7 @@
 					}?>
 				</select><br />
 					<input type="checkbox" name="ssubb2" <?php if(isset($_POST['csubb2']) == 1){echo "checked";} ?> id="ssubb2" onclick="showHide('ssub2', 'ssubb2')">More Sub Hours
-					<div id="ssub2" class="hide">
+					<div id="ssub2" style="position: absolute; left: -9999px;">
 						<select name="semployee11" id="semployee11" value="<?php echo $_POST['employee11'] ?>"><?php
 							for ($i=0; $i<count($subEmps); $i++){
 								echo "<option value='" . $subEmps[$i] . "' ".$subDisabled[$i].">" . $subEmps[$i] . "</option>";
@@ -1569,7 +1301,7 @@
 			</div><br />
 			
 			<input type="checkbox" name="odoc" <?php if(isset($_POST['odoc']) == 1){echo "checked";} ?> id="odoc" onclick="showHide('odo', 'odoc')">Odometer
-			<div id="odo" class="hide">
+			<div id="odo" style="position: absolute; left: -9999px;">
 				<table cellspacing="10">
 					<th>ID</th><th>Year</th><th align="left">Make/Model</th><th>Tag Number</th>
 					<tr><td>101</td><td>1997</td><td>Dodge Ram 3500</td><td>M074AX</td></tr>
@@ -1596,7 +1328,7 @@
 			</div><br />
 			
 			<input type="checkbox" id="box" name="box" <?php if(isset($_POST['box']) == 1){echo "checked";} ?> onclick="showHide('expenses', 'box')">Expenses
-			<div id='expenses' class="hide">
+			<div id='expenses' style="position: absolute; left: -9999px;">
 				<input type="text" name="expense1" placeholder="Expense 1" value="<?php echo $_POST['expense1'] ?>">
 				<input placeholder="Cost" type="number" step="any" name="cost1" value="<?php echo $_POST['cost1'] ?>">
 				<select name="ejob1" id="ejob1">
@@ -1625,7 +1357,7 @@
 					}?>
 				</select><br />
 				<input type="checkbox" id="box2" name="box2" <?php if(isset($_POST['box2']) == 1){echo "checked";} ?> onclick="showHide('expenses2', 'box2')">More expenses
-				<div id="expenses2" class="hide">
+				<div id="expenses2" style="position: absolute; left: -9999px;">
 					<input type="text" name="expense4" placeholder="Expense 4" value="<?php echo $_POST['expense4'] ?>">
 					<input placeholder="Cost" type="number" step="any" name="cost4" value="<?php echo $_POST['cost4'] ?>">
 					<select name="ejob4" id="ejob4">
@@ -1699,38 +1431,20 @@
 			<textarea name="recognition" id="recognition" cols="50" placeholder="List (if any) employees that have demonstrated exceptional work or employees that deserve recognition"></textarea>
 			<!input type="file" name="userfile" id="file"> <br />
 
-			<div id="theButton" style="position: relative; left: 0px;">
-			<input type="button" id="upload" onclick="validate()" value="Submit" style="color: #f61c1c;">
-			</div>
+			<input type="submit" id="upload" onclick="return validate()" value="<?php if($_POST['summary']==""){echo "Submit";} else{echo "Change";} ?>">
 			
 			
-		
-		<? //include("recap.php"); ?>
+			
+		</form>
 		</td>
-		<td valign="top">
-			<input type="checkbox" name="thedata" id="thedata" class="hide">
-			<div id="data" name="data" class="hide">
-				<h2 style="color:red;">Kensington Data Required</h2>
-				<p>Please input exact quantities for work performed today.</p>
-				<input type="number" name="fabric" id="fabric" placeholder="Filter fabric placed">Linear feet<br>
-				<input type="number" name="geowebPlaced" id="geowebPlaced" placeholder="Geoweb placed">Linear feet<br>
-				<input type="number" name="fillPlaced" id="fillPlaced" placeholder="Fill dirt placed">Cubic Yard<br>
-				<input type="number" name="grading" id="grading" placeholder="Graded slope">Linear feet<br>
-				<input type="number" name="tieins" id="tieins" placeholder="Number of tie-ins">Each<br>
-				<input type="number" name="rockPlaced" id="rockPlaced" placeholder="Rock placed">Linear feet<br>
-				<input type="number" name="topsoilPlaced" id="topsoilPlaced" placeholder="Topsoil placed">Linear feet<br>
-				<input type="number" name="sodPlaced" id="sodPlaced" placeholder="Sod placed">Linear feet<br>
-				<input type="number" name="fillDelivered" id="fillDelivered" placeholder="Fill dirt delivered">Square feet<br>
-				<input type="number" name="rockDelivered" id="rockDelivered" placeholder="Rock delivered">Tons<br>
-				<input type="number" name="topsoilDelivered" id="topsoilDelivered" placeholder="Topsoil delivered">Cubic Yards<br>
-				</form>
-			</div>
-			<? include_once("news.html"); ?>
+		<td valign="top" align="center" width="300px">
+			<? include("news.html"); ?>
 		</td>
 		<td>
-			<!insert exception request here>	
+			<!insert exception request here>		
 		</td>
 		</tr>
 		</table>
+		
 	</body>
 </html>

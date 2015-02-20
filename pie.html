@@ -1,0 +1,69 @@
+<html>
+  <head>
+    <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+    <script type='text/javascript'>
+      google.load('visualization', '1', {packages:['corechart']});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          	['Job', 'Hours per Day'],
+          	['Admin',	24.75],
+          	['Lee Vessels',	0.0],
+          	['Gulf Harbour',	0.0],
+          	['Coats School',	0.0],
+          	['Palmira',	0.0],
+          	['Civic Center Pond',	0.0],
+          	['BWC',	0.0],
+          	['Shingle Creek',	75.5],
+          	['Osceola Channel Markers',	0.0],
+          	['UNC Bingham',	22.5],
+          	['Tavares',	0.0],
+          	['Toho Com. Park',	0.0],
+          	['GH sand',	0.0],
+          	['Cherry Point',	65.0],
+          	['Bonita Bay',	171.0],
+          	['Snake Island',	0.0],
+          	['Mackinson Island',	0.0],
+          	['Kensington',	45.0],
+          	['Okeechobee',	14.0],
+          	['Cherokee Point',	0.0],
+          	['Aiken',	0.0],
+          	['Maint',	0.0],
+          	['BIDDING',	0.0],
+          	['',	0],
+          	['',	0],
+          	['',	0],
+          	['',	0],
+          	['',	0],
+          	['',	0],
+          	['',	0],
+
+          	
+		
+        ]);
+
+        var options = {
+          title: 'Total Hours by Job 5-2-2014',
+			backgroundColor: 'white',
+			pieSliceText: 'label',
+			is3D:'true',
+			chartArea:{left:20,top:20,width:'50%',height:'60%'}
+			
+			//legend.textStyle: {color: <'white'>}
+
+			
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+
+	
+
+    </script>
+  </head>
+  <body>
+
+    <div id='chart_div' style='width: 800px; height: 400px;'></div>
+  </body>
+</html>
