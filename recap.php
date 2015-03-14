@@ -40,12 +40,14 @@
 	$illegals = array("'",'"',"\n");
 	$replacements = array("&#39", "&#34", "<br>");
 	$ip = get_client_ip();
-	include("database.php");
+	include("database.php");								
+								
 	date_default_timezone_set ("America/New_York");
 	$now = date("F j, Y @ g:i a");
 	$dateTime = date("Y-m-d H:i:s");
 	$date = $_POST["Year"] . "-" . $_POST["Month"] . "-" . $_POST["Day"];
 	$day = strftime("%A",strtotime($date));
+	$update = $_POST['updateSwitch'];
 	
 	//collect the data from the form
 	$DUPCHECK = "true";
@@ -85,6 +87,15 @@
 		exit("Something went wrong, press back");
 	}
 	
+	$dups = 0;
+	$duplicateCheck = mysqli_query($con,"SELECT * FROM Data WHERE Name = '".$empName[0]."' AND Date = '".$date."'");
+	while($row = mysqli_fetch_array($duplicateCheck)) {
+		$dups++;
+	}
+	
+	if ($dups > 0 && $update == 0){
+		exit(include("exists.php"));
+	}
 	
 	$eList->hours[0] = $_POST['hours'];
 	$empHours[0] = $_POST['hours'];
@@ -176,7 +187,9 @@
 	
 	//compose message
 	//make table for employee hours
-	setHours($empName[0], $date, $empJob[0], $empHours[0], $empName[0]);
+	if($update == 0){
+		setHours($empName[0], $date, $empJob[0], $empHours[0], $empName[0]);
+	}
 	$message .= "<table><th>Name</th><th>hours</th><th>job</th><th>week hours</th>";
 	$message .= "<tr><td align='center'>".$eList->name[0] . "</td><td align='center'>" . $eList->hours[0] . "</td><td>#" . $eList->job[0] ."</td>";
 	if (getWeeklyHours($empName[0], $date) > 40){
@@ -208,7 +221,9 @@
 	}*/
 	for ($i=1; $i <= 10; $i++){
 		if ($supMultHour[$i] > 0){
-			setHours($empName[0], $date, $supMultJob[$i], $supMultHour[$i], $empName[0]);
+			if($update == 0){
+				setHours($empName[0], $date, $supMultJob[$i], $supMultHour[$i], $empName[0]);
+			}
 			$message .= "<tr><td align='center'>" . $empName[0] . "</td><td align='center'>" . $supMultHour[$i] . "</td><td align='center'>#" . $supMultJob[$i] ."</td>";
 			if (getWeeklyHours($eList->name[0], $date) > 40){
 				$message .= "<td align='center' bgcolor='#FF0000'><b>".getWeeklyHours($eList->name[0], $date)."</b></td></tr>";
@@ -229,7 +244,9 @@
 	$count = 1;
 	for ($i=1; $i<=$E_COUNT; $i++){
 		if ($eList->name[$i] != "" && $eList->name[$i] != "---Select Employee---"){
-			setHours($empName[$i], $date, $empJob[$i], $empHours[$i], $empName[0]);
+			if($update == 0){
+				setHours($empName[$i], $date, $empJob[$i], $empHours[$i], $empName[0]);
+			}
 			$message .= "<tr><td align='center'>" . $empName[$i] . "</td><td align='center'>" . $empHours[$i] . "</td><td align='center'>#" . $empJob[$i] ."</td>";
 			if (getWeeklyHours($eList->name[$i], $date) > 40){
 				$message .= "<td align='center' bgcolor='#FF0000'><b>".getWeeklyHours($eList->name[$i], $date)."</b></td></tr>";
@@ -255,7 +272,9 @@
 	$scount = 0;
 	for ($i=1; $i<=$E_COUNT; $i++){
 		if ($subName[$i] != "" && $subName[$i] != "---Select Employee---"){
-			setHours($subName[$i], $date, $subJob[$i], $subHours[$i], $empName[0]);
+			if($update == 0){
+				setHours($subName[$i], $date, $subJob[$i], $subHours[$i], $empName[0]);
+			}
 			$message .= "<tr><td align='center'>" . $subName[$i] . "</td><td align='center'>" . $subHours[$i] . "</td><td align='center'>#" . $subJob[$i] ."</td>";
 			if (getWeeklyHours($subName[$i], $date) > 40){
 				$message .= "<td align='center' bgcolor='#FF0000'><b>".getWeeklyHours($subName[$i], $date)."</b></td></tr>";
@@ -281,7 +300,7 @@
 	//Expenses------------_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_--_
 	//!expenses
 	for ($i=1; $i<=$E_COUNT; $i++){
-		if ($expCost[$i] > 0){
+		if ($expCost[$i] > 0 && $update == 0){
 			$exsql = "INSERT INTO Expenses (Submitted, Date, Name, Job, Expense, Cost) VALUES ('$now', '$date', '$empName[0]', '$expJob[$i]', '$expName[$i]', '$expCost[$i]')";
 			mysqli_query($con, $exsql);
 		}
@@ -308,7 +327,7 @@
 	
 	//add odometer to $message
 	//!odometer
-	if ($startOdo != "" && $endOdo != ""){
+	if ($startOdo != "" && $endOdo != "" && $update == 0){
 		mysqli_query($con, "INSERT INTO Vehicle (VehicleID, Odometer, Submitter, Submitted, Date) VALUES ('$vehicle', '$endOdo', '$empName[0]', '$now', '$date')");
 		$diff = $endOdo - $startOdo;
 		$message = $message ."Vehicle #: ". $vehicle .", Odometer: " . $startOdo . " - " . $endOdo . "<br><b>Total Mileage: " . $diff .'</b><hr>';
@@ -337,7 +356,8 @@
 	
 	//! Job metrics
 	if($_POST["job"] == 192){
-		$KenData = "fabric: ".$fabric .
+		$KenData = "Lake: ".$_POST['kensingtonLake'].
+		"<br>fabric: ".$fabric .
 		"<Br>geoweb placed: ".$geowebPlaced.
 		"<Br>fill dirt placed: ".$fillPlaced.
 		"<Br>grading done: ".$grading.
@@ -352,8 +372,10 @@
 		
 		$message.= $KenData;
 		
-		$sql = "INSERT INTO JobData (submitter, Date, submittedOn, job, filterFabric, geoweb, fillDirtPlaced, graded, tieIns, rockPlaced, topsoilPlaced, sodPlaced, fillDirtDelivered, rockDelivered, topsoilDelivered) VALUES ('$empName[0]', '$date', '$dateTime', '$empJob[0]', '$fabric', '$geowebPlaced', '$fillPlaced', '$grading', '$tieins', '$rockPlaced', '$topsoilPlaced', '$sodPlaced', '$fillDelivered','$rockDelivered', '$topsoilDelivered')";
-		mysqli_query($con, $sql);
+		if($update == 0){
+			$sql = "INSERT INTO JobData (submitter, Date, submittedOn, job, lake, filterFabric, geoweb, fillDirtPlaced, graded, tieIns, rockPlaced, topsoilPlaced, sodPlaced, fillDirtDelivered, rockDelivered, topsoilDelivered) VALUES ('$empName[0]', '$date', '$dateTime', '$empJob[0]', '".$_POST['kensingtonLake']."', '$fabric', '$geowebPlaced', '$fillPlaced', '$grading', '$tieins', '$rockPlaced', '$topsoilPlaced', '$sodPlaced', '$fillDelivered','$rockDelivered', '$topsoilDelivered')";
+			mysqli_query($con, $sql);
+		}
 	}
 	?>
 <html>
@@ -389,7 +411,15 @@
 	$message = mysqli_real_escape_string($con, $message);
 	//DATABASE
 	
-	$sql = "INSERT INTO Data (Name, Submitted, Email, Summary, Date, IP, Hours, Expenses, Mileage, userAgent) VALUES ('$empName[0]', '$now', '$email', '$message', '$date', '$ip', '$totalHours', '$totalCost', '$diff', '$broswer')";
+	if($update == 0){
+		$sql = "INSERT INTO Data (Name, Submitted, Email, Summary, Date, IP, Hours, Expenses, Mileage, userAgent) VALUES ('$empName[0]', '$now', '$email', '$message',
+		'$date', '$ip', '$totalHours', '$totalCost', '$diff', '$broswer')";
+	}
+	else{
+		echo "<h1>UPDATED</h1>";
+		$sql = "UPDATE Data SET Name='$empName[0]', Submitted='$now', Email='$email', Summary='$message', Date='$date', IP='$ip', Hours='$totalHours', Expenses='$totalCost', Mileage='$diff', userAgent='$broswer' WHERE Name='$empName[0]' AND Date='$date'";
+	}
+	
 	mysqli_query($con, $sql);
 	
 	// add hours 

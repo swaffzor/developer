@@ -1711,6 +1711,19 @@
 			<input type="checkbox" name="thedata" id="thedata" class="hide">
 			<div id="data" name="data" class="hide">
 				<h2 style="color:red;">Kensington Data Required</h2>
+				Lake:<select name="kensingtonLake" id="kensingtonLake">
+					<option value='1'>1</option>
+					<option value='2'>2</option>
+					<option value='5'>5</option>
+					<option value='8'>8</option>
+					<option value='9G'>9G</option>
+					<option value='9T'>9T</option>
+					<option value='10'>10</option>
+					<option value='11'>11</option>
+					<option value='12'>12</option>
+					<option value='16'>16</option>
+					<option value='17'>17</option>
+				</select>
 				<p>Please input exact quantities for work performed today.</p>
 				<input type="number" name="fabric" id="fabric" placeholder="Filter fabric placed">Linear feet<br>
 				<input type="number" name="geowebPlaced" id="geowebPlaced" placeholder="Geoweb placed">Linear feet<br>
@@ -1719,10 +1732,19 @@
 				<input type="number" name="tieins" id="tieins" placeholder="Number of tie-ins">Each<br>
 				<input type="number" name="rockPlaced" id="rockPlaced" placeholder="Rock placed">Linear feet<br>
 				<input type="number" name="topsoilPlaced" id="topsoilPlaced" placeholder="Topsoil placed">Linear feet<br>
-				<input type="number" name="sodPlaced" id="sodPlaced" placeholder="Sod placed">Linear feet<br>
+				<input type="number" name="sodPlaced" id="sodPlaced" placeholder="Sod placed">Square feet<br>
 				<input type="number" name="fillDelivered" id="fillDelivered" placeholder="Fill dirt delivered">Square feet<br>
 				<input type="number" name="rockDelivered" id="rockDelivered" placeholder="Rock delivered">Tons<br>
 				<input type="number" name="topsoilDelivered" id="topsoilDelivered" placeholder="Topsoil delivered">Cubic Yards<br>
+				
+				<input type="hidden" name="updateSwitch" id="updateSwitch" value="<? 
+					if (isset($_POST['summary'])){
+						echo "1";
+					}
+					else{
+						echo "0";
+					}
+				?>">
 				</form>
 			</div>
 			<? include_once("news.html"); ?>

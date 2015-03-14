@@ -4,6 +4,10 @@
 	date_default_timezone_set ("America/New_York");
 	$date = date("Y-m-d");
 	
+	
+	if (isset($_POST['summary'])){
+		include_once("recap.php");
+	}
 	// Check connection
 	if (mysqli_connect_errno()) {
 	  echo "Failed to connect to MySQL: " . mysqli_connect_error();
@@ -75,20 +79,24 @@
 		<link rel="apple-touch-icon-precomposed" href="http://tsidisaster.net/recap-touch-icon-114.png">
 		<link rel="icon" type="image/png" href="http://tsidisaster.net/favicon.ico">
 		<script type="text/javascript">
-			
+
 			var FIELD_COUNT = 30;
 			var clicks = 0;
-
+			
+			function start(){
+				putToDay();
+				makeSameJob();
+				checkChecks();
+			}
+			
 			function checkChecks(){
+				//alert("checking checks");
 				showHide('expenses', 'box');
 				showHide('cHours', 'cHoursb');
 				showHide('cHours2', 'cHoursb2');
 				showHide('odo', 'odoc');
 				showHide('expenses2', 'box2');
 				showHide('moreHours', 'multhours');
-				
-				//make same job as cookie's job
-				makeSameJob();
 			}
 			
 			function insertEmail(senderName){
@@ -146,6 +154,7 @@
 			}
 			
 			function putToDay(){
+				//alert("putting today");
 				var toDay = new Date();
 				var dd = toDay.getDate();
 				var mm = toDay.getMonth() + 1; //January is 0!
@@ -218,6 +227,7 @@
 			}
 			
 			function validate(){
+				//alert("validating");
 				var success = 1;	//true/false replacement for return false
 				var message;		//message to show in alert when validation fails
 				clicks++;
@@ -369,6 +379,7 @@
 				}
 			}
 			function makeSameJob(){
+				//alert("making same job");
 				//if(document.getElementById("sameJob").checked){
 					var theJob = document.getElementById("job").value;
 					for(i=1; i<31; i++){
@@ -380,6 +391,15 @@
 					for(i=1; i<11; i++){
 						document.getElementById("ejob" + i).value = theJob;
 					}
+					if(theJob == 192){
+						document.getElementById("thedata").checked = true;
+						showHide("data", "thedata")
+					}
+					else{
+						document.getElementById("thedata").checked = false;
+						showHide("data", "thedata")
+					}
+					
 				//}
 			}
 			
@@ -427,8 +447,7 @@
 				}
 			}
 			
-		</script>
-		
+		</script>		
 		<style>
 			body{
 				font-family: sans-serif;
@@ -439,8 +458,8 @@
 			}
 		</style>
 	</head>
-	<body onload="checkChecks(); putToDay();">
-		<? include("nav2.html"); 		?>
+	<body onload="start();">
+		<? include_once("nav2.html"); 		?>
 	<table cellspacing="15px"><tr><td valign="top" width="500px">
 		<form action="index2.php" name="recapForm" method="post" enctype="multipart/form-data">
 		<table>
@@ -532,7 +551,7 @@
 				?>
 			</select>
 			<input placeholder="Name" name="name" id="name" type="text" onchange="nameFix()" required value="<?php echo $_POST['name'] ?>" style="display: none"/>
-			<input type="email" name="email" id="email" placeholder="email" disabled="true" required value="<?php echo $_POST['email'] ?>">
+			<input type="email" name="email" id="email" placeholder="email" disabled="true" required value="<?php echo $_COOKIE['email'] ?>">
 			
 			<input type="checkbox" id="noList" name="noList" onchange="showHideName()">Name Not Listed<br />
 
@@ -542,7 +561,14 @@
 				<?php
 					$job = mysqli_query($con,"SELECT * FROM Jobs ORDER BY Number");
 					while($row = mysqli_fetch_array($job)) {
-						if($_COOKIE['job'] == $row['Number']){
+						
+						if(isset($_POST['summary'])){
+							$temp = $_POST['job'];
+						}
+						else{
+							$temp = $_COOKIE['job']; 
+						}
+						if($temp == $row['Number']){
 							echo "<option selected value='". $row['Number'] . "'>" . $row['Number'] . " " . $row['Name'] . "</option>";
 						}
 						else{
@@ -550,6 +576,10 @@
 						}
 					}?>
 			</select> 
+			
+			
+			</select> 
+			
 			Multiple jobs<input type="checkbox" <?php if(isset($_POST['multhours']) == 1){echo "checked";} ?> value="value1" name ="multhours" id="multhours" onclick="showHide('moreHours', 'multhours')"><br />
 			
 			
@@ -758,24 +788,56 @@
 			<input type="button" id="upload" onclick="validate()" value="Submit" style="color: #f61c1c;">
 			</div>
 			
-			
-		</form>
+			<?
+				echo "<pre>";
+				print_r($_POST);
+				echo "</pre>";
+			?>
 		<? //include("recap.php"); ?>
 		</td>
 		<td valign="top">
-			
-			<? 				
-				echo "<pre>";
-					print_r($_POST);
-				echo "</pre>";
 				
-				/*
-				if(isset($_POST["summary"])){
-					include("recap.php");
-				}
-				else{
-					include("news.html");
-				} */
+			<input type="checkbox" name="thedata" id="thedata" class="hide">
+			<div id="data" name="data" class="hide">
+				<h2 style="color:red;">Kensington Data Required</h2>
+				Lake:<select name="kensingtonLake" id="kensingtonLake">
+					<option value='1'>1</option>
+					<option value='2'>2</option>
+					<option value='5'>5</option>
+					<option value='8'>8</option>
+					<option value='9G'>9G</option>
+					<option value='9T'>9T</option>
+					<option value='10'>10</option>
+					<option value='11'>11</option>
+					<option value='12'>12</option>
+					<option value='16'>16</option>
+					<option value='17'>17</option>
+				</select>
+				<p>Please input exact quantities for work performed today.</p>
+				<input type="number" name="fabric" id="fabric" placeholder="Filter fabric placed" value="<? echo $_POST['fabric']; ?>">Linear feet<br>
+				<input type="number" name="geowebPlaced" id="geowebPlaced" placeholder="Geoweb placed" value="<? echo $_POST['geowebPlaced']; ?>">Linear feet<br>
+				<input type="number" name="fillPlaced" id="fillPlaced" placeholder="Fill dirt placed" value="<? echo $_POST['fillPlaced']; ?>">Tons<br>
+				<input type="number" name="grading" id="grading" placeholder="Graded slope" value="<? echo $_POST['grading']; ?>">Linear feet<br>
+				<input type="number" name="tieins" id="tieins" placeholder="Number of tie-ins" value="<? echo $_POST['tieins']; ?>">Each<br>
+				<input type="number" name="rockPlaced" id="rockPlaced" placeholder="Rock placed" value="<? echo $_POST['rockPlaced']; ?>">Linear feet<br>
+				<input type="number" name="topsoilPlaced" id="topsoilPlaced" placeholder="Topsoil placed" value="<? echo $_POST['topsoilPlaced']; ?>">Linear feet<br>
+				<input type="number" name="sodPlaced" id="sodPlaced" placeholder="Sod placed" value="<? echo $_POST['sodPlaced']; ?>">Square feet<br>
+				<input type="number" name="fillDelivered" id="fillDelivered" placeholder="Fill dirt delivered" value="<? echo $_POST['fillDelivered']; ?>">Square feet<br>
+				<input type="number" name="rockDelivered" id="rockDelivered" placeholder="Rock delivered" value="<? echo $_POST['rockDelivered']; ?>">Tons<br>
+				<input type="number" name="topsoilDelivered" id="topsoilDelivered" placeholder="Topsoil delivered" value="<? echo $_POST['topsoilDelivered']; ?>">Cubic Yards<br>
+				
+				<input type="hidden" name="updateSwitch" id="updateSwitch" value="<? 
+					if (isset($_POST['summary'])){
+						echo "1";
+					}
+					else{
+						echo "0";
+					}
+				?>">
+				</form>
+			</div>
+			<?
+				include_once("news.html");
 			?>
 		</td>
 		<td>
