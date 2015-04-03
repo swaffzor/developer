@@ -1,5 +1,6 @@
 <?php
 	include_once("functions.php");
+	include_once("globals.php");
 	$test = true;
 	Class employeeList
 	{
@@ -59,18 +60,7 @@
 	$eList = new employeeList();
 	$broswer = $_SERVER['HTTP_USER_AGENT'];
 	$expire = time() + (60*60*24*7); // add seconds for a week
-	
-	$fabric = $_POST['fabric'];
-	$geowebPlaced = $_POST['geowebPlaced'];
-	$fillPlaced = $_POST['fillPlaced'];
-	$grading = $_POST['grading'];
-	$tieins = $_POST['tieins'];
-	$rockPlaced = $_POST['rockPlaced'];
-	$topsoilPlaced = $_POST['topsoilPlaced'];
-	$sodPlaced = $_POST['sodPlaced'];
-	$fillDelivered = $_POST['fillDelivered'];
-	$rockDelivered = $_POST['rockDelivered'];
-	$topsoilDelivered = $_POST['topsoilDelivered'];				
+				
 	
 	//supervisor info
 	/* if 'Name Not Listed' is checked then empName is what was manually entered */
@@ -93,7 +83,7 @@
 		$dups++;
 	}
 	
-	if ($dups > 0 && $update == 0){
+	if (($dups > 0 && $update == 0) && $DEBUG == false){
 		exit(include("exists.php"));
 	}
 	
@@ -356,26 +346,139 @@
 	
 	//! Job metrics
 	if($_POST["job"] == 192){
-		$KenData = "Lake: ".$_POST['kensingtonLake'].
-		"<br>fabric: ".$fabric .
-		"<Br>geoweb placed: ".$geowebPlaced.
-		"<Br>fill dirt placed: ".$fillPlaced.
-		"<Br>grading done: ".$grading.
-		"<Br>tie-ins placed: ".$tieins .
-		"<Br>rock placed: ".$rockPlaced.
-		"<Br>topsoil placed: ".$topsoilPlaced.
-		"<Br>sod placed: ".$sodPlaced.
-		"<Br>fill delivered: ".$fillDelivered .
-		"<Br>rock delivered: ".$rockDelivered .
-		"<Br>topsoil delivered: ".$topsoilDelivered.
-		"<Br>";
-		
-		$message.= $KenData;
-		
-		if($update == 0){
-			$sql = "INSERT INTO JobData (submitter, Date, submittedOn, job, lake, filterFabric, geoweb, fillDirtPlaced, graded, tieIns, rockPlaced, topsoilPlaced, sodPlaced, fillDirtDelivered, rockDelivered, topsoilDelivered) VALUES ('$empName[0]', '$date', '$dateTime', '$empJob[0]', '".$_POST['kensingtonLake']."', '$fabric', '$geowebPlaced', '$fillPlaced', '$grading', '$tieins', '$rockPlaced', '$topsoilPlaced', '$sodPlaced', '$fillDelivered','$rockDelivered', '$topsoilDelivered')";
-			mysqli_query($con, $sql);
+		for ($i=0; $i<2; $i++){
+			if(($_POST['kensingtonLake' . $i] != "---Select Lake---") && ($_POST['kensingtonLake' . $i] != 0)){
+
+				$kensingtonLake = $_POST['kensingtonLake'.$i];
+				$fabric = $_POST['fabric'.$i];
+				$geowebPlaced = $_POST['geowebPlaced'.$i];
+				$fillPlaced = $_POST['fillPlaced'.$i];
+				$grading = $_POST['grading'.$i];
+				$tieins = $_POST['tieins'.$i];
+				$rockPlaced = $_POST['rockPlaced'.$i];
+				$topsoilPlaced = $_POST['topsoilPlaced'.$i];
+				$sodPlaced = $_POST['sodPlaced'.$i];
+				$fillDelivered = $_POST['fillDelivered'.$i];
+				$rockDelivered = $_POST['rockDelivered'.$i];
+				$topsoilDelivered = $_POST['topsoilDelivered'.$i];
+
+				if($kensingtonLake != 0){
+					$KenData .= "Lake: $kensingtonLake";
+				}
+				if($fabric != ""){
+					$KenData .= "<br>fabric: $fabric Linear feet";
+				}				
+				if($geowebPlaced != ""){
+					$KenData .= "<Br>geoweb placed: $geowebPlaced Linear feet";	
+				}
+				if($fillPlaced != ""){
+					$KenData .= "<Br>fill dirt placed: $fillPlaced Tons";
+				}
+				if($grading != ""){
+					$KenData .= "<Br>grading done: $grading Linear feet";
+				}
+				if($tieins != ""){
+					$KenData .= "<Br>tie-ins placed: $tieins Each";
+				}
+				if($rockPlaced != ""){
+					$KenData .= "<Br>rock placed: $rockPlaced Linear feet";
+				}
+				if($topsoilPlaced != ""){
+					$KenData .= "<Br>topsoil placed: $topsoilPlaced Linear feet";
+				}
+				if($sodPlaced != ""){
+					$KenData .= "<Br>sod placed: $sodPlaced Square Feet";
+				}
+				if($fillDelivered != ""){
+					$KenData .= "<Br>fill delivered: $fillDelivered Tons";
+				}
+				if($rockDelivered != ""){
+					$KenData .= "<Br>rock delivered: $rockDelivered Tons";
+				}
+				if($topsoilDelivered != ""){
+					$KenData .= "<Br>topsoil delivered: $topsoilDelivered Cubic Yards";
+				}
+				$KenData .= "<Br><BR>";
+				
+				$message.= $KenData;
+				
+				if($update == 0){
+					$sql = "INSERT INTO Kensington (
+						submitter, 
+						Date, 
+						submittedOn, 
+						job, 
+						lake, 
+						filterFabric, 
+						geoweb, 
+						fillDirtPlaced, 
+						graded, 
+						tieIns, 
+						rockPlaced, 
+						topsoilPlaced, 
+						sodPlaced, 
+						fillDirtDelivered, 
+						rockDelivered, 
+						topsoilDelivered
+					) 
+					VALUES (
+						'".$empName[0]."', 
+						'$date', 
+						'$dateTime', 
+						'".$_POST['job']."', 
+						'$kensingtonLake', 
+						'$fabric', 
+						'$geowebPlaced', 
+						'$fillPlaced', 
+						'$grading', 
+						'$tieins', 
+						'$rockPlaced', 
+						'$topsoilPlaced', 
+						'$sodPlaced', 
+						'$fillDelivered',
+						'$rockDelivered', 
+						'$topsoilDelivered'
+					)";
+					
+					mysqli_query($con, $sql);
+				}
+			}
 		}
+	}
+	
+	if($_POST["job"] == 195){
+		$scarData = "Dikes: ".$_POST['dike']. " Truckloads
+		<br>Land Smoothing: ".$_POST['landSmoothing']. " (1/4) mile intervals
+		<Br>Silt Fence Placed: ".$_POST['siltFencePlaced']. " Truckloads
+		<Br>Structures: ".$_POST['structures']. " Structures
+		<Br>Berms: ".$_POST['berms']. " Loads hauled
+		<Br><BR>";
+		
+		$message.= $scarData;
+		
+		$sql = "INSERT INTO Scarborough (
+				submitter, 
+				Date, 
+				submittedOn, 
+				job,
+				dike,
+				landSmoothing,
+				siltFencePlaced,
+				structures,
+				berms
+			)
+			VALUES(
+				'".$empName[0]."', 
+				'$date', 
+				'$dateTime', 
+				'".$empJob[0]."',
+				'".$_POST['dike']."',
+				'".$_POST['landSmoothing']."',
+				'".$_POST['siltFencePlaced']."',
+				'".$_POST['structures']."',
+				'".$_POST['berms']."
+			')";
+		mysqli_query($con, $sql);
 	}
 	?>
 <html>
@@ -402,11 +505,13 @@
 	$headers .= "Content-type:text/html;charset=iso-8859-1" . "\r\n";
 	$headers .= "From: $empName[0]" . "\r\n" . "Reply-To: recap@tsidisaster.com" . "\r\n" . "Bcc: jeremy@tsidisaster.com";
 	$emessage = wordwrap($emessage, 70, "\r\n");
-	if(mail($email, "Recap Receipt", $emessage, $headers)){
-		echo "<h2>An email has been successfully sent</h2>";
-	}
-	else{
-		echo "<h1 style='color: #FF0000;'>for some reason, a Recap Receipt has not been sent to your email but your recap has been submitted</h1>";
+	if($DEBUG == false){
+		if(mail($email, "Recap Receipt", $emessage, $headers)){
+			echo "<h2>An email has been successfully sent</h2>";
+		}
+		else{
+			echo "<h1 style='color: #FF0000;'>for some reason, a Recap Receipt has not been sent to your email but your recap has been submitted</h1>";
+		}
 	}
 	$message = mysqli_real_escape_string($con, $message);
 	//DATABASE

@@ -83,7 +83,16 @@
 					$daysMissing = $row['daysMissing'] + 1;
 				}
 				mysqli_query($con, "UPDATE employees SET daysMissing='$daysMissing' WHERE Name='".$empNames[$i]."'");
-				$message .= "<tr><td>".$empNames[$i]."</td><td>$daysMissing</td></tr>";
+				if($daysMissing > 28){
+					$message .= "<tr><td>".$empNames[$i]."</td><td>$daysMissing (will be automaticaly removed at 30)</td></tr>";
+				}
+				else if($daysMissing > 30){
+					$message .= "<tr><td>".$empNames[$i]."</td><td>$daysMissing (HAS JUST BEEN REMOVED FROM DROP DOWN)</td></tr>";
+					mysqli_query($con, "UPDATE employees SET Status='expired' WHERE Name='".$empNames[$i]."'");
+				}
+				else{
+					$message .= "<tr><td>".$empNames[$i]."</td><td>$daysMissing</td></tr>";
+				}
 			}
 			$fresh = true;
 			$emps[] = $empNames[$i];
@@ -97,8 +106,8 @@
 		$headers .= "From: Automated Recap System" . "\r\n" . "Reply-To: recap@tsidisaster.com" . "\r\n" . "Bcc: jeremy@tsidisaster.com";
 		$message = wordwrap($message, 70, "\r\n");
 		
-		/*if(mail("marc@tsidisaster.com", "Missing Person Report", $message, $headers)){
+		if(mail("marc@tsidisaster.com", "Missing Person Report", $message, $headers)){
 			echo "email sent";
-		}*/
+		}
 			
 		?>

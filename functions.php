@@ -9,6 +9,7 @@
 	//input parameters: name, date
 	//output: current weekly hours
 	function getWeeklyHours($fname, $fdate){
+		include("globals.php");
 		include("database.php");
 		$now = date("F j, Y @ g:i a");
 		$ddate = $fdate;
@@ -38,6 +39,7 @@
 	//input parameters: name, date
 	//output: none (inputs data into hours database)
 	function setHours($fname, $fdate, $fjob, $fhours, $fsuper){
+		include("globals.php");
 		include("database.php");
 		$now = date("F j, Y @ g:i a");
 		$ffdate = $fdate;

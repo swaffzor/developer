@@ -1,13 +1,15 @@
 <?php
 	require_once("database.php");
 	include_once("functions.php");
+	include_once("globals.php");
 	date_default_timezone_set ("America/New_York");
 	$date = date("Y-m-d");
 	
 	
-	if (isset($_POST['summary'])){
+	/*if (isset($_POST['summary'])){
 		include_once("recap.php");
-	}
+	}*/
+	
 	// Check connection
 	if (mysqli_connect_errno()) {
 	  echo "Failed to connect to MySQL: " . mysqli_connect_error();
@@ -291,7 +293,7 @@
 				for (i=1; i<=FIELD_COUNT; i++) {
 					//check for empty hours for employees
 					if(document.getElementById("employee" + i).value != "---Select Employee---" && document.getElementById("hours" + i).value == ""){
-						message = "Please enter the number of hours for " + document.getElementById("employee" + i).value + " in the space next to his name.";
+						message = "Please enter the number of hours for " + document.getElementById("employee" + i).value + " in the space next to their name.";
 						document.getElementById("hours" + i).focus();
 						success = 0;
 					}
@@ -393,11 +395,19 @@
 					}
 					if(theJob == 192){
 						document.getElementById("thedata").checked = true;
-						showHide("data", "thedata")
+						showHide("kensingtonData", "thedata")
 					}
 					else{
 						document.getElementById("thedata").checked = false;
-						showHide("data", "thedata")
+						showHide("kensingtonData", "thedata")
+					}
+					if(theJob == 195){
+						document.getElementById("thedata").checked = true;
+						showHide("scarboroughData", "thedata")
+					}
+					else{
+						document.getElementById("thedata").checked = false;
+						showHide("scarboroughData", "thedata")
 					}
 					
 				//}
@@ -461,7 +471,7 @@
 	<body onload="start();">
 		<? include_once("nav2.html"); 		?>
 	<table cellspacing="15px"><tr><td valign="top" width="500px">
-		<form action="index2.php" name="recapForm" method="post" enctype="multipart/form-data">
+		<form action="recap.php" name="recapForm" method="post" enctype="multipart/form-data">
 		<table>
 			<th>Month</th><th>Day</th><th>Year</th><th></th>
 			<tr><td><select name='Month' id="Month" onchange="dateCheck(); showStyle()" selected="<?php echo $_POST['Month']?>">
@@ -559,7 +569,7 @@
 
 			<select name="job" id="job" onchange="makeSameJob()">
 				<?php
-					$job = mysqli_query($con,"SELECT * FROM Jobs ORDER BY Number");
+					$job = mysqli_query($con,"SELECT * FROM Jobs WHERE Status = 1 ORDER BY Number");
 					while($row = mysqli_fetch_array($job)) {
 						
 						if(isset($_POST['summary'])){
@@ -787,45 +797,54 @@
 			<div id="theButton" style="position: relative; left: 0px;">
 			<input type="button" id="upload" onclick="validate()" value="Submit" style="color: #f61c1c;">
 			</div>
-			
-			<?
-				echo "<pre>";
-				print_r($_POST);
-				echo "</pre>";
-			?>
+			 
 		<? //include("recap.php"); ?>
 		</td>
 		<td valign="top">
 				
 			<input type="checkbox" name="thedata" id="thedata" class="hide">
-			<div id="data" name="data" class="hide">
+			
+			<div id="scarboroughData" name="scarboroughData" class="hide">
+				<h2 style="color:red;">Scarborough Data Required</h2>
+				<input type="number" name="dike" id="dike" placeholder="Dike" value="<? echo $_POST['dike']; ?>">Truckloads<br>
+				<input type="number" name="landSmoothing" id="landSmoothing" placeholder="Land Smoothing" value="<? echo $_POST['landSmoothing']; ?>">1/4 mile intervals<br>
+				<input type="number" name="siltFencePlaced" id="siltFencePlaced" placeholder="Silt Fence Placed" value="<? echo $_POST['siltFencePlaced']; ?>">Truckloads<br>
+				<input type="number" name="structures" id="structures" placeholder="Structures" value="<? echo $_POST['structures']; ?>">Structures<br>
+				<input type="number" name="berms" id="berms" placeholder="Berms" value="<? echo $_POST['berms']; ?>">Loads hauled<br>
+			</div>
+			
+			<div id="kensingtonData" name="kensingtonData" class="hide">
 				<h2 style="color:red;">Kensington Data Required</h2>
-				Lake:<select name="kensingtonLake" id="kensingtonLake">
-					<option value='1'>1</option>
-					<option value='2'>2</option>
-					<option value='5'>5</option>
-					<option value='8'>8</option>
-					<option value='9G'>9G</option>
-					<option value='9T'>9T</option>
-					<option value='10'>10</option>
-					<option value='11'>11</option>
-					<option value='12'>12</option>
-					<option value='16'>16</option>
-					<option value='17'>17</option>
-				</select>
-				<p>Please input exact quantities for work performed today.</p>
-				<input type="number" name="fabric" id="fabric" placeholder="Filter fabric placed" value="<? echo $_POST['fabric']; ?>">Linear feet<br>
-				<input type="number" name="geowebPlaced" id="geowebPlaced" placeholder="Geoweb placed" value="<? echo $_POST['geowebPlaced']; ?>">Linear feet<br>
-				<input type="number" name="fillPlaced" id="fillPlaced" placeholder="Fill dirt placed" value="<? echo $_POST['fillPlaced']; ?>">Tons<br>
-				<input type="number" name="grading" id="grading" placeholder="Graded slope" value="<? echo $_POST['grading']; ?>">Linear feet<br>
-				<input type="number" name="tieins" id="tieins" placeholder="Number of tie-ins" value="<? echo $_POST['tieins']; ?>">Each<br>
-				<input type="number" name="rockPlaced" id="rockPlaced" placeholder="Rock placed" value="<? echo $_POST['rockPlaced']; ?>">Linear feet<br>
-				<input type="number" name="topsoilPlaced" id="topsoilPlaced" placeholder="Topsoil placed" value="<? echo $_POST['topsoilPlaced']; ?>">Linear feet<br>
-				<input type="number" name="sodPlaced" id="sodPlaced" placeholder="Sod placed" value="<? echo $_POST['sodPlaced']; ?>">Square feet<br>
-				<input type="number" name="fillDelivered" id="fillDelivered" placeholder="Fill dirt delivered" value="<? echo $_POST['fillDelivered']; ?>">Square feet<br>
-				<input type="number" name="rockDelivered" id="rockDelivered" placeholder="Rock delivered" value="<? echo $_POST['rockDelivered']; ?>">Tons<br>
-				<input type="number" name="topsoilDelivered" id="topsoilDelivered" placeholder="Topsoil delivered" value="<? echo $_POST['topsoilDelivered']; ?>">Cubic Yards<br>
-				
+				<?
+					for ($i=0; $i<2; $i++){
+						echo "Lake:<select name='kensingtonLake$i' id='kensingtonLake$i'>
+							<option value='0'>---Select Lake---</option>
+							<option value='1'>1</option>
+							<option value='2'>2</option>
+							<option value='5'>5</option>
+							<option value='8'>8</option>
+							<option value='9G'>9G</option>
+							<option value='9T'>9T</option>
+							<option value='10'>10</option>
+							<option value='11'>11</option>
+							<option value='12'>12</option>
+							<option value='16'>16</option>
+							<option value='17'>17</option>
+						</select>
+						<p>Please input exact quantities for work performed today.</p>";
+						echo "<input type='number' name='fabric".$i."' id='fabric".$i."' placeholder='Filter fabric placed' value='". $_POST['fabric'.$i] ."'>Linear feet<br>";
+						echo "<input type='number' name='geowebPlaced".$i."' id='geowebPlaced".$i."' placeholder='Geoweb placed' value='".$_POST['geowebPlaced'.$i]."'>Linear feet<br>";
+						echo "<input type='number' name='fillPlaced".$i."' id='fillPlaced".$i."' placeholder='Fill dirt placed' value='".$_POST['fillPlaced'.$i]."'>Tons<br>";
+						echo "<input type='number' name='grading".$i."' id='grading".$i."' placeholder='Graded slope' value='".$_POST['grading'.$i]."'>Linear feet<br>";
+						echo "<input type='number' name='tieins".$i."' id='tieins".$i."' placeholder='Number of tie-ins' value='".$_POST['tieins'.$i]."'>Each<br>";
+						echo "<input type='number' name='rockPlaced".$i."' id='rockPlaced".$i."' placeholder='Rock placed' value='".$_POST['rockPlaced'.$i]."'>Linear feet<br>";
+						echo "<input type='number' name='topsoilPlaced".$i."' id='topsoilPlaced".$i."' placeholder='Topsoil placed' value='".$_POST['topsoilPlaced'.$i]."'>Linear feet<br>";
+						echo "<input type='number' name='sodPlaced".$i."' id='sodPlaced".$i."' placeholder='Sod placed' value='".$_POST['sodPlaced'.$i]."'>Square feet<br>";
+						echo "<input type='number' name='fillDelivered".$i."' id='fillDelivered".$i."' placeholder='Screenings' value='".$_POST['fillDelivered'.$i]."'>Tons<br>";
+						echo "<input type='number' name='rockDelivered".$i."' id='rockDelivered".$i."' placeholder='Rock delivered' value='".$_POST['rockDelivered'.$i]."'>Tons<br>";
+						echo "<input type='number' name='topsoilDelivered".$i."' id='topsoilDelivered".$i."' placeholder='Topsoil delivered' value='".$_POST['topsoilDelivered'.$i]."'>Cubic Yards<br><br><hr>";
+					}
+				?>
 				<input type="hidden" name="updateSwitch" id="updateSwitch" value="<? 
 					if (isset($_POST['summary'])){
 						echo "1";

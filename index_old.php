@@ -1727,13 +1727,13 @@
 				<p>Please input exact quantities for work performed today.</p>
 				<input type="number" name="fabric" id="fabric" placeholder="Filter fabric placed">Linear feet<br>
 				<input type="number" name="geowebPlaced" id="geowebPlaced" placeholder="Geoweb placed">Linear feet<br>
-				<input type="number" name="fillPlaced" id="fillPlaced" placeholder="Fill dirt placed">Cubic Yard<br>
+				<input type="number" name="fillPlaced" id="fillPlaced" placeholder="Fill dirt placed">Tons<br>
 				<input type="number" name="grading" id="grading" placeholder="Graded slope">Linear feet<br>
 				<input type="number" name="tieins" id="tieins" placeholder="Number of tie-ins">Each<br>
 				<input type="number" name="rockPlaced" id="rockPlaced" placeholder="Rock placed">Linear feet<br>
 				<input type="number" name="topsoilPlaced" id="topsoilPlaced" placeholder="Topsoil placed">Linear feet<br>
 				<input type="number" name="sodPlaced" id="sodPlaced" placeholder="Sod placed">Square feet<br>
-				<input type="number" name="fillDelivered" id="fillDelivered" placeholder="Fill dirt delivered">Square feet<br>
+				<input type="number" name="fillDelivered" id="fillDelivered" placeholder="Screenings">Tons<br>
 				<input type="number" name="rockDelivered" id="rockDelivered" placeholder="Rock delivered">Tons<br>
 				<input type="number" name="topsoilDelivered" id="topsoilDelivered" placeholder="Topsoil delivered">Cubic Yards<br>
 				
