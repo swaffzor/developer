@@ -83,12 +83,12 @@
 					$daysMissing = $row['daysMissing'] + 1;
 				}
 				mysqli_query($con, "UPDATE employees SET daysMissing='$daysMissing' WHERE Name='".$empNames[$i]."'");
-				if($daysMissing > 28){
-					$message .= "<tr><td>".$empNames[$i]."</td><td>$daysMissing (will be automaticaly removed at 30)</td></tr>";
-				}
-				else if($daysMissing > 30){
+				if($daysMissing > 30){
 					$message .= "<tr><td>".$empNames[$i]."</td><td>$daysMissing (HAS JUST BEEN REMOVED FROM DROP DOWN)</td></tr>";
 					mysqli_query($con, "UPDATE employees SET Status='expired' WHERE Name='".$empNames[$i]."'");
+				}
+				else if($daysMissing > 28){
+					$message .= "<tr><td>".$empNames[$i]."</td><td>$daysMissing (will be automaticaly removed at 30)</td></tr>";
 				}
 				else{
 					$message .= "<tr><td>".$empNames[$i]."</td><td>$daysMissing</td></tr>";
