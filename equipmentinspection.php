@@ -542,7 +542,42 @@
 						"Glass" => "Report all cracks/shattered",
 						"Body" => "Report dents",
 						"Exhaust" => "Check for leaks",
-						"Fuel" => "Check for leaks");
+						"Fuel" => "Check for leaks",
+						"Lights" => " ",
+						"Steps/Hand Rails" => " ",
+						"Tires/Tracks" => " ",
+						"Exhaust" => " ",
+						"Fenders" => " ",
+						"Bucket" => " ",
+						"Cutting Edge/Teeth" => " ",
+						"Lifting Mechanism" => " ",
+						"Hoses" => " ",
+						"Fittings Greased" => " ",
+						"Hitch/Coupler" => " ",
+						"Wipers" => " ",
+						"Battery Cable" => " ",
+						"Fan Belt" => " ",
+						"Hoses" => " ",
+						"Air Filter" => " ",
+						"Guards" => " ",
+						"Brakes" => " ",
+						"Backup Alarm" => " ",
+						"Fire Extinguisher" => " ",
+						"Gauges" => " ",
+						"Horn" => " ",
+						"Hydraulic Controls" => " ",
+						"Glass" => " ",
+						"Mirror" => " ",
+						"Roll Over Protection" => " ",
+						"Seat Belt" => " ",
+						"Steering" => " ",
+						"Visible Leaks" => " ",
+						"Oil Level/Pressure" => " ",
+						"Coolant Level" => " ",
+						"Hydraulic Oil Level" => " ",
+						"Transmission Fluid Level" => " ",
+						"Fuel Level" => " "
+						);
 					
 					
 					foreach($items as $key => $value){
@@ -557,7 +592,7 @@
 						$count++;
 					}
 					
-					
+					/*
 					echo "<tr><td colspan='8'>Outside</td></tr>";
 					for($i=0; $i<sizeof($outside); $i++){
 						echo "<tr><td>$outside[$i]</td></tr>";
@@ -577,6 +612,7 @@
 					for($i=0; $i<sizeof($fluids); $i++){
 						echo "<tr><td>$fluids[$i]</td></tr>";
 					}
+					*/ 
 				?>
 			
 			</table>
