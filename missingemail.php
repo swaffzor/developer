@@ -1,5 +1,16 @@
 <?php
 	
+	/*
+		This script returns a list of people and the assosiated days that they have not been reported.
+		It is run every night at 11:59 PM EST
+		This report is sent to Marc Junker and Jeremy Swafford is CC'd
+		
+		CAUTION:
+			Loading this page will 
+			-INCREMENT DATABASE FIELD the days missing of everyone that has not been reported for the day
+			-Send an email to 2 people
+	*/
+	
 	//collect variables
 	require_once 'functions.php';
 	date_default_timezone_set ("America/New_York");
@@ -16,7 +27,7 @@
 	}
 	
 	$phours = 1 + getWeeklyHours("Jeremy Swafford", $fromDate);
-	$esql = "INSERT INTO Hours (Submitted, Date, Name, Job, Hours, Submitter, WeeklyHours) VALUES (' ', '$fromDate', 'Jeremy Swafford', '99', '1', 'Jeremy SwaFForD', '$phours')";
+	$esql = "INSERT INTO Hours (Submitted, Date, Name, Job, Hours, Submitter, WeeklyHours) VALUES (' ', '$fromDate', 'Jeremy Swafford', '99', '1', 'Jeremy Swafford', '$phours')";
 	mysqli_query($con, $esql);
 	
 	$jobString = "";
