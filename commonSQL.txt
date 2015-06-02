@@ -1,0 +1,1 @@
+UPDATE `Hours` SET `Date`= '2015-05-28' WHERE `Submitter`= "Mike Blissett" AND `Date` = '2015-06-02'
