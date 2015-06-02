@@ -429,9 +429,10 @@
 				var elemss = document.getElementsByTagName('select');
 				var lens = elems.length;
 				
-				/*if(dd != ddd || mm != dmm || yyyy != dyyyy){
+				
+				if(dd != ddd || mm != dmm || yyyy != dyyyy){
 					//document.getElementById("messageDiv").style.display = 'block';
-					document.getElementById(div_id).style.position = 'relative';
+					document.getElementById("messageDiv").style.position = 'relative';
 					document.getElementById("messageDiv").style.left = '0px';
 					//disable form, show buttons
 					document.recapForm.action = "past.php";
@@ -446,7 +447,7 @@
 				}
 				else{
 					//document.getElementById("messageDiv").style.display='none';
-					document.getElementById(div_id).style.position='absolute;';
+					document.getElementById("messageDiv").style.position='absolute;';
 					document.getElementById("messageDiv").style.left = '-9999px';
 					for (var i = 0; i < len; i++) {
 					    elems[i].disabled = false;
@@ -454,7 +455,7 @@
 					for (var i = 0; i < lent; i++) {
 					    elemst[i].disabled = false;
 					}
-				}*/
+				}
 			}
 			
 		</script>		
@@ -544,6 +545,7 @@
 		</table>
 		
 			<?//!name
+				echo $_SERVER['REQUEST_URI'];
 			?>
 			<select onchange="insertEmail(this.value)" id="nameDrop" name="nameDrop" style="display: inline">
 				<option>---Select Name---</option>
