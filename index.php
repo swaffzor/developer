@@ -334,6 +334,26 @@
 					success = 0;
 				}
 				
+				//todo: is this working?
+				for(i=1;i<11;i++){
+					if(document.getElementById("expense"+i).value != ""){
+						alert("inside 1st if for expense != ''");
+						if(document.getElementById("cost"+i).value = ""){
+							alert("inside 2nd if for cost =''");
+							message = "Please fill out the expense cost";
+							document.getElementById("cost"+i).focus();
+							success = 0;
+						}						
+					}
+					if(document.getElementById("cost"+i).value != ""){
+						if(document.getElementById("expense"+i).value = ""){
+							message = "Please fill out the expense name";
+							document.getElementById("expense"+i).focus();
+							success = 0;
+						}
+					}
+				}
+				
 				//check for full name
 				var spaceCount = 0;
 				var x = document.getElementById("name").value;
@@ -352,7 +372,7 @@
 					document.getElementById("name").focus();
 					success = 0;
 				}
-				
+				alert("success = " + success);
 				//if validation fails, show the message, return false and enable the button for retry
 				if(success == 0){
 					alert(message);
@@ -777,8 +797,8 @@
 			<div id='expenses' class="hide">
 				<? //! Expenses
 					for ($i=1; $i<11; $i++){
-						echo "<input type='text' name='expense".$i."' placeholder='Expense ".$i."' value='".$_POST['expense'.$i.'']."'>";
-						echo "<input placeholder='Cost' type='number' step='any' name='cost".$i."' value='".$_POST['cost'.$i.'']."'>";
+						echo "<input type='text' name='expense".$i."' id='expense".$i."' placeholder='Expense ".$i."' value='".$_POST['expense'.$i.'']."'>";
+						echo "<input placeholder='Cost' type='number' step='any' name='cost".$i."' id='cost".$i."' value='".$_POST['cost'.$i.'']."'>";
 						echo "<select name='ejob".$i."' id='ejob".$i."'>";
 						$job = mysqli_query($con,"SELECT * FROM Jobs ORDER BY Number");
 						while($row = mysqli_fetch_array($job)) {
