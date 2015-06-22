@@ -3,7 +3,14 @@
 	include_once("functions.php");
 	include_once("globals.php");
 	date_default_timezone_set ("America/New_York");
-	$date = date("Y-m-d");
+	
+	
+	if (strpos($_SERVER['REQUEST_URI'], "past.php") !== false){
+		$date = $_POST['Year'] ."-".$_POST['Month'] ."-".$_POST['Day'];
+	}
+	else{
+		$date = date("Y-m-d");
+	}
 	
 	
 	/*if (isset($_POST['summary'])){
@@ -403,6 +410,9 @@
 			function makeSameJob(){
 				//alert("making same job");
 				//if(document.getElementById("sameJob").checked){
+					/*
+						CAUTION: NEED TO ADD ANY CHANGES TO START AS WELL
+					*/
 					var theJob = document.getElementById("job").value;
 					for(i=1; i<31; i++){
 						document.getElementById("job" + i).value = theJob;
@@ -415,19 +425,19 @@
 					}
 					if(theJob == 192){
 						document.getElementById("thedata").checked = true;
-						showHide("kensingtonData", "thedata")
+						showHide("kensingtonData", "thedata");
 					}
 					else{
 						document.getElementById("thedata").checked = false;
-						showHide("kensingtonData", "thedata")
+						showHide("kensingtonData", "thedata");
 					}
 					if(theJob == 195){
 						document.getElementById("thedata").checked = true;
-						showHide("scarboroughData", "thedata")
+						showHide("scarboroughData", "thedata");
 					}
 					else{
 						document.getElementById("thedata").checked = false;
-						showHide("scarboroughData", "thedata")
+						showHide("scarboroughData", "thedata");
 					}
 					
 				//}
@@ -451,6 +461,7 @@
 				
 				
 				if(dd != ddd || mm != dmm || yyyy != dyyyy){
+					var currentPage = "<? echo $_SERVER['REQUEST_URI']; ?>";
 					//document.getElementById("messageDiv").style.display = 'block';
 					document.getElementById("messageDiv").style.position = 'relative';
 					document.getElementById("messageDiv").style.left = '0px';
@@ -458,23 +469,24 @@
 					document.recapForm.action = "past.php";
 					document.getElementById("dateHere").innerHTML = dmm+"-"+ddd+"-"+dyyyy;
 					
-					for (var i = 0; i < len; i++) {
+					//removed the disabling because it does not post disabled fields
+					/*for (var i = 0; i < len; i++) {
 					    elems[i].disabled = true;
 					}
 					for (var i = 0; i < lent; i++) {
 					    elemst[i].disabled = true;
-					}
+					}*/
 				}
 				else{
 					//document.getElementById("messageDiv").style.display='none';
 					document.getElementById("messageDiv").style.position='absolute;';
 					document.getElementById("messageDiv").style.left = '-9999px';
-					for (var i = 0; i < len; i++) {
+					/*for (var i = 0; i < len; i++) {
 					    elems[i].disabled = false;
 					}
 					for (var i = 0; i < lent; i++) {
 					    elemst[i].disabled = false;
-					}
+					}*/
 				}
 			}
 			
@@ -490,82 +502,114 @@
 		</style>
 	</head>
 	<body onload="start();">
+		
+		
 		<? include_once("nav2.html"); 		?>
 	<table cellspacing="15px"><tr><td valign="top" width="500px">
 		<form action="recap.php" name="recapForm" method="post" enctype="multipart/form-data">
-		<table>
-			<th>Month</th><th>Day</th><th>Year</th><th></th>
-			<tr><td><select name='Month' id="Month" onchange="dateCheck(); showStyle()" selected="<?php echo $_POST['Month']?>">
-				<option value='01'>01</option>
-				<option value='02'>02</option>
-				<option value='03'>03</option>
-				<option value='04'>04</option>
-				<option value='05'>05</option>
-				<option value='06'>06</option>
-				<option value='07'>07</option>
-				<option value='08'>08</option>
-				<option value='09'>09</option>
-				<option value='10'>10</option>
-				<option value='11'>11</option>
-				<option value='12'>12</option>
-			</select></td>
 		
-			<td><select name='Day' id="Day" onchange="dateCheck(); showStyle()" selected="<?php echo $_POST['Day']?>">
-				<option value='01' id="1">01</option>
-				<option value='02' id="2">02</option>
-				<option value='03' id="3">03</option>
-				<option value='04' id="4">04</option>
-				<option value='05' id="5">05</option>
-				<option value='06' id="6">06</option>
-				<option value='07' id="7">07</option>
-				<option value='08' id="8">08</option>
-				<option value='09' id="9">09</option>
-				<option value='10' id="10">10</option>
-				<option value='11' id="11">11</option>
-				<option value='12' id="12">12</option>
-				<option value='13' id="13">13</option>
-				<option value='14' id="14">14</option>
-				<option value='15' id="15">15</option>
-				<option value='16' id="16">16</option>
-				<option value='17' id="17">17</option>
-				<option value='18' id="18">18</option>
-				<option value='19' id="19">19</option>
-				<option value='20' id="20">20</option>
-				<option value='21' id="21">21</option>
-				<option value='22' id="22">22</option>
-				<option value='23' id="23">23</option>
-				<option value='24' id="24">24</option>
-				<option value='25' id="25">25</option>
-				<option value='26' id="26">26</option>
-				<option value='27' id="27">27</option>
-				<option value='28' id="28">28</option>
-				<option value='29' id="29">29</option>
-				<option value='30' id="30">30</option>
-				<option value='31' id="31">31</option>
-			</select>
-			</td>
-			
-			<td colspan="1"><select name='Year' id="Year" onchange="dateCheck(); showStyle()" selected="<?php echo $_POST['Year']?>">
-				<option value='2014'>2014</option>
-				<option value='2015'>2015</option>
-				<option value='2016'>2016</option>
-				<option value='2017'>2017</option>
-				<option value='2018'>2018</option>
-				<option value='2019'>2019</option>
-				<option value='2020'>2020</option>
-			</select></td>
-			<tr>
-				<td colspan="3" align="center">
-					<div id="messageDiv" class="hide"><p id="message" style="color: red; font-size: 20;">Not Today's Date</p>
-					Are you sure you want to enter a past recap for <br><b><span style="color: red; font-size: 20;"><span id="dateHere" name="dateHere"></span></span></b><br>
-					<button>Yes</button>&nbsp&nbsp&nbsp&nbsp&nbsp<button type="button" onclick="putToDay(), showStyle()">No</button>
-					</div>
-				</td>
-		</tr>
-		</table>
+		
+		<?
+			//if page contains past.php then display other date code
+			if (strpos($_SERVER['REQUEST_URI'], "past.php") !== false){
+				echo "<table><th>Month</th><th>Day</th><th>Year</th>
+					<tr><td><select name='Month' id='Month' onchange='showStyle()' selected='". $_POST['Month']."'>
+						<option value='". $_POST['Month']."'>". $_POST['Month']."</option>
+					</select></td>
+				
+					<td><select name='Day' id='day' onchange='showStyle()' selected = '". $_POST['Day']."'>
+						<option value='". $_POST['Day']."'>". $_POST['Day']."</option>
+					</select>
+					</td>
+					
+					<td><select name='Year' id='Year' onchange='showStyle()' selected='". $_POST['Year']."'>
+						<option value='". $_POST['Year']."'>". $_POST['Year']."</option>
+					</select></td></tr>
+					<tr>
+						<td colspan='3' align='center'>To change the date, press the back button</td>
+					</tr>
+					<tr>
+						<td colspan='3' align='center'>
+							<div id='messageDiv'><p id='message' style='color: red; font-size: 20;'>Not Today's Date</p></div>
+						</td>
+					</tr>
+					</table>";
+			}
+			else{
+				echo "<table>
+					<th>Month</th><th>Day</th><th>Year</th><th></th>
+					<tr><td><select name='Month' id='Month' onchange='dateCheck(); showStyle()' selected='". $_POST['Month']."'>
+						<option value='01'>01</option>
+						<option value='02'>02</option>
+						<option value='03'>03</option>
+						<option value='04'>04</option>
+						<option value='05'>05</option>
+						<option value='06'>06</option>
+						<option value='07'>07</option>
+						<option value='08'>08</option>
+						<option value='09'>09</option>
+						<option value='10'>10</option>
+						<option value='11'>11</option>
+						<option value='12'>12</option>
+					</select></td>
+				
+					<td><select name='Day' id='Day' onchange='dateCheck(); showStyle()' selected='". $_POST['Day']."'>
+						<option value='01' id='1'>01</option>
+						<option value='02' id='2'>02</option>
+						<option value='03' id='3'>03</option>
+						<option value='04' id='4'>04</option>
+						<option value='05' id='5'>05</option>
+						<option value='06' id='6'>06</option>
+						<option value='07' id='7'>07</option>
+						<option value='08' id='8'>08</option>
+						<option value='09' id='9'>09</option>
+						<option value='10' id='10'>10</option>
+						<option value='11' id='11'>11</option>
+						<option value='12' id='12'>12</option>
+						<option value='13' id='13'>13</option>
+						<option value='14' id='14'>14</option>
+						<option value='15' id='15'>15</option>
+						<option value='16' id='16'>16</option>
+						<option value='17' id='17'>17</option>
+						<option value='18' id='18'>18</option>
+						<option value='19' id='19'>19</option>
+						<option value='20' id='20'>20</option>
+						<option value='21' id='21'>21</option>
+						<option value='22' id='22'>22</option>
+						<option value='23' id='23'>23</option>
+						<option value='24' id='24'>24</option>
+						<option value='25' id='25'>25</option>
+						<option value='26' id='26'>26</option>
+						<option value='27' id='27'>27</option>
+						<option value='28' id='28'>28</option>
+						<option value='29' id='29'>29</option>
+						<option value='30' id='30'>30</option>
+						<option value='31' id='31'>31</option>
+					</select>
+					</td>
+					
+					<td colspan='1'><select name='Year' id='Year' onchange='dateCheck(); showStyle()' selected='". $_POST['Year']."'>
+						<option value='2014'>2014</option>
+						<option value='2015'>2015</option>
+						<option value='2016'>2016</option>
+						<option value='2017'>2017</option>
+						<option value='2018'>2018</option>
+						<option value='2019'>2019</option>
+						<option value='2020'>2020</option>
+					</select></td>
+					<tr>
+						<td colspan='3' align='center'>
+							<div id='messageDiv' class='hide'><p id='message' style='color: red; font-size: 20;'>Not Today's Date</p>
+							Are you sure you want to enter a past recap for <br><b><span style='color: red; font-size: 20;'><span id='dateHere' name='dateHere'></span></span></b><br>
+							<button>Yes</button>&nbsp&nbsp&nbsp&nbsp&nbsp<button type='button' onclick='putToDay(), showStyle()'>No</button>
+							</div>
+						</td>
+				</tr>
+				</table>";
+			} 
+		?>
 		
 			<?//!name
-				echo $_SERVER['REQUEST_URI'];
 			?>
 			<select onchange="insertEmail(this.value)" id="nameDrop" name="nameDrop" style="display: inline">
 				<option>---Select Name---</option>
@@ -587,7 +631,7 @@
 			
 			<input type="checkbox" id="noList" name="noList" onchange="showHideName()">Name Not Listed<br />
 
-			 <input placeholder="Hours" name="hours" id="hours" type="number" step="any" required value="<?php echo $_POST['hours'] ?>"/>
+			 <input placeholder="Hours" name="hours" id="hours" type="number" step="any" required value="<?php echo $_POST['hours']; ?>"/>
 
 			<select name="job" id="job" onchange="makeSameJob()">
 				<?php
@@ -810,10 +854,13 @@
 			</div><br />
 			
 			<textarea name="summary" id="summary" rows="10" cols="50" required placeholder="Today's work summary and progress"><?php echo $_POST['summary'] ?></textarea><br />
-			<textarea name="planning" id="planning" cols="50" placeholder="Next day planning"></textarea><br>
-			<textarea name="problems" id="problems" cols="50" placeholder="List any problems, delays, reasons for downtime, or change orders"></textarea><br>
-			<textarea name="discipline" id="discipline" cols="50" placeholder="List any disciplinary actions including name and offense"></textarea><br>
-			<textarea name="recognition" id="recognition" cols="50" placeholder="List (if any) employees that have demonstrated exceptional work or employees that deserve recognition"></textarea>
+			<textarea name="planning" id="planning" cols="50" placeholder="Next day planning"><?php echo $_POST['planning'] ?></textarea><br>
+			<textarea name="problems" id="problems" cols="50" placeholder="List any problems, delays, reasons for downtime, or change orders"><?php echo $_POST['problems'] ?></textarea><br>
+			<textarea name="discipline" id="discipline" cols="50" placeholder="List any disciplinary actions including name and offense"><?php echo $_POST['discipline'] ?></textarea><br>
+			<textarea name="recognition" id="recognition" cols="50" placeholder="List (if any) employees that have demonstrated exceptional work or employees that deserve recognition"><?php echo $_POST['recognition'] ?></textarea>
+			
+			<p>Technical Difficulties</p>
+			<textarea name="technicalDifficulties" id="technicalDifficulties" cols="50" rows="4" placeholder="If you are having technical difficulties with this page or anything with the recap system (like needing to add an employee not listed in a drop down,) list those here to create a ticket. NOTE: This area will not be seen by the Managing Members."><?php echo $_POST['technicalDifficulties'] ?></textarea>
 			<!input type="file" name="userfile" id="file"> <br />
 
 			<div id="theButton" style="position: relative; left: 0px;">

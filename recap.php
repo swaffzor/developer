@@ -330,6 +330,7 @@
 	$problems = str_replace($illegals, $replacements, $_POST['problems']);
 	$discipline = str_replace($illegals, $replacements, $_POST['discipline']);
 	$recognition = str_replace($illegals, $replacements, $_POST['recognition']);
+	$technicalDifficulties = str_replace($illegals, $replacements, $_POST['technicalDifficulties']);
 	
 	if ($planning != ""){
 		$planning = "<hr><h4>Next Day Planning</h4>" . $planning;
@@ -342,6 +343,25 @@
 	}
 	if ($recognition != ""){
 		$recognition = "<hr><h4>Recognition</h4>" . $recognition;
+	}
+	
+	//! Technical Difficulties
+	if($technicalDifficulties != ""){
+		echo "Technical Difficulties:<br>$technicalDifficulties<Br>";
+		//input into database
+		$sql = "INSERT INTO Tickets (Submitter, Submitted, Status, Message) VALUES ('$empName[0]', '$now', 'New', '$technicalDifficulties')";
+		mysqli_query($con, $sql);
+		//email me and submitter
+		$headers2 = "MIME-Version: 1.0" . "\r\n";
+		$headers2 .= "Content-type:text/html;charset=iso-8859-1" . "\r\n";
+		$headers2 .= "From: $empName[0]" . "\r\n" . "cc: jeremy@tsidisaster.com";
+		if(mail($email, "Technical Difficulties", $technicalDifficulties, $headers2)){
+			echo "<h2>A technical difficulties email has been successfully sent</h2>";
+		}
+		else{
+			echo "<h2>Nobody has been notified about the technical difficulty, take a screenshot and send it in.</h2>";
+		}
+		//see if this email function will mess up the recap receipt email function
 	}
 	
 	//! Job metrics
@@ -508,14 +528,24 @@
 
 	if(mail($email, "Recap Receipt", $emessage, $headers)){
 		echo "<h2>An email has been successfully sent</h2>";
+<<<<<<< HEAD
 	}
 	else{
 		echo "<h1 style='color: #FF0000;'>for some reason, a Recap Receipt has not been sent to your email but your recap has been submitted</h1>";
 	}
 
+=======
+	}
+	else{
+		echo "<h1 style='color: #FF0000;'>for some reason, a Recap Receipt has not been sent to your email but your recap has been submitted</h1>";
+	}
+	
+>>>>>>> technical-difficulties
 	$message = mysqli_real_escape_string($con, $message);
 	//DATABASE
 	
+	
+	$update = 0;
 	if($update == 0){
 		$sql = "INSERT INTO Data (Name, Submitted, Email, Summary, Date, IP, Hours, Expenses, Mileage, userAgent) VALUES ('$empName[0]', '$now', '$email', '$message',
 		'$date', '$ip', '$totalHours', '$totalCost', '$diff', '$broswer')";
@@ -538,7 +568,6 @@
 	}
 	
 
-		
 ?>
 </body>
 </html>
