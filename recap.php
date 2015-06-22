@@ -505,14 +505,14 @@
 	$headers .= "Content-type:text/html;charset=iso-8859-1" . "\r\n";
 	$headers .= "From: $empName[0]" . "\r\n" . "Reply-To: recap@tsidisaster.com" . "\r\n" . "Bcc: jeremy@tsidisaster.com";
 	$emessage = wordwrap($emessage, 70, "\r\n");
-	if($DEBUG == false){
-		if(mail($email, "Recap Receipt", $emessage, $headers)){
-			echo "<h2>An email has been successfully sent</h2>";
-		}
-		else{
-			echo "<h1 style='color: #FF0000;'>for some reason, a Recap Receipt has not been sent to your email but your recap has been submitted</h1>";
-		}
+
+	if(mail($email, "Recap Receipt", $emessage, $headers)){
+		echo "<h2>An email has been successfully sent</h2>";
 	}
+	else{
+		echo "<h1 style='color: #FF0000;'>for some reason, a Recap Receipt has not been sent to your email but your recap has been submitted</h1>";
+	}
+
 	$message = mysqli_real_escape_string($con, $message);
 	//DATABASE
 	
