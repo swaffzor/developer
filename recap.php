@@ -49,6 +49,7 @@
 	$date = $_POST["Year"] . "-" . $_POST["Month"] . "-" . $_POST["Day"];
 	$day = strftime("%A",strtotime($date));
 	$update = $_POST['updateSwitch'];
+	$update = 0;
 	
 	//collect the data from the form
 	$DUPCHECK = "true";
@@ -528,19 +529,11 @@
 
 	if(mail($email, "Recap Receipt", $emessage, $headers)){
 		echo "<h2>An email has been successfully sent</h2>";
-<<<<<<< HEAD
-	}
-	else{
-		echo "<h1 style='color: #FF0000;'>for some reason, a Recap Receipt has not been sent to your email but your recap has been submitted</h1>";
-	}
-
-=======
 	}
 	else{
 		echo "<h1 style='color: #FF0000;'>for some reason, a Recap Receipt has not been sent to your email but your recap has been submitted</h1>";
 	}
 	
->>>>>>> technical-difficulties
 	$message = mysqli_real_escape_string($con, $message);
 	//DATABASE
 	
