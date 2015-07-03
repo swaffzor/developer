@@ -9,7 +9,30 @@
 		$date = $_POST['Year'] ."-".$_POST['Month'] ."-".$_POST['Day'];
 	}
 	else{
-		$date = date("Y-m-d");
+		//get last recap date from the database using cookie data
+		$lastRecapDateRows = mysqli_query($con, "SELECT Date FROM Data WHERE Name = '".$_COOKIE['name']."' ORDER BY Date DESC LIMIT 1");
+		while($row = mysqli_fetch_array($lastRecapDateRows)) {
+			$lastRecapDate = $row['Date'];
+			echo $lastRecapDate ."<BR>";
+		}
+		
+		/*
+			show the previous date if after midnight but before 10am
+		*/
+		$to_time = strtotime(date("Y-m-d"));
+		$from_time = strtotime(date("Y-m-d G:i"));
+		echo round(abs($to_time - $from_time) / 3600, 2)."<br>";
+		//day:86400, hour:3600, minute:60
+		if(round(abs($to_time - $from_time) / 3600, 2) < 10){
+			//yesterday's date
+			$date = date("Y-m-d", strtotime("-1 days", $to_time));
+			$yesterday = 1;
+		}
+		else{
+			$date = date("Y-m-d");
+			$yesterday = 0;			
+		}
+		echo $date;
 	}
 	
 	
@@ -165,9 +188,14 @@
 			function putToDay(){
 				//alert("putting today");
 				var toDay = new Date();
+				if(<? echo $yesterday; ?>){
+					toDay.setDate(toDay.getDate()-1);
+				}
 				var dd = toDay.getDate();
 				var mm = toDay.getMonth() + 1; //January is 0!
 				var yyyy = toDay.getFullYear();
+				
+				
 				
 				if(mm < 10){
 					document.getElementById("Month").value = "0" + mm;
@@ -610,6 +638,9 @@
 		?>
 		
 			<?//!name
+				if($yesterday){
+					echo "<p id='message' style='color: red; font-size: 20;'>Yesterday's Date</p>";
+				}
 			?>
 			<select onchange="insertEmail(this.value)" id="nameDrop" name="nameDrop" style="display: inline">
 				<option>---Select Name---</option>
