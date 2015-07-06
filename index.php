@@ -19,11 +19,12 @@
 		/*
 			show the previous date if after midnight but before 10am
 		*/
+		echo $_POST['yesterday_flag']. "<BR>";
 		$to_time = strtotime(date("Y-m-d"));
 		$from_time = strtotime(date("Y-m-d G:i"));
 		echo round(abs($to_time - $from_time) / 3600, 2)."<br>";
 		//day:86400, hour:3600, minute:60
-		if(round(abs($to_time - $from_time) / 3600, 2) < 10){
+		if(round(abs($to_time - $from_time) / 3600, 2) < 14 || $_POST['yesterday_flag'] != 1){
 			//yesterday's date
 			$date = date("Y-m-d", strtotime("-1 days", $to_time));
 			$yesterday = 1;
@@ -32,6 +33,7 @@
 			$date = date("Y-m-d");
 			$yesterday = 0;			
 		}
+		
 		echo $date;
 	}
 	
@@ -114,6 +116,7 @@
 
 			var FIELD_COUNT = 30;
 			var clicks = 0;
+			var YESTERDAY = <? echo $yesterday; ?>;
 			
 			function start(){
 				putToDay();
@@ -188,7 +191,7 @@
 			function putToDay(){
 				//alert("putting today");
 				var toDay = new Date();
-				if(<? echo $yesterday; ?>){
+				if(YESTERDAY){
 					toDay.setDate(toDay.getDate()-1);
 				}
 				var dd = toDay.getDate();
@@ -515,6 +518,15 @@
 					for (var i = 0; i < lent; i++) {
 					    elemst[i].disabled = false;
 					}*/
+					if (YESTERDAY){
+						document.recapForm.action = "index.php";
+						document.getElementById("message").innerHTML ="change to today?";
+						document.getElementById("dateHere").innerHTML = dmm+"-"+ddd+"-"+dyyyy;
+						document.getElementById("messageDiv").style.position = 'relative';
+						document.getElementById("messageDiv").style.left = '0px';
+						document.getElementById("date_text").innerHTML ="Enter a recap ";
+						document.getElementById("yesterday_flag").value = 1;
+					}
 				}
 			}
 			
@@ -628,7 +640,7 @@
 					<tr>
 						<td colspan='3' align='center'>
 							<div id='messageDiv' class='hide'><p id='message' style='color: red; font-size: 20;'>Not Today's Date</p>
-							Are you sure you want to enter a past recap for <br><b><span style='color: red; font-size: 20;'><span id='dateHere' name='dateHere'></span></span></b><br>
+							<span id='date_text'>Are you sure you want to enter a past recap</span> for <br><b><span style='color: red; font-size: 20;'><span id='dateHere' name='dateHere'></span></span></b><br>
 							<button>Yes</button>&nbsp&nbsp&nbsp&nbsp&nbsp<button type='button' onclick='putToDay(), showStyle()'>No</button>
 							</div>
 						</td>
@@ -639,7 +651,7 @@
 		
 			<?//!name
 				if($yesterday){
-					echo "<p id='message' style='color: red; font-size: 20;'>Yesterday's Date</p>";
+					echo "<p id='message_yesterday' style='color: red; font-size: 20;'>Yesterday's Date</p>";
 				}
 			?>
 			<select onchange="insertEmail(this.value)" id="nameDrop" name="nameDrop" style="display: inline">
@@ -953,6 +965,7 @@
 						echo "0";
 					}
 				?>">
+				<input type="hidden" name="yesterday_flag" id="yesterday_flag">
 				</form>
 			</div>
 			<?
