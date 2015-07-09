@@ -13,28 +13,30 @@
 		$lastRecapDateRows = mysqli_query($con, "SELECT Date FROM Data WHERE Name = '".$_COOKIE['name']."' ORDER BY Date DESC LIMIT 1");
 		while($row = mysqli_fetch_array($lastRecapDateRows)) {
 			$lastRecapDate = $row['Date'];
-			echo $lastRecapDate ."<BR>";
+			//echo "Last Recap Submitted: $lastRecapDate <BR>";
 		}
 		
-		/*
-			show the previous date if after midnight but before 10am
-		*/
-		echo $_POST['yesterday_flag']. "<BR>";
+		//show the previous date if after midnight but before 10am
 		$to_time = strtotime(date("Y-m-d"));
 		$from_time = strtotime(date("Y-m-d G:i"));
-		echo round(abs($to_time - $from_time) / 3600, 2)."<br>";
+		
 		//day:86400, hour:3600, minute:60
-		if(round(abs($to_time - $from_time) / 3600, 2) < 14 || $_POST['yesterday_flag'] != 1){
-			//yesterday's date
-			$date = date("Y-m-d", strtotime("-1 days", $to_time));
-			$yesterday = 1;
-		}
-		else{
+		if($_POST['not_yesterday_flag'] == 1){
 			$date = date("Y-m-d");
 			$yesterday = 0;			
 		}
+		else{
+			if(round(abs($to_time - $from_time) / 3600, 2) < $SHOW_YESTERDAY_THRESHOLD){
+				//yesterday's date
+				$date = date("Y-m-d", strtotime("-1 days", $to_time));
+				$yesterday = 1;
+			}
+			else{
+				$date = date("Y-m-d");
+				$yesterday = 0;			
+			}
+		}
 		
-		echo $date;
 	}
 	
 	
@@ -375,16 +377,16 @@
 				//todo: is this working?
 				for(i=1;i<11;i++){
 					if(document.getElementById("expense"+i).value != ""){
-						alert("inside 1st if for expense != ''");
-						if(document.getElementById("cost"+i).value = ""){
-							alert("inside 2nd if for cost =''");
+						if(document.getElementById("cost"+i).value == ""){
 							message = "Please fill out the expense cost";
 							document.getElementById("cost"+i).focus();
 							success = 0;
 						}						
 					}
 					if(document.getElementById("cost"+i).value != ""){
-						if(document.getElementById("expense"+i).value = ""){
+						//alert("inside 1st if for cost != ''");
+						if(document.getElementById("expense"+i).value == ""){
+							//alert("inside 2nd if for expense =''");							
 							message = "Please fill out the expense name";
 							document.getElementById("expense"+i).focus();
 							success = 0;
@@ -410,7 +412,6 @@
 					document.getElementById("name").focus();
 					success = 0;
 				}
-				alert("success = " + success);
 				//if validation fails, show the message, return false and enable the button for retry
 				if(success == 0){
 					alert(message);
@@ -525,7 +526,7 @@
 						document.getElementById("messageDiv").style.position = 'relative';
 						document.getElementById("messageDiv").style.left = '0px';
 						document.getElementById("date_text").innerHTML ="Enter a recap ";
-						document.getElementById("yesterday_flag").value = 1;
+						document.getElementById("not_yesterday_flag").value = 1;
 					}
 				}
 			}
@@ -965,7 +966,7 @@
 						echo "0";
 					}
 				?>">
-				<input type="hidden" name="yesterday_flag" id="yesterday_flag">
+				<input type="hidden" name="not_yesterday_flag" id="not_yesterday_flag">
 				</form>
 			</div>
 			<?
