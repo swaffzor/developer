@@ -7,6 +7,7 @@
 	
 	if (strpos($_SERVER['REQUEST_URI'], "past.php") !== false){
 		$date = $_POST['Year'] ."-".$_POST['Month'] ."-".$_POST['Day'];
+		$yesterday = 0;
 	}
 	else{
 		//get last recap date from the database using cookie data
@@ -527,6 +528,9 @@
 						document.getElementById("messageDiv").style.left = '0px';
 						document.getElementById("date_text").innerHTML ="Enter a recap ";
 						document.getElementById("not_yesterday_flag").value = 1;
+					}
+					else{
+						document.getElementById("not_yesterday_flag").value = 0;
 					}
 				}
 			}
