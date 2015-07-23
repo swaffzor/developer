@@ -1,5 +1,47 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<?
+	session_start();
+	include("functions.php");
+	date_default_timezone_set ("America/New_York");
+	
+	include("database.php");
+	
+	$url = $_SERVER['REQUEST_URI'];
+	if(strstr($url, "last")){
+		//if page contains last	
+		$result = mysqli_query($con,"SELECT * FROM Data ORDER BY Date DESC LIMIT 1");
+		while($row = mysqli_fetch_array($result)) {
+			$date = $row['Date'];
+		}			
+		$day = strftime("%A",strtotime($date));
+	}
+	elseif(strstr($url, "report")){
+		//if page contains report	
+		$date = $_POST['Year'] . "-" . $_POST['Month'] . "-" . $_POST['Day'];
+		$day = strftime("%A",strtotime($date));
+	}
+	else{
+		echo "Something went wrong, can't load the page. Let Jeremy know.";
+	}
+	
+	
+	$now = date("F j, Y @ g:i a");
+	
+	// Check connection
+	if (mysqli_connect_errno()) {
+	  echo "Failed to connect to MySQL: " . mysqli_connect_error();
+	}
+	//! recent submission session
+	$recent_results = mysqli_query($con,"SELECT * FROM Data WHERE Date != '$date' ORDER BY Date");
+	while($row = mysqli_fetch_array($recent_results)) {
+		//generate link block
+		if(SubmittedRecently($row['Submitted'])){
+			$linkBlock .= StrToHex("<a href='viewsummary.php?Name=".$row['Name']."&Date=".$row['Date']."'>". $row['Date'] ." ". $row['Name'] ."</a><BR>");
+		}
+	}
+	
+	$_SESSION['linkblock'] = $linkBlock;
+?>
+	<html>
 
 	<head>
 		<title>Last Recap Report</title>
@@ -26,39 +68,7 @@
 			}
 		</style>
 		
-		<?php
-			include("functions.php");
-			date_default_timezone_set ("America/New_York");
-			
-			include("database.php");
-			
-			$url = $_SERVER['REQUEST_URI'];
-			if(strstr($url, "last")){
-				//if page contains last	
-				$result = mysqli_query($con,"SELECT * FROM Data ORDER BY Date DESC LIMIT 1");
-				while($row = mysqli_fetch_array($result)) {
-					$date = $row['Date'];
-				}			
-				$day = strftime("%A",strtotime($date));
-			}
-			elseif(strstr($url, "report")){
-				//if page contains report	
-				$date = $_POST['Year'] . "-" . $_POST['Month'] . "-" . $_POST['Day'];
-				$day = strftime("%A",strtotime($date));
-			}
-			else{
-				echo "Something went wrong, can't load the page. Let Jeremy know.";
-			}
-			
-			
-			$now = date("F j, Y @ g:i a");
-			
-			// Check connection
-			if (mysqli_connect_errno()) {
-			  echo "Failed to connect to MySQL: " . mysqli_connect_error();
-			}
-			
-			
+		<?php			
 			
 			//get hours from db
 			$result = mysqli_query($con,"SELECT * FROM Hours WHERE Date ='$date'");
@@ -546,7 +556,7 @@
 			echo "Report Generated on " . $now . "<br><h1>Recap for " .$day ." " . $date . "</h1>";
 
 			//gauge 
-			echo '<table><tr><td><div id="chart_gauge" style="width: 250px; height: 250px;"></div></td>';
+			echo "<table cellspacing='15px'><tr><td><div id='chart_gauge' style='width: 250px; height: 250px;'></div></td>";
 			
 			
 			echo "<td><b>Missing:</b><BR>";
@@ -562,22 +572,29 @@
 					echo $exceptionNames[$i]."<BR>";
 				}
 			}
+
+			//! recent submissions			
+			echo "</td><td><b>Recent Submissions not on this page</b><br>";
+			echo HexToStr($_SESSION['linkblock']);
+			
 			echo "</td></tr></table><br>";
 			echo "<a href='#chart_div'><button style='background-color:#66ccff; width:100px; height:50px;'>Charts</button></a>";
+			
+			//! recaps
 			while($row = mysqli_fetch_array($result)) {
 			  echo "<h3>" . $row['Name'] . "</h3> <i>Submitted: " . $row['Submitted'] . "</i><br>" . $row['Summary'];
 			  
-			// photo right here
-			if (is_array($photos)){
-				foreach($photos as $key => $value){
-					if($photosName[$key] == $row['Name']){
-						echo "<a href='http://tsidisaster.net/jeremy/uploads/" . $value . "'><img src='http://tsidisaster.net/jeremy/uploads/" . $value . "' id='pics'></a><br>";
+				// photo right here
+				if (is_array($photos)){
+					foreach($photos as $key => $value){
+						if($photosName[$key] == $row['Name']){
+							echo "<a href='http://tsidisaster.net/developer/uploads/" . $value . "'><img src='http://tsidisaster.net/developer/uploads/" . $value . "' id='pics'></a><br>";
+						}
 					}
-				}
-			}			  
-			  echo "<hr style='color: #0000FF;
-				background-color: #66ccff;
-				height: 5px;'>";
+				}			  
+				echo "<hr style='color: #0000FF;
+					background-color: #66ccff;
+					height: 5px;'>";
 			}
 			echo "Total hours today: " . $totalHours;
 		?>

@@ -143,4 +143,45 @@
 		}
 	}
 	
+	//determines if a value is within 24 hours of now
+	function SubmittedRecently($strDate){
+		  
+		$submitted_time = trim(substr($strDate, strpos($strDate, "@") + 1)); 
+		$submitted_time = date("G:i", strtotime($submitted_time));
+		
+		$submitted_date = trim(substr($strDate, 0, strpos($strDate, "@")));
+		$submitted_date = date("Y-m-d", strtotime($submitted_date));
+		
+		$combined_date = date("Y-m-d G:i", strtotime("$submitted_date $submitted_time"));
+		
+		$nowt = date("Y-m-d G:i");
+		
+		$diff = strtotime($nowt) - strtotime($combined_date);
+		$diff = round($diff/3600, 1);
+		
+		if($diff <= 24){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	function StrToHex($string){
+	    $hex='';
+	    for ($i=0; $i < strlen($string); $i++)
+	    {
+	        $hex .= dechex(ord($string[$i]));
+	    }
+	    return $hex;
+	}
+	
+	function HexToStr($hex){
+	    $string='';
+	    for ($i=0; $i < strlen($hex)-1; $i+=2)
+	    {
+	        $string .= chr(hexdec($hex[$i].$hex[$i+1]));
+	    }
+	    return $string;
+	}
 ?>
