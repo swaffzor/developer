@@ -130,7 +130,7 @@
 		echo $message;
 		$headers = "MIME-Version: 1.0" . "\r\n";
 		$headers .= "Content-type:text/html;charset=iso-8859-1" . "\r\n";
-		$headers .= "From: Automated Recap System" . "\r\n" . "Reply-To: recap@tsidisaster.com" . "\r\n" . "Bcc: jeremy@tsidisaster.com";
+		$headers .= "From: robot@tsidisaster.net" . "\r\n" . "Reply-To: recap@tsidisaster.com" . "\r\n" . "Bcc: jeremy@tsidisaster.com";
 		$message = wordwrap($message, 70, "\r\n");
 		
 		if(mail("marc@tsidisaster.com", "Missing Person Report", $message, $headers)){

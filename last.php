@@ -573,9 +573,11 @@
 				}
 			}
 
-			//! recent submissions			
-			echo "</td><td><b>Recent Submissions not on this page</b><br>";
-			echo HexToStr($_SESSION['linkblock']);
+			//! recent submissions	
+			if($linkBlock != ""){		
+				echo "</td><td><b>Recent Submissions not on this page</b><br>";
+				echo HexToStr($_SESSION['linkblock']);
+			}
 			
 			echo "</td></tr></table><br>";
 			echo "<a href='#chart_div'><button style='background-color:#66ccff; width:100px; height:50px;'>Charts</button></a>";

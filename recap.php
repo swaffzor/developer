@@ -524,7 +524,7 @@
 	//!email message & DATA into database
 	$headers = "MIME-Version: 1.0" . "\r\n";
 	$headers .= "Content-type:text/html;charset=iso-8859-1" . "\r\n";
-	$headers .= "From: $empName[0]" . "\r\n" . "Reply-To: recap@tsidisaster.com" . "\r\n" . "Bcc: jeremy@tsidisaster.com";
+	$headers .= "From: robot@tsidisaster.net" . "\r\n" . "Bcc: jeremy@tsidisaster.com";
 	$emessage = wordwrap($emessage, 70, "\r\n");
 
 	if(mail($email, "Recap Receipt", $emessage, $headers)){

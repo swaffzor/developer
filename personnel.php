@@ -10,13 +10,8 @@
 		</style>
 		<title>Personnel Report</title>
 		<?php
-			$con = mysqli_connect("192.254.232.54", "swafford_jeremy", "cloud999", "swafford_recap2");
-			// Check connection
-			if (mysqli_connect_errno()) {
-			  echo "Failed to connect to MySQL: " . mysqli_connect_error();
-			}
+			require_once 'database.php';
 			
-			$employees = mysqli_query($con,"SELECT * FROM employees ORDER BY Name");
 		?>
 		
 		<script type="text/javascript">
@@ -277,6 +272,7 @@
 					<select name="employee">
 						<option class="emp" value="" id="all">All Employees</option>
 						<?php
+						$employees = mysqli_query($con,"SELECT * FROM employees ORDER BY Name");
 						while($row = mysqli_fetch_array($employees)) {
 						  echo "<option value='" . $row['Name'] . "'>" . $row['Name'] . "</option>";
 						}?>

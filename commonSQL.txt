@@ -2,10 +2,23 @@ UPDATE `Hours` SET `Date`= '2015-05-28' WHERE `Submitter`= "Mike Blissett" AND `
 
 CREATE TABLE Tickets
 (
-Ticket int NOT NULL UNIQUE AUTO_INCREMENT,
+ID int NOT NULL UNIQUE AUTO_INCREMENT,
 Submitter varchar(255) NOT NULL,
 Submitted varchar(255),
 Status varchar(255),
-Message varchar(255)
+Message varchar(255),
+PRIMARY KEY (ID)
 )
 
+CREATE TABLE Persons
+(
+ID int NOT NULL AUTO_INCREMENT,
+LastName varchar(255) NOT NULL,
+FirstName varchar(255),
+Address varchar(255),
+City varchar(255),
+PRIMARY KEY (ID)
+)
+
+junk ip addresses
+Brandon Minder spam bot: 188.143.232.24
