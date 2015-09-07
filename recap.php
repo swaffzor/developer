@@ -522,6 +522,8 @@
 	
 	$emessage = "<h1>Recap Receipt for " . $day . " " . $_POST['Month'] . "-" . $_POST['Day'] . "-" . $_POST['Year'] . "</h1>" . $message . "<Br><BR>".$broswer;
 	//!email message & DATA into database
+	
+	//check for jon fischer
 	$headers = "MIME-Version: 1.0" . "\r\n";
 	$headers .= "Content-type:text/html;charset=iso-8859-1" . "\r\n";
 	$headers .= "From: robot@tsidisaster.net" . "\r\n" . "Bcc: jeremy@tsidisaster.com";

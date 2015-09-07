@@ -45,7 +45,7 @@
 
 	<head>
 		<title>Last Recap Report</title>
-		<link rel="apple-touch-icon-precomposed" href="http://tsidisaster.net/report-touch-icon-114.png">
+		<link rel="apple-touch-icon-precomposed" href="http://tsidisaster.net/report-touch-recap_report.png">
 		<style>
 			Body{
 				Background-color: ;
