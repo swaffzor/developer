@@ -4,6 +4,7 @@
 	include_once("globals.php");
 	date_default_timezone_set ("America/New_York");
 	
+	$now = date("Y-m-d g:i:s a");
 	
 	if (strpos($_SERVER['REQUEST_URI'], "past.php") !== false){
 		$date = $_POST['Year'] ."-".$_POST['Month'] ."-".$_POST['Day'];
@@ -971,6 +972,7 @@
 					}
 				?>">
 				<input type="hidden" name="not_yesterday_flag" id="not_yesterday_flag">
+				<input type="hidden" name="load_time" id="load_time" value="<? echo $now; ?>">
 				</form>
 			</div>
 			<?

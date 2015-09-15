@@ -61,7 +61,6 @@
 	$eList = new employeeList();
 	$broswer = $_SERVER['HTTP_USER_AGENT'];
 	$expire = time() + (60*60*24*7); // add seconds for a week
-				
 	
 	//supervisor info
 	/* if 'Name Not Listed' is checked then empName is what was manually entered */
@@ -77,6 +76,9 @@
 	if ($empName[0] == ""){
 		exit("Something went wrong, press back");
 	}
+	
+	//! Process time
+	$nowFormat2 = date("Y-m-d g:i:s a");
 	
 	$dups = 0;
 	$duplicateCheck = mysqli_query($con,"SELECT * FROM Data WHERE Name = '".$empName[0]."' AND Date = '".$date."'");
@@ -532,7 +534,7 @@
 		if($row['Name'] == $empName[0]){
 			if($row['ReportingTo'] != ""){
 				$headers .= "From: robot@tsidisaster.net" . "\r\n" . "Bcc: jeremy@tsidisaster.com, " . $row['ReportingTo'] . " ";
-				$emessage .= "<h3>A copy of this email has been sent to" . $row['ReportingTo'];
+				$emessage .= "<h3>A copy of this email has been sent to " . $row['ReportingTo'];
 			}
 			else{
 				$headers .= "From: robot@tsidisaster.net" . "\r\n" . "Bcc: jeremy@tsidisaster.com";
@@ -556,8 +558,34 @@
 	
 	$update = 0;
 	if($update == 0){
-		$sql = "INSERT INTO Data (Name, Submitted, Email, Summary, Date, IP, Hours, Expenses, Mileage, userAgent) VALUES ('$empName[0]', '$now', '$email', '$message',
-		'$date', '$ip', '$totalHours', '$totalCost', '$diff', '$broswer')";
+		$sql = "INSERT INTO Data (
+			Name, 
+			Submitted, 
+			Email, 
+			Summary, 
+			Date, 
+			IP, 
+			Hours, 
+			Expenses,
+			Mileage, 
+			userAgent,
+			StartTime,
+			EndTime
+		) 
+		VALUES (
+			'$empName[0]', 
+			'$now', 
+			'$email', 
+			'$message',
+			'$date', 
+			'$ip', 
+			'$totalHours', 
+			'$totalCost', 
+			'$diff', 
+			'$broswer',
+			'".$_POST['load_time']."', 
+			'$nowFormat2'
+		)";
 	}
 	else{
 		echo "<h1>UPDATED</h1>";

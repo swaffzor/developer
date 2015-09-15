@@ -243,16 +243,6 @@
 					document.getElementById("eqNum").focus();	
 					success = 0;	
 				}
-				else if(document.getElementById("equipment").value == "---Select Equipment---"){
-					message = "Select the equipment";
-					document.getElementById("equipment").focus();	
-					success = 0;	
-				}
-				else if(document.getElementById("equipment").value == ""){
-					message = "Select the equipment";
-					document.getElementById("equipment").focus();	
-					success = 0;	
-				}
 				else if(document.getElementById("milesHours").value == ""){
 					message = "Please enter the hours or miles for this equipment";
 					document.getElementById("milesHours").focus();	
@@ -502,7 +492,7 @@
 			print_r($_POST);
 			echo "</pre>";
 			*/
-			if(isset($_POST['equipment'])){
+			if(isset($_POST['eqNum'])){
 				$post_items = str_replace(" ", "_", $_POST);
 				$illegals = array("'",'"',"\n");
 				$replacements = array("&#39", "&#34", "<br>");
