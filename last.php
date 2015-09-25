@@ -48,7 +48,6 @@
 		<link rel="apple-touch-icon-precomposed" href="http://tsidisaster.net/report-touch-recap_report.png">
 		<style>
 			Body{
-				Background-color: ;
 				Font-family: sans-serif;
 				Color: black;
 				padding: 5px 50px 10px 50px;
@@ -77,12 +76,13 @@
 				$hoursList[] = $row['Hours'];
 			}
 			//get job list
-			$result2 = mysqli_query($con,"SELECT * FROM Jobs");
+			$result2 = mysqli_query($con,"SELECT * FROM Jobs Order by Number");
 			while($row2 = mysqli_fetch_array($result2)) {
 				$job[] = $row2['Number'];
 				$jobName[] = $row2['Name'];
 				$theJob[$row2['Number']] = $row2['Name'];
 			}
+			
 			//get expenses list
 			$resultExp = mysqli_query($con,"SELECT * FROM Expenses WHERE Date ='$date'");
 			while($rowExp = mysqli_fetch_array($resultExp)) {
@@ -584,7 +584,12 @@
 			
 			//! recaps
 			while($row = mysqli_fetch_array($result)) {
-			  echo "<h3>" . $row['Name'] . "</h3> <i>Submitted: " . $row['Submitted'] . "</i><br>" . $row['Summary'];
+				echo "<h3>" . $row['Name'] . "</h3> ";
+				$result2 = mysqli_query($con,"SELECT * FROM Hours WHERE Name = '".$row['Name']."' AND Date = '".$date."' Order by Hours LIMIT 1");
+				while($row2 = mysqli_fetch_array($result2)) {
+					echo "<h4 style='color: #0000FF'>". $theJob[$row2['Job']] ."</h4>";
+				}
+				echo "<i>Submitted: " . $row['Submitted'] . "</i><br><br>" . $row['Summary'];
 			  
 				// photo right here
 				if (is_array($photos)){
