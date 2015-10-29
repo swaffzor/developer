@@ -703,7 +703,7 @@
 				
 				$headers = "MIME-Version: 1.0" . "\r\n";
 				$headers .= "Content-type:text/html;charset=iso-8859-1" . "\r\n";
-				$headers .= "From: robot@tsidisaster.net\r\n" . "Bcc: jeremy@tsidisaster.com";
+				$headers .= "From: robot@tsidisaster.net\r\n" . "Bcc: jeremy@tsidisaster.com, skinny@tsidisaster.com";
 				$message = wordwrap($message, 70, "\r\n");
 				if(mail($emailTo, "Equipment Inspection Confirmation", $message, $headers)){
 					echo "<h2>An email has been successfully sent</h2>";

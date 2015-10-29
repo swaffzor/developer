@@ -60,7 +60,7 @@
 	$vehicle = str_replace($illegals, $replacements, $_POST['vid']);
 	$eList = new employeeList();
 	$broswer = $_SERVER['HTTP_USER_AGENT'];
-	$expire = time() + (60*60*24*7); // add seconds for a week
+	$expire = time() + (60*60*24*90); // add seconds for a week
 	
 	//supervisor info
 	/* if 'Name Not Listed' is checked then empName is what was manually entered */
