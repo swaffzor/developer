@@ -323,7 +323,7 @@
 						document.getElementById("sub" + i).focus();	
 						success = 0;
 					}
-					if (i<5){
+					if (i<10){
 						if(document.getElementById("hoursm" + i).value > 24){
 							message = "Too many hours, there just isn't enough time in the Day. Let's fix that.";
 							document.getElementById("hoursm" + i).focus();	
@@ -710,7 +710,7 @@
 			
 			<div id="moreHours" class="hide">
 				<? //!Multiple Hours
-					for ($i=1; $i<5; $i++){
+					for ($i=1; $i<10; $i++){
 						//multiple hours
 						echo "<input placeholder='Hours' name='hoursm".$i."' id='hoursm".$i."' type='number' step='any'  value='".$_POST['hoursm'.$i.'']."'>";
 						//multiple job select
