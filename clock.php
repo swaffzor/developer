@@ -551,7 +551,7 @@
 		
 		
 		<? include_once("nav2.html"); 		?>
-	<table cellspacing="15px"><tr><td valign="top" width="500px">
+	<table cellspacing="15px"><tr><td valign="top">
 		<form action="recap.php" name="recapForm" method="post" enctype="multipart/form-data">
 		
 		
@@ -676,11 +676,7 @@
 				?>
 			</select>
 			<input placeholder="Name" name="name" id="name" type="text" onchange="nameFix()" required value="<?php echo $_POST['name'] ?>" style="display: none"/>
-			<input type="email" name="email" id="email" placeholder="email" disabled="true" required value="<?php echo $_COOKIE['email'] ?>">
 			
-			<input type="checkbox" id="noList" name="noList" onchange="showHideName()">Name Not Listed<br />
-
-			 <input placeholder="Hours" name="hours" id="hours" type="number" step="any" required value="<?php echo $_POST['hours']; ?>"/>
 
 			<select name="job" id="job" onchange="makeSameJob()">
 				<?php
@@ -705,29 +701,14 @@
 			
 			</select> 
 			
-			Multiple jobs<input type="checkbox" <?php if(isset($_POST['multhours']) == 1){echo "checked";} ?> value="value1" name ="multhours" id="multhours" onclick="showHide('moreHours', 'multhours')"><br />
+			<hr>
 			
 			
-			<div id="moreHours" class="hide">
-				<? //!Multiple Hours
-					for ($i=1; $i<5; $i++){
-						//multiple hours
-						echo "<input placeholder='Hours' name='hoursm".$i."' id='hoursm".$i."' type='number' step='any'  value='".$_POST['hoursm'.$i.'']."'>";
-						//multiple job select
-						echo "<select name='jobm".$i."'>";
-							$job = mysqli_query($con,"SELECT * FROM Jobs ORDER BY Number");
-						
-							while($row = mysqli_fetch_array($job)) {
-								echo "<option value='" . $row['Number'] . "'>" . $row['Number'] . " " . $row['Name'] . "</option>";
-							}
-						echo "</select><br>";
-					}
-				?>
-			</div>
+			
 			
 			<!CREW HOURS>
-			<input type="checkbox" name="cHoursb" <?php if(isset($_POST['cHoursb']) == 1){echo "checked";} ?> id="cHoursb" onclick="showHide('cHours', 'cHoursb')">Crew Hours
-			<div id="cHours" class="hide">
+			
+			<div id="cHours">
 				<? //! Crew Hours
 					for ($i=1; $i<11; $i++){
 						echo "<select name='employee".$i."' id='employee".$i."' value='".$_POST['employee'.$i.'']."'>";
@@ -741,7 +722,6 @@
 							}
 						echo "</select>";
 		
-						echo "<input placeholder='Employee ".$i." hours' type='number' step='any' name='hours".$i."' id='hours".$i."' value='".$_POST['hours'.$i.'']."'>";
 						echo "<select name='job".$i."' id='job".$i."'>";
 		
 							$job = mysqli_query($con,"SELECT * FROM Jobs ORDER BY Number");
@@ -753,11 +733,12 @@
 									echo "<option value='" . $row['Number'] . "'>" . $row['Number'] . " " . $row['Name'] . "</option>";
 								}
 							}
-						echo "</select><br />";
+						echo "</select>";
+						echo "<input placeholder='Employee ".$i." hours' type='number' step='any' name='hours".$i."' id='hours".$i."' value='".$_POST['hours'.$i.'']."'><br>";
 					}
 				?>
 			
-			<input type="checkbox" name="cHoursb2" <?php if(isset($_POST['cHoursb2']) == 1){echo "checked";} ?> id="cHoursb2" onclick="showHide('cHours2', 'cHoursb2')">More Crew Hours
+				<input type="checkbox" name="cHoursb2" <?php if(isset($_POST['cHoursb2']) == 1){echo "checked";} ?> id="cHoursb2" onclick="showHide('cHours2', 'cHoursb2')">More Crew Hours
 					<div id="cHours2" class="hide">
 						<? //!Extra Employees
 							for ($i=11; $i<31; $i++){
@@ -859,58 +840,7 @@
 					</div>
 			</div><br />
 			
-			<input type="checkbox" name="odoc" <?php if(isset($_POST['odoc']) == 1){echo "checked";} ?> id="odoc" onclick="showHide('odo', 'odoc')">Odometer
-			<div id="odo" class="hide">
-				<table cellspacing="10">
-					<th>ID</th><th>Year</th><th align="left">Make/Model</th><th>Tag Number</th>
-					<tr><td>101</td><td>1997</td><td>Dodge Ram 3500</td><td>M074AX</td></tr>
-					<tr><td>102</td><td>2008</td><td>Ford F550 SRW</td><td>521WCN</td></tr>
-					<tr><td>103</td><td>2000</td><td>Ford F350 Super Duty</td><td>N846CC</td></tr>
-					<tr><td>107</td><td>2001</td><td>Ford Van</td><td>907QAN</td></tr>
-					<tr><td>108</td><td>2005</td><td>Saturn Vue</td><td>092PVI</td></tr>
-					<tr><td>109</td><td>2013</td><td>Ford F150</td><td>BRDK01</td></tr>
-					<tr><td>110</td><td>2013</td><td>Ford F150</td><td>BRDK02</td></tr>
-					<tr><td>111</td><td>2014</td><td>Ford F250 SD</td><td>CFNX20</td></tr>
-					<tr><td>112</td><td>2014</td><td>Ford F250 SD</td><td></td></tr>
-					<tr><td>113</td><td>2004</td><td>Chevrolet C1500 TA</td><td>838WTT</td></tr>
-					<tr><td>114</td><td>2008</td><td>Ford Expedition</td><td>BZTT68</td></tr>
-					<tr><td>115</td><td>1998</td><td>Chevy Truck</td><td>CPTF62</td></tr>
-					<tr><td>117</td><td>1994</td><td>GMC Van</td><td>907QAN</td></tr>
-					<tr><td>119</td><td>1997</td><td>Ford F350</td><td>203MCK</td></tr>
-					<tr><td>120</td><td>1988</td><td>Chevrolet Pickup</td><td>N104TB</td></tr>
-					<tr><td>121</td><td>2014</td><td>Ford F550</td><td>CXGS63</td></tr>
-				</table>
-				Please input the ID number of your company vehicle <br>
-				<input type="text" name="vid" id="vid" placeholder="Company Vehicle Id">
-				<input placeholder="Starting odometer" type="number" step="any" name="startodo" id="startodo" value="<?php echo $_POST['startodo'] ?>">
-				<input placeholder="Ending odometer" type="number" step="any" name="endodo" id="endodo" value="<?php echo $_POST['endodo'] ?>"><br />
-			</div><br />
 			
-			<input type="checkbox" id="box" name="box" <?php if(isset($_POST['box']) == 1){echo "checked";} ?> onclick="showHide('expenses', 'box')">Expenses
-			<div id='expenses' class="hide">
-				<? //! Expenses
-					for ($i=1; $i<11; $i++){
-						echo "<input type='text' name='expense".$i."' id='expense".$i."' placeholder='Expense ".$i."' value='".$_POST['expense'.$i.'']."'>";
-						echo "<input placeholder='Cost' type='number' step='any' name='cost".$i."' id='cost".$i."' value='".$_POST['cost'.$i.'']."'>";
-						echo "<select name='ejob".$i."' id='ejob".$i."'>";
-						$job = mysqli_query($con,"SELECT * FROM Jobs ORDER BY Number");
-						while($row = mysqli_fetch_array($job)) {
-							echo "<option value='" . $row['Number'] . "'>" . $row['Number'] . " " . $row['Name'] . "</option>";
-						}
-						echo "</select><br />";
-					}
-				?>
-			</div><br />
-			
-			<textarea name="summary" id="summary" rows="10" cols="50" required placeholder="Today's work summary and progress"><?php echo $_POST['summary'] ?></textarea><br />
-			<textarea name="planning" id="planning" cols="50" placeholder="Next day planning"><?php echo $_POST['planning'] ?></textarea><br>
-			<textarea name="problems" id="problems" cols="50" placeholder="List any problems, delays, reasons for downtime, or change orders"><?php echo $_POST['problems'] ?></textarea><br>
-			<textarea name="discipline" id="discipline" cols="50" placeholder="List any disciplinary actions including name and offense"><?php echo $_POST['discipline'] ?></textarea><br>
-			<textarea name="recognition" id="recognition" cols="50" placeholder="List (if any) employees that have demonstrated exceptional work or employees that deserve recognition"><?php echo $_POST['recognition'] ?></textarea>
-			
-			<p>Technical Difficulties</p>
-			<textarea name="technicalDifficulties" id="technicalDifficulties" cols="50" rows="4" placeholder="If you are having technical difficulties with this page or anything with the recap system (like needing to add an employee not listed in a drop down,) list those here to create a ticket. NOTE: This area will not be seen by the Managing Members."><?php echo $_POST['technicalDifficulties'] ?></textarea>
-			<!input type="file" name="userfile" id="file"> <br />
 
 			<div id="theButton" style="position: relative; left: 0px;">
 			<input type="button" id="upload" onclick="validate()" value="Submit" style="color: #f61c1c;">
@@ -922,47 +852,7 @@
 				
 			<input type="checkbox" name="thedata" id="thedata" class="hide">
 			
-			<div id="scarboroughData" name="scarboroughData" class="hide">
-				<h2 style="color:red;">Scarborough Data Required</h2>
-				<input type="number" name="dike" id="dike" placeholder="Dike" value="<? echo $_POST['dike']; ?>">Truckloads<br>
-				<input type="number" name="landSmoothing" id="landSmoothing" placeholder="Land Smoothing" value="<? echo $_POST['landSmoothing']; ?>">1/4 mile intervals<br>
-				<input type="number" name="siltFencePlaced" id="siltFencePlaced" placeholder="Silt Fence Placed" value="<? echo $_POST['siltFencePlaced']; ?>">Truckloads<br>
-				<input type="number" name="structures" id="structures" placeholder="Structures" value="<? echo $_POST['structures']; ?>">Structures<br>
-				<input type="number" name="berms" id="berms" placeholder="Berms" value="<? echo $_POST['berms']; ?>">Loads hauled<br>
-			</div>
 			
-			<div id="kensingtonData" name="kensingtonData" class="hide">
-				<h2 style="color:red;">Kensington Data Required</h2>
-				<?
-					for ($i=0; $i<2; $i++){
-						echo "Lake:<select name='kensingtonLake$i' id='kensingtonLake$i'>
-							<option value='0'>---Select Lake---</option>
-							<option value='1'>1</option>
-							<option value='2'>2</option>
-							<option value='5'>5</option>
-							<option value='8'>8</option>
-							<option value='9G'>9G</option>
-							<option value='9T'>9T</option>
-							<option value='10'>10</option>
-							<option value='11'>11</option>
-							<option value='12'>12</option>
-							<option value='16'>16</option>
-							<option value='17'>17</option>
-						</select>
-						<p>Please input exact quantities for work performed today.</p>";
-						echo "<input type='number' name='fabric".$i."' id='fabric".$i."' placeholder='Filter fabric placed' value='". $_POST['fabric'.$i] ."'>Linear feet<br>";
-						echo "<input type='number' name='geowebPlaced".$i."' id='geowebPlaced".$i."' placeholder='Geoweb placed' value='".$_POST['geowebPlaced'.$i]."'>Linear feet<br>";
-						echo "<input type='number' name='fillPlaced".$i."' id='fillPlaced".$i."' placeholder='Fill dirt placed' value='".$_POST['fillPlaced'.$i]."'>Tons<br>";
-						echo "<input type='number' name='grading".$i."' id='grading".$i."' placeholder='Graded slope' value='".$_POST['grading'.$i]."'>Linear feet<br>";
-						echo "<input type='number' name='tieins".$i."' id='tieins".$i."' placeholder='Number of tie-ins' value='".$_POST['tieins'.$i]."'>Each<br>";
-						echo "<input type='number' name='rockPlaced".$i."' id='rockPlaced".$i."' placeholder='Rock placed' value='".$_POST['rockPlaced'.$i]."'>Linear feet<br>";
-						echo "<input type='number' name='topsoilPlaced".$i."' id='topsoilPlaced".$i."' placeholder='Topsoil placed' value='".$_POST['topsoilPlaced'.$i]."'>Linear feet<br>";
-						echo "<input type='number' name='sodPlaced".$i."' id='sodPlaced".$i."' placeholder='Sod placed' value='".$_POST['sodPlaced'.$i]."'>Square feet<br>";
-						echo "<input type='number' name='fillDelivered".$i."' id='fillDelivered".$i."' placeholder='Screenings' value='".$_POST['fillDelivered'.$i]."'>Tons<br>";
-						echo "<input type='number' name='rockDelivered".$i."' id='rockDelivered".$i."' placeholder='Rock delivered' value='".$_POST['rockDelivered'.$i]."'>Tons<br>";
-						echo "<input type='number' name='topsoilDelivered".$i."' id='topsoilDelivered".$i."' placeholder='Topsoil delivered' value='".$_POST['topsoilDelivered'.$i]."'>Cubic Yards<br><br><hr>";
-					}
-				?>
 				<input type="hidden" name="updateSwitch" id="updateSwitch" value="<? 
 					if (isset($_POST['summary'])){
 						echo "1" ;
@@ -975,9 +865,6 @@
 				<input type="hidden" name="load_time" id="load_time" value="<? echo $now; ?>">
 				</form>
 			</div>
-			<?
-				include_once("news.html");
-			?>
 		</td>
 		<td>
 			<!insert exception request here>	
