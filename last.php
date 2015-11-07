@@ -630,6 +630,8 @@
 		 	echo "none";		 
 		 ?>; border-style:solid;'></div>
 		 
+		 <a href="http://tsidisaster.net/images/Project_Leadership_Chart.jpg" target="_blank"><img src="http://tsidisaster.net/images/Project_Leadership_Chart.jpg" width="1000px"></a><br>
+
 		
 	</body>
 </html>

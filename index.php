@@ -323,7 +323,7 @@
 						document.getElementById("sub" + i).focus();	
 						success = 0;
 					}
-					if (i<10){
+					if (i< <? echo $SUP_MULT_HOUR_COUNT; ?>){
 						if(document.getElementById("hoursm" + i).value > 24){
 							message = "Too many hours, there just isn't enough time in the Day. Let's fix that.";
 							document.getElementById("hoursm" + i).focus();	
@@ -551,7 +551,7 @@
 		
 		
 		<? include_once("nav2.html"); 		?>
-	<table cellspacing="15px"><tr><td valign="top" width="500px">
+	<table cellspacing="15px"><tr><td valign="top">
 		<form action="recap.php" name="recapForm" method="post" enctype="multipart/form-data">
 		
 		
@@ -710,7 +710,7 @@
 			
 			<div id="moreHours" class="hide">
 				<? //!Multiple Hours
-					for ($i=1; $i<10; $i++){
+					for ($i=1; $i<$SUP_MULT_HOUR_COUNT; $i++){
 						//multiple hours
 						echo "<input placeholder='Hours' name='hoursm".$i."' id='hoursm".$i."' type='number' step='any'  value='".$_POST['hoursm'.$i.'']."'>";
 						//multiple job select
@@ -975,9 +975,9 @@
 				<input type="hidden" name="load_time" id="load_time" value="<? echo $now; ?>">
 				</form>
 			</div>
-			<?
-				include_once("news.html");
-			?>
+			
+			<? //! project leadership chart ?>
+			<a href="http://tsidisaster.net/images/Project_Leadership_Chart.jpg" target="_blank"><img src="http://tsidisaster.net/images/Project_Leadership_Chart.jpg" width="500px"></a><br>
 		</td>
 		<td>
 			<!insert exception request here>	

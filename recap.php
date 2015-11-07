@@ -97,7 +97,7 @@
 	$supMultHour = array();
 	$supMultJob = array();
 	$multHours = isset($_POST['multhours']);
-	for ($i=1; $i<=10; $i++){
+	for ($i=1; $i<=$SUP_MULT_HOUR_COUNT; $i++){
 		$supMultHour[$i] = $_POST['hoursm' . $i];
 		$supMultJob[$i] = $_POST['jobm' . $i];
 	}
@@ -171,7 +171,7 @@
 		$testdate = date("Y-m-d", strtotime("-1 days", strtotime($testdate)));
 	}
 	
-	for ($i=1; $i <= 10; $i++){
+	for ($i=1; $i <= $SUP_MULT_HOUR_COUNT; $i++){
 		if ($supMultHour[$i] > 0){
 			$supHourTotal += $supMultHour[$i];
 		}
@@ -212,7 +212,7 @@
 			$totalHours += $supMultHour[$i];
 		}
 	}*/
-	for ($i=1; $i <= 10; $i++){
+	for ($i=1; $i <= $SUP_MULT_HOUR_COUNT; $i++){
 		if ($supMultHour[$i] > 0){
 			if($update == 0){
 				setHours($empName[0], $date, $supMultJob[$i], $supMultHour[$i], $empName[0]);
