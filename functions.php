@@ -51,6 +51,7 @@
 					if ($fname != "" && $fname != "---Select Employee---"){
 						$esql = "INSERT INTO Hours (Submitted, Date, Name, Job, Hours, Submitter, WeeklyHours) VALUES ('$now', '$ffdate', '$fname', '$fjob', '$fhours', '$fsuper', '$fhours')";
 						mysqli_query($con, $esql);
+						mysqli_query($con, "UPDATE employees SET daysMissing='0' WHERE Name = '$fname'");
 					}
 				}
 				else{
@@ -62,6 +63,7 @@
 							//insert into database here
 							$esql = "INSERT INTO Hours (Submitted, Date, Name, Job, Hours, Submitter, WeeklyHours) VALUES ('$now', '$ffdate', '$fname', '$fjob', '$fhours', '$fsuper', '$phours')";
 							mysqli_query($con, $esql);
+							mysqli_query($con, "UPDATE employees SET daysMissing='0' WHERE Name = '$fname'");
 						}
 					}
 				}
