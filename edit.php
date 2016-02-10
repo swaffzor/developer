@@ -7,15 +7,10 @@
 		include("nav.html");
 		
 		//----------------------------------------------------------------------------
-		//! Backend
+		//! Back end
 		//============================================================================
 			
-			//if(isset($_POST['firstname'])){
-				/*
-					echo "<pre>";
-					print_r($_POST);
-					echo "</pre>";
-				*/
+			
 				/*
 				$illegals = array("'",'"',"\n");
 				$replacements = array("&#39", "&#34", "<br>");
@@ -164,17 +159,6 @@
 			
 		
 	<head>
-		<style>
-			table{
-				table-layout: fixed;
-			}
-			td { 
-				width: 33%; 
-			}
-			th { 
-				width: 33%; 
-			}
-		</style>
 		
 		<script type='text/javascript'>
 			<?//!TO DO: only pass if $post is set
@@ -221,19 +205,38 @@
 			*/?>
 			
 			function Populate(id){
-				var lastname = eName[id];
-				lastname = lastname.split(" ");
 				
-				document.getElementById("edit").checked = true;
-				document.getElementById("button").value = "Edit Employee";
-				document.getElementById("lastname").value = lastname[1];
-				document.getElementById("email").value = eEmail[id];
-				document.getElementById("status").value = eStatus[id];
-				document.getElementById("company").value = eCompany[id];
-				document.getElementById("daysmissing").value = eDaysmissing[id];
-				document.getElementById("reportingto").value = eReportingto[id];
-				document.getElementById("id").value = eID[id];
+				var sqlString = "SELECT * FROM Hours WHERE ";
+				var dSubmitter = document.getElementById("nameDrop");
+				var dName = document.getElementById("allNameDrop");
+				var dDate = document.getElementById("date");
+				var dJob = document.getElementById("job");
 				
+				if(dSubmitter != "---Recap Submitter---" && dSubmitter.value != "-1"){
+					sqlString += "Submitter = '" + dSubmitter.value + "'";
+				}
+				if(dName.value != "---Employee---" && dName.value != "-1"){
+					if(dName.value != "-1" && dSubmitter.value != "-1"){
+						sqlString += " AND";
+					}
+					sqlString += " Name = '" + dName.value + "'";
+				}
+				if(dDate.value != "---Date---" && dDate.value != "-1"){
+					if((dDate.value != "-1" && dName.value != "-1") || (dDate.value != "-1" && dSubmitter.value != "-1")){
+						sqlString += " AND";
+					}
+					sqlString += " Date = '" + dDate.value + "'";
+				}
+				if(dJob.value != "---Date---" && dJob.value != "-1"){
+					if((dJob.value != "-1" && dName.value != "-1") || (dJob.value != "-1" && dSubmitter.value != "-1") || (dJob.value != "-1" && dDate.value != "-1")){
+						sqlString += " AND";
+					}
+					sqlString += " Job = '" + dJob.value + "'";
+				}
+				
+				document.getElementById("description").value = sqlString;
+				
+				/* populate the fields
 				if(eFirstname[id] != ""){
 					document.getElementById("firstname").value = eFirstname[id];
 				}
@@ -255,6 +258,7 @@
 				else{
 					document.getElementById("recap").checked = false;					
 				}
+				*/
 			}
 			
 			function ChangeAction(sender){
@@ -354,52 +358,84 @@
 		</script>
 	</head>
 	<body>
+		<form name="employee_form" id="employee_form" action="edit.php" method="post">
+			<?
+				echo "<select id='nameDrop' onchange=Populate(this)>";
+				echo "<option value='-1'>---Recap Submitter---</option>";
+				foreach($recapNames as $i=>$value){
+					echo "<option value='".$value."'>" . $value;
+					if(strtoupper($status[$i]) != "ACTIVE"){
+						echo " (". $status[$i] . ")";
+					}
+					echo "</option>\n";
+				}
+				echo "</select>";	
+			
+				echo "<select id='allNameDrop' onchange=Populate(this)>";
+				echo "<option value='-1'>---Employee---</option>";
+				for($i=1;$i<sizeof($allNames);$i++){
+					echo "<option value='".$allNames[$i]."'>" . $allNames[$i];
+					if(strtoupper($status[$i]) != "ACTIVE"){
+						echo " (". $status[$i] . ")";
+					}
+					echo "</option>\n";
+				}
+				echo "</select><BR>";
+				
+				echo "<select id='date' onchange=Populate(this)>";
+				echo "<option value='-1'>---Date---</option>";
+				for($i=0; $i<sizeof($distinctDates);$i++){
+					echo "<option>" . $distinctDates[$i] . "</option>";
+				}
+				echo "</select>";	
+
+				echo "<select id='job' onchange=Populate(this)>";
+				echo "<option value='-1'>---Job---</option>";
+				foreach($jobList as $jnum=>$jname){
+					echo "<option value='$jnum'>$jnum $jname</option>";
+				}
+				echo "</select>";
+			?>
+		
+			<br><textarea cols="60" name="description" id="description">test</textarea><br>
+			
+			<input type="submit" id="button" name="button"></button>
+		
+		</form>
+		
+		<form name="dbRows" id="dbRows" action="edit.php" method="post">
 		<?
-			echo "<select id='nameDrop' onchange=Populate(this.value)>";
-			echo "<option value='-1'>---Recap Submitter---</option>";
-			foreach($recapNames as $i=>$value){
-				echo "<option value='".$i."'>" . $value;
-				if(strtoupper($status[$i]) != "ACTIVE"){
-					echo " (". $status[$i] . ")";
+			if(isset($_POST['description'])){
+				/*
+					echo "<pre>";
+					print_r($_POST);
+					echo "</pre>";
+				*/
+				//!TO DO: sort buttons by column, count, format the same date
+				echo "<table border>
+					<tr><th>Date</th>
+					<th>Name</th>
+					<th>Job</th>
+					<th>Hours</th>
+					<th>Week Hours</th>
+					<th>Submitted by</th>
+					<th>Submitted</th></tr>";
+				$database_results = mysqli_query($con, $_POST['description']);
+				while($row = mysqli_fetch_array($database_results)) {
+					echo "<tr><td><input type='text' value='".$row['Date']."'></td>";
+					echo "<td><input type='text' value='".$row['Name']."'></td>";
+					echo "<td><input type='text' value='".$row['Job']."'></td>";
+					echo "<td><input type='text' value='".$row['Hours']."'></td>";
+					echo "<td><input type='text' value='".$row['WeeklyHours']."'></td>";
+					echo "<td><input type='text' value='".$row['Submitter']."'></td>";
+					echo "<td>".$row['Submitted']."</td>";
+					echo "<td><input type='checkbox'></td></tr>\n";
 				}
-				echo "</option>\n";
+				
+				echo "</table>";
 			}
-			echo "</select>";	
-		
-			echo "<select id='allNameDrop' onchange=Populate(this.value)>";
-			echo "<option value='-1'>---Employee---</option>";
-			for($i=1;$i<sizeof($allNames);$i++){
-				echo "<option value='".$i."'>" . $allNames[$i];
-				if(strtoupper($status[$i]) != "ACTIVE"){
-					echo " (". $status[$i] . ")";
-				}
-				echo "</option>\n";
-			}
-			echo "</select><BR>";
-			
-			echo "<select>";
-			echo "<option>---Date---</option>";
-			for($i=0; $i<sizeof($distinctDates);$i++){
-				echo "<option>" . $distinctDates[$i] . "</option>";
-			}
-			echo "</select>";	
-			
-			echo "<select>";
-			echo "<option>---Job---</option>";
-			foreach($jobList as $jnum=>$jname){
-				echo "<option>$jnum $jname</option>";
-			}
-			echo "</select>";
-			
-			//! TO DO: pass selected items as the sql query
 		?>
-		
-		<form name="employee_form" id="employee_form" action="employees.php" method="post">
-		
-			<p id="description"></p><br>
 			
-			<input type="button" id="button" name="button" onclick="validate()" value="Add Employee"></button>
-		
 		</form>
 		
 		

@@ -901,8 +901,9 @@
 					}
 				?>
 			</div><br />
-			
+
 			<textarea name="summary" id="summary" rows="10" cols="50" required placeholder="Today's work summary and progress"><?php echo $_POST['summary'] ?></textarea><br />
+			<textarea name="safety" id="safety" cols="50" placeholder="Safety. Please describe daily toolbox talk and weekly safety meetings here. Also note any safety concerns here."><?php echo $_POST['safety'] ?></textarea><span style="color:red; font-size: small;">*New & Required*</span><br>
 			<textarea name="planning" id="planning" cols="50" placeholder="Next day planning"><?php echo $_POST['planning'] ?></textarea><br>
 			<textarea name="problems" id="problems" cols="50" placeholder="List any problems, delays, reasons for downtime, or change orders"><?php echo $_POST['problems'] ?></textarea><br>
 			<textarea name="discipline" id="discipline" cols="50" placeholder="List any disciplinary actions including name and offense"><?php echo $_POST['discipline'] ?></textarea><br>
