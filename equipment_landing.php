@@ -1,6 +1,10 @@
 <?
 	session_start();
-	include_once 'nav.html';
+	if($_SESSION['LoggedIn'] != 1){
+		echo '<meta http-equiv="refresh" content="0;login.php?sender=index.php">';
+		exit();
+	}
+	include_once 'nav.php';
 	require_once 'database.php';
 	
 	date_default_timezone_set ("America/New_York");

@@ -1,7 +1,15 @@
 <?php
+	session_start();
+	
 	require_once("database.php");
 	include_once("functions.php");
 	include_once("globals.php");
+	
+	session_start();
+	if($_SESSION['LoggedIn'] != 1){
+		echo '<meta http-equiv="refresh" content="0;login.php?sender=index.php">';
+		exit();
+	}
 	date_default_timezone_set ("America/New_York");
 	
 	$now = date("Y-m-d g:i:s a");
@@ -550,8 +558,8 @@
 	<body onload="start();">
 		
 		
-		<? include_once("nav2.html"); 		?>
-	<table cellspacing="15px"><tr><td valign="top">
+		<? include_once("nav2.php"); 		?>
+	<table border cellspacing="15px"><tr><td valign="top">
 		<form action="recap.php" name="recapForm" method="post" enctype="multipart/form-data">
 		
 		
@@ -726,7 +734,9 @@
 			</div>
 			
 			<!CREW HOURS>
-			<input type="checkbox" name="cHoursb" <?php if(isset($_POST['cHoursb']) == 1){echo "checked";} ?> id="cHoursb" onclick="showHide('cHours', 'cHoursb')">Crew Hours
+			<fieldset>
+				<legend>Crew Hours</legend>
+				 <input type="checkbox" name="cHoursb" <?php if(isset($_POST['cHoursb']) == 1){echo "checked";} ?> id="cHoursb" onclick="showHide('cHours', 'cHoursb')">Crew Hours
 			<div id="cHours" class="hide">
 				<? //! Crew Hours
 					for ($i=1; $i<11; $i++){
@@ -790,7 +800,7 @@
 						?>
 					</div>
 			</div><br />
-			
+			</fieldset>
 			<input type="checkbox" name="ssubb" <?php if(isset($_POST['ssubb']) == 1){echo "checked";} ?> id="ssubb" onclick="showHide('ssub', 'ssubb')">Sub Hours
 			<div id="ssub" class="hide">
 				<? //!Subs
@@ -919,7 +929,7 @@
 			 
 		<? //include("recap.php"); ?>
 		</td>
-		<td valign="top">
+		<td valign="top" style="width:500">
 				
 			<input type="checkbox" name="thedata" id="thedata" class="hide">
 			

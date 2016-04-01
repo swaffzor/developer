@@ -1,6 +1,6 @@
 <?
 	session_start();
-	include_once 'nav.html';
+	include_once 'nav.php';
 	require_once 'database.php';
 	
 	date_default_timezone_set ("America/New_York");

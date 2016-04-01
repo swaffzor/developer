@@ -449,7 +449,7 @@
 		</style>
 	</head>
 	<body onload="checkChecks(); putToDay();">
-		<? include("nav2.html"); 		?>
+		<? include("nav2.php"); 		?>
 		<form action="recap.php" name="recapForm" method="post" enctype="multipart/form-data">
 	<table cellspacing="15px"><tr><td valign="top" width="500px">
 		<table>

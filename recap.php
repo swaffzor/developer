@@ -510,7 +510,7 @@
 </head>
 <body>
 	<?
-	include("nav2.html");
+	include("nav2.php");
 	//print the page
 	echo "<html><head><link rel='icon' type='image/png' href='http://tsidisaster.net/favicon.ico'></head><body><h1>Thank you for turning in your recap for today.</h1>
 	<h2>Recap Receipt for " . $day . " " . $_POST['Month'] . "-" . $_POST['Day'] . "-" . $_POST['Year'] . "</h2>

@@ -3,7 +3,7 @@
 	<body>
 		
 		<?
-			include("nav2.html");
+			include("nav2.php");
 			include("database.php");
 		?>
 		<h1>A Recap for this date has already been submitted</h1>

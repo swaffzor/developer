@@ -30,7 +30,7 @@ $now = date("Y-m-d_g:i:s_");
 $empName[1] = str_replace(" ", "_", $empName[0]);
 
 include("database.php");
-include("nav2.html");
+include("nav2.php");
 
 $target_dir = "uploads/";
 $target_dir = $target_dir . basename( $_FILES["uploadFile"]["name"]);

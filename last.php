@@ -1,4 +1,11 @@
 <?		
+	
+	session_start();
+	if($_SESSION['LoggedIn'] != 1){
+		echo '<meta http-equiv="refresh" content="0;login.php?sender=index.php">';
+		exit();
+	}
+	
 	$pword = "brucewayne";
 	$expire = time() + (60*60*24*90); // 3 months
 	
@@ -32,14 +39,14 @@
 	
 	if($_COOKIE['rememberme'] != $pword){	
 		if($_POST['pword'] == ""){
-			include("nav.html");
+			include("nav.php");
 			echo $page_to_display;
 		}
 		elseif($_POST['pword'] == $pword){
 			include("viewer.php");
 		}
 		else{
-			include("nav.html");
+			include("nav.php");
 			echo "<i>Incorrect Password</i>";
 			echo $page_to_display;
 		}

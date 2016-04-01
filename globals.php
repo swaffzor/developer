@@ -6,4 +6,7 @@
 	
 	//the number of supervisor's multiple hour slots
 	$SUP_MULT_HOUR_COUNT = 10;
+	
+	//the url of the current page
+	$URL = $_SERVER['REQUEST_URI'];
 ?>

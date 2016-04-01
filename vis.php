@@ -178,7 +178,7 @@
 		}
 	}
 	
-	include("nav.html");
+	include("nav.php");
 	?>
 	
 	<script type='text/javascript' src='https://www.google.com/jsapi'></script>

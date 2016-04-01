@@ -550,7 +550,7 @@
 	<body onload="start();">
 		
 		
-		<? include_once("nav2.html"); 		?>
+		<? include_once("nav2.php"); 		?>
 	<table cellspacing="15px"><tr><td valign="top">
 		<form action="recap.php" name="recapForm" method="post" enctype="multipart/form-data">
 		

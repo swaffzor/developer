@@ -1,4 +1,12 @@
 <?		
+	
+	include("nav.php");
+	session_start();
+	if($_SESSION['LoggedIn'] != 1){
+		echo '<meta http-equiv="refresh" content="0;login.php?sender=index.php">';
+		exit();
+	}
+	
 	$pword = "brucewayne";
 	$expire = time() + (60*60*24*90); // 3 months
 	
@@ -32,7 +40,6 @@
 	
 	if($_COOKIE['rememberme'] != $pword){	
 		if($_POST['pword'] == ""){
-			include("nav.html");
 			echo $page_to_display;
 			exit();
 		}
@@ -40,7 +47,6 @@
 			//success
 		}
 		else{
-			include("nav.html");
 			echo "<i>Incorrect Password</i>";
 			echo $page_to_display;
 			exit();
@@ -168,7 +174,6 @@
 		
 	</head>
 	<body onload="putToday()">
-	<? include("nav.html"); ?>
 	<h1>Personnel Report</h1>
 	<p>Select the criteria that you want to view</p>
 	<table border>

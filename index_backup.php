@@ -1,6 +1,6 @@
 <?php
 	include("database.php");
-	include("nav2.html");
+	include("nav2.php");
 	date_default_timezone_set ("America/New_York");
 	$date = date("Y-m-d");
 	

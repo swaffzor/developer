@@ -9,7 +9,7 @@
 	<head>
 	</head>
 	<body>
-		<? include_once("nav2.html"); ?>
+		<? include_once("nav2.php"); ?>
 		
 		<form name="options" action="techdiff.php" method="post">
 			

@@ -476,7 +476,7 @@
 	</head>
 	<body onload="putToDay();">
 
-		<? include("nav2.html"); 
+		<? include("nav2.php"); 
 			
 			//! BACK END
 			

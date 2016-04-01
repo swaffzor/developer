@@ -7,7 +7,7 @@
 	$m = date("m");
 	$y = date("Y");
 	$d = date("d");
-	include("nav2.html");
+	include("nav2.php");
 ?>
 	
 	Turn off email notifications for the selected day <br>

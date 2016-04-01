@@ -1,6 +1,6 @@
 <?
 	include("database.php");
-	include("nav2.html");
+	include("nav2.php");
 ?>
 <html><head>
 	
