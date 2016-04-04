@@ -1,5 +1,6 @@
 <?php
 	include_once("functions.php");
+	require_once("database.php");	
 	include_once("globals.php");
 	$test = true;
 	Class employeeList
@@ -40,8 +41,7 @@
 	$multiple = false;
 	$illegals = array("'",'"',"\n");
 	$replacements = array("&#39", "&#34", "<br>");
-	$ip = get_client_ip();
-	include("database.php");								
+	$ip = get_client_ip();							
 								
 	date_default_timezone_set ("America/New_York");
 	$now = date("F j, Y @ g:i a");
@@ -84,6 +84,12 @@
 	$duplicateCheck = mysqli_query($con,"SELECT * FROM Data WHERE Name = '".$empName[0]."' AND Date = '".$date."'");
 	while($row = mysqli_fetch_array($duplicateCheck)) {
 		$dups++;
+	}
+	
+	//load job numbers
+	$tempjob = mysqli_query($con,"SELECT * FROM Jobs ORDER BY Number");	
+	while($row = mysqli_fetch_array($tempjob)){
+		$jobs[$row['Number']] = $row['Name'];	//dump the results into a job array
 	}
 	
 	if (($dups > 0 && $update == 0) && $DEBUG == false){
@@ -142,6 +148,7 @@
 	setcookie("email", $email, $expire);
 	setcookie("name", $empName[0], $expire);
 	setcookie("job", $empJob[0], $expire);
+	include("nav2.php");
 	
 	//check db for duplicates
 	/*$result = mysqli_query($con,"SELECT * FROM Data WHERE Date = '".$date."' AND Name = '".$empName[0]."'");
@@ -335,6 +342,16 @@
 	$recognition = str_replace($illegals, $replacements, $_POST['recognition']);
 	$technicalDifficulties = str_replace($illegals, $replacements, $_POST['technicalDifficulties']);
 	
+	//accumulate job summaries
+	$summary = "<fieldset><legend style='color:#66ccff;'>" . $empJob[0] . ": " . $jobs[$empJob[0]] . "</legend>" . $summary. "</fieldset><Br>";
+	for($i=1;$i<$SUP_MULT_HOUR_COUNT;$i++){
+		$temp = "summary" . $i;
+		if($supMultJob[$i] > 90){
+			$tempsummary = str_replace($illegals, $replacements, $_POST[$temp]);
+			$summary .= "<fieldset><legend style='color:#66ccff;'>" . $supMultJob[$i] . ": " . $jobs[$supMultJob[$i]] . "</legend>" . $tempsummary . "</fieldset><Br>";
+		}
+	}
+	
 	if ($planning != ""){
 		$planning = "<hr><h4>Next Day Planning</h4>" . $planning;
 	}
@@ -510,7 +527,6 @@
 </head>
 <body>
 	<?
-	include("nav2.php");
 	//print the page
 	echo "<html><head><link rel='icon' type='image/png' href='http://tsidisaster.net/favicon.ico'></head><body><h1>Thank you for turning in your recap for today.</h1>
 	<h2>Recap Receipt for " . $day . " " . $_POST['Month'] . "-" . $_POST['Day'] . "-" . $_POST['Year'] . "</h2>
