@@ -6,10 +6,10 @@
 	include_once("globals.php");
 	
 	session_start();
-	if($_SESSION['LoggedIn'] != 1){
+	/*if($_SESSION['LoggedIn'] != 1){
 		echo '<meta http-equiv="refresh" content="0;login.php?sender=index.php">';
 		exit();
-	}
+	}*/
 	date_default_timezone_set ("America/New_York");
 	
 	$now = date("Y-m-d g:i:s a");
@@ -49,6 +49,11 @@
 		
 	}
 	
+	//load job numbers
+	$tempjob = mysqli_query($con,"SELECT * FROM Jobs ORDER BY Number");	
+	while($row = mysqli_fetch_array($tempjob)){
+		$jobs[$row['Number']] = $row['Name'];	//dump the results into a job array
+	}
 	
 	/*if (isset($_POST['summary'])){
 		include_once("recap.php");
@@ -485,6 +490,18 @@
 				//}
 			}
 			
+			function ShowBox(sender){
+				var index;
+				index = sender.id.substr(sender.id.length-1, 1);
+				if(sender.value != " "){
+					document.getElementById("summary" + index).style.display = 'block';
+					document.getElementById("summary" + index).placeholder = "Job " + sender.value + " summary";
+					document.getElementById("summary").placeholder = "Job " + document.getElementById("job").value + " summary here";
+				}
+				else{
+					document.getElementById("summary" + index).style.display = 'none'; 
+				}
+			}
 			
 			function showStyle(){
 				var toDay = new Date();
@@ -556,10 +573,9 @@
 		</style>
 	</head>
 	<body onload="start();">
+		<? include_once("nav2.php"); ?>
 		
-		
-		<? include_once("nav2.php"); 		?>
-	<table border cellspacing="15px"><tr><td valign="top">
+	<table cellspacing="15px"><tr><td valign="top">
 		<form action="recap.php" name="recapForm" method="post" enctype="multipart/form-data">
 		
 		
@@ -686,7 +702,7 @@
 			<input placeholder="Name" name="name" id="name" type="text" onchange="nameFix()" required value="<?php echo $_POST['name'] ?>" style="display: none"/>
 			<input type="email" name="email" id="email" placeholder="email" disabled="true" required value="<?php echo $_COOKIE['email'] ?>">
 			
-			<input type="checkbox" id="noList" name="noList" onchange="showHideName()">Name Not Listed<br />
+			<input type="checkbox" id="noList" name="noList" onchange="showHideName()"><label for="noList">Name Not Listed</label><br />
 
 			 <input placeholder="Hours" name="hours" id="hours" type="number" step="any" required value="<?php echo $_POST['hours']; ?>"/>
 
@@ -710,10 +726,9 @@
 					}?>
 			</select> 
 			
+			<textarea name="summary" id="summary" rows="10" cols="50" required placeholder="Today's work summary and progress"><?php echo $_POST['summary'] ?></textarea><br />
 			
-			</select> 
-			
-			Multiple jobs<input type="checkbox" <?php if(isset($_POST['multhours']) == 1){echo "checked";} ?> value="value1" name ="multhours" id="multhours" onclick="showHide('moreHours', 'multhours')"><br />
+			<input type="checkbox" <?php if(isset($_POST['multhours']) == 1){echo "checked";} ?> value="value1" name ="multhours" id="multhours" onclick="showHide('moreHours', 'multhours')"><label for="multhours">Multiple jobs</label><br />
 			
 			
 			<div id="moreHours" class="hide">
@@ -722,21 +737,18 @@
 						//multiple hours
 						echo "<input placeholder='Hours' name='hoursm".$i."' id='hoursm".$i."' type='number' step='any'  value='".$_POST['hoursm'.$i.'']."'>";
 						//multiple job select
-						echo "<select name='jobm".$i."'>";
-							$job = mysqli_query($con,"SELECT * FROM Jobs ORDER BY Number");
-						
-							while($row = mysqli_fetch_array($job)) {
-								echo "<option value='" . $row['Number'] . "'>" . $row['Number'] . " " . $row['Name'] . "</option>";
+						echo "<select name='jobm".$i."' id='jobm".$i."' onchange='ShowBox(this)'>";
+							foreach($jobs as $number=> $name){
+								echo "<option value='" . $number . "'>" . $number . " " . $name . "</option>";
 							}
 						echo "</select><br>";
+						echo "<textarea name='summary".$i."' id='summary".$i."' style='display:none' rows='10' cols='50' placeholder=''></textarea><br />";
 					}
 				?>
 			</div>
 			
 			<!CREW HOURS>
-			<fieldset>
-				<legend>Crew Hours</legend>
-				 <input type="checkbox" name="cHoursb" <?php if(isset($_POST['cHoursb']) == 1){echo "checked";} ?> id="cHoursb" onclick="showHide('cHours', 'cHoursb')">Crew Hours
+				 <input type="checkbox" name="cHoursb" <?php if(isset($_POST['cHoursb']) == 1){echo "checked";} ?> id="cHoursb" onclick="showHide('cHours', 'cHoursb')"><label for="cHoursb">Crew Hours</label>
 			<div id="cHours" class="hide">
 				<? //! Crew Hours
 					for ($i=1; $i<11; $i++){
@@ -753,21 +765,14 @@
 		
 						echo "<input placeholder='Employee ".$i." hours' type='number' step='any' name='hours".$i."' id='hours".$i."' value='".$_POST['hours'.$i.'']."'>";
 						echo "<select name='job".$i."' id='job".$i."'>";
-		
-							$job = mysqli_query($con,"SELECT * FROM Jobs ORDER BY Number");
-							while($row = mysqli_fetch_array($job)) {
-								if($_POST['job'.$i.''] == $row['Number']){
-									echo "<option selected value='". $row['Number'] . "'>" . $row['Number'] . " " . $row['Name'] . "</option>";
-								}
-								else{
-									echo "<option value='" . $row['Number'] . "'>" . $row['Number'] . " " . $row['Name'] . "</option>";
-								}
+						foreach($jobs as $number=> $name){
+								echo "<option value='" . $number . "'>" . $number . " " . $name . "</option>";
 							}
 						echo "</select><br />";
 					}
 				?>
 			
-			<input type="checkbox" name="cHoursb2" <?php if(isset($_POST['cHoursb2']) == 1){echo "checked";} ?> id="cHoursb2" onclick="showHide('cHours2', 'cHoursb2')">More Crew Hours
+			<input type="checkbox" name="cHoursb2" <?php if(isset($_POST['cHoursb2']) == 1){echo "checked";} ?> id="cHoursb2" onclick="showHide('cHours2', 'cHoursb2')"><label for="cHoursb2">More Crew Hours</label>
 					<div id="cHours2" class="hide">
 						<? //!Extra Employees
 							for ($i=11; $i<31; $i++){
@@ -784,24 +789,17 @@
 				
 								echo "<input placeholder='Employee ".$i." hours' type='number' step='any' name='hours".$i."' id='hours".$i."' value='".$_POST['hours'.$i.'']."'>";
 								echo "<select name='job".$i."' id='job".$i."'>";
-				
-									$job = mysqli_query($con,"SELECT * FROM Jobs ORDER BY Number");
-									while($row = mysqli_fetch_array($job)) {
-										if($_POST['job'.$i.''] == $row['Number']){
-											echo "<option selected value='". $row['Number'] . "'>" . $row['Number'] . " " . $row['Name'] . "</option>";
-										}
-										else{
-											echo "<option value='" . $row['Number'] . "'>" . $row['Number'] . " " . $row['Name'] . "</option>";
-										}
-									}
+								foreach($jobs as $number=> $name){
+									echo "<option value='" . $number . "'>" . $number . " " . $name . "</option>";
+								}
 								echo "</select><br />";
 							}
 							
 						?>
 					</div>
 			</div><br />
-			</fieldset>
-			<input type="checkbox" name="ssubb" <?php if(isset($_POST['ssubb']) == 1){echo "checked";} ?> id="ssubb" onclick="showHide('ssub', 'ssubb')">Sub Hours
+
+			<input type="checkbox" name="ssubb" <?php if(isset($_POST['ssubb']) == 1){echo "checked";} ?> id="ssubb" onclick="showHide('ssub', 'ssubb')"><label for="ssubb">Sub Hours</label>
 			<div id="ssub" class="hide">
 				<? //!Subs
 					
@@ -819,22 +817,15 @@
 		
 						echo "<input placeholder='Sub ".$i." hours' type='number' step='any' name='sub".$i."' id='sub".$i."' value='".$_POST['sub'.$i.'']."'>";
 						echo "<select name='sjob".$i."' id='sjob".$i."'>";
-		
-							$job = mysqli_query($con,"SELECT * FROM Jobs ORDER BY Number");
-							while($row = mysqli_fetch_array($job)) {
-								if($_POST['job'.$i.''] == $row['Number']){
-									echo "<option selected value='". $row['Number'] . "'>" . $row['Number'] . " " . $row['Name'] . "</option>";
-								}
-								else{
-									echo "<option value='" . $row['Number'] . "'>" . $row['Number'] . " " . $row['Name'] . "</option>";
-								}
+							foreach($jobs as $number=> $name){
+								echo "<option value='" . $number . "'>" . $number . " " . $name . "</option>";
 							}
 						echo "</select><br />";
 					}
 					
 				?>
 					
-					<input type="checkbox" name="ssubb2" <?php if(isset($_POST['csubb2']) == 1){echo "checked";} ?> id="ssubb2" onclick="showHide('ssub2', 'ssubb2')">More Sub Hours
+					<input type="checkbox" name="ssubb2" <?php if(isset($_POST['csubb2']) == 1){echo "checked";} ?> id="ssubb2" onclick="showHide('ssub2', 'ssubb2')"><label for="ssubb2">More Sub Hours</label>
 					<div id="ssub2" class="hide">
 						<? //!More Subs
 					
@@ -852,16 +843,9 @@
 				
 								echo "<input placeholder='Sub ".$i." hours' type='number' step='any' name='sub".$i."' id='sub".$i."' value='".$_POST['sub'.$i.'']."'>";
 								echo "<select name='sjob".$i."' id='sjob".$i."'>";
-				
-									$job = mysqli_query($con,"SELECT * FROM Jobs ORDER BY Number");
-									while($row = mysqli_fetch_array($job)) {
-										if($_POST['job'.$i.''] == $row['Number']){
-											echo "<option selected value='". $row['Number'] . "'>" . $row['Number'] . " " . $row['Name'] . "</option>";
-										}
-										else{
-											echo "<option value='" . $row['Number'] . "'>" . $row['Number'] . " " . $row['Name'] . "</option>";
-										}
-									}
+								foreach($jobs as $number=> $name){
+									echo "<option value='" . $number . "'>" . $number . " " . $name . "</option>";
+								}
 								echo "</select><br />";
 							}
 							
@@ -869,7 +853,7 @@
 					</div>
 			</div><br />
 			
-			<input type="checkbox" name="odoc" <?php if(isset($_POST['odoc']) == 1){echo "checked";} ?> id="odoc" onclick="showHide('odo', 'odoc')">Odometer
+			<input type="checkbox" name="odoc" <?php if(isset($_POST['odoc']) == 1){echo "checked";} ?> id="odoc" onclick="showHide('odo', 'odoc')"><label for="odoc">Odometer</label>
 			<div id="odo" class="hide">
 				<table cellspacing="10">
 					<th>ID</th><th>Year</th><th align="left">Make/Model</th><th>Tag Number</th>
@@ -896,7 +880,7 @@
 				<input placeholder="Ending odometer" type="number" step="any" name="endodo" id="endodo" value="<?php echo $_POST['endodo'] ?>"><br />
 			</div><br />
 			
-			<input type="checkbox" id="box" name="box" <?php if(isset($_POST['box']) == 1){echo "checked";} ?> onclick="showHide('expenses', 'box')">Expenses
+			<input type="checkbox" id="box" name="box" <?php if(isset($_POST['box']) == 1){echo "checked";} ?> onclick="showHide('expenses', 'box')"><label for="box">Expenses</label>
 			<div id='expenses' class="hide">
 				<? //! Expenses
 					for ($i=1; $i<11; $i++){
@@ -912,8 +896,6 @@
 				?>
 			</div><br />
 
-			<textarea name="summary" id="summary" rows="10" cols="50" required placeholder="Today's work summary and progress"><?php echo $_POST['summary'] ?></textarea><br />
-			<textarea name="safety" id="safety" cols="50" placeholder="Safety. Please describe daily toolbox talk and weekly safety meetings here. Also note any safety concerns here."><?php echo $_POST['safety'] ?></textarea><span style="color:red; font-size: small;">*New & Required*</span><br>
 			<textarea name="planning" id="planning" cols="50" placeholder="Next day planning"><?php echo $_POST['planning'] ?></textarea><br>
 			<textarea name="problems" id="problems" cols="50" placeholder="List any problems, delays, reasons for downtime, or change orders"><?php echo $_POST['problems'] ?></textarea><br>
 			<textarea name="discipline" id="discipline" cols="50" placeholder="List any disciplinary actions including name and offense"><?php echo $_POST['discipline'] ?></textarea><br>

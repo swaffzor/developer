@@ -593,10 +593,6 @@
 			//! recaps
 			while($row = mysqli_fetch_array($result)) {
 				echo "<h3>" . $row['Name'] . "</h3> ";
-				$result2 = mysqli_query($con,"SELECT * FROM Hours WHERE Name = '".$row['Name']."' AND Date = '".$date."' Order by Hours LIMIT 1");
-				while($row2 = mysqli_fetch_array($result2)) {
-					echo "<h4 style='color: #0000FF'>". $theJob[$row2['Job']] ."</h4>";
-				}
 				echo "<i>Submitted: " . $row['Submitted'] . "</i><br><br>" . $row['Summary'];
 			  
 				// photo right here

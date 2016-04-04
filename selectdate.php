@@ -1,10 +1,12 @@
 <?
-	include_once 'nav.php';
+	/*include_once 'nav.php';
 	session_start();
 	if($_SESSION['LoggedIn'] != 1){
 		echo '<meta http-equiv="refresh" content="0;login.php?sender=index.php">';
 		exit();
-	}
+	}*/
+	
+	include_once 'nav.php';
 ?>
 <!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN' 'http://www.w3.org/TR/html4/loose.dtd'>
 <html>
