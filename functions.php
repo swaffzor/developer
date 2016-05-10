@@ -22,7 +22,6 @@
 			}
 			$ddate = date("Y-m-d", strtotime("-1 days", strtotime($ddate)));
 			if (strftime("%A",strtotime($ddate)) == "Sunday"){
-				echo "<h1>".strftime("%A",strtotime($ddate))."</h1>";
 				$running = false;
 				$qresult = mysqli_query($con, "SELECT * FROM Hours WHERE Date = '$ddate' AND Name = '$fname' ORDER BY WeeklyHours ASC");
 				while($row = mysqli_fetch_array($qresult)) {

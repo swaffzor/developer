@@ -150,6 +150,7 @@
 	setcookie("job", $empJob[0], $expire);
 	include("nav2.php");
 	
+	
 	//check db for duplicates
 	/*$result = mysqli_query($con,"SELECT * FROM Data WHERE Date = '".$date."' AND Name = '".$empName[0]."'");
 	while($row = mysqli_fetch_array($result)) {
@@ -343,12 +344,12 @@
 	$technicalDifficulties = str_replace($illegals, $replacements, $_POST['technicalDifficulties']);
 	
 	//accumulate job summaries
-	$summary = "<fieldset><legend style='color:#66ccff;'>" . $empJob[0] . ": " . $jobs[$empJob[0]] . "</legend>" . $summary. "</fieldset><Br>";
+	$summary = "<fieldset><legend>" . $empJob[0] . ": " . $jobs[$empJob[0]] . "</legend>" . $summary. "</fieldset><Br>";
 	for($i=1;$i<$SUP_MULT_HOUR_COUNT;$i++){
 		$temp = "summary" . $i;
 		if($supMultJob[$i] > 90){
 			$tempsummary = str_replace($illegals, $replacements, $_POST[$temp]);
-			$summary .= "<fieldset><legend style='color:#66ccff;'>" . $supMultJob[$i] . ": " . $jobs[$supMultJob[$i]] . "</legend>" . $tempsummary . "</fieldset><Br>";
+			$summary .= "<fieldset><legend>" . $supMultJob[$i] . ": " . $jobs[$supMultJob[$i]] . "</legend>" . $tempsummary . "</fieldset><Br>";
 		}
 	}
 	
@@ -523,12 +524,20 @@
 	?>
 <html>
 <head>
+	
+	<style>
+		legend{
+			color: #25ACC1;
+			font-size: 18px;
+		}
+	</style>
+		
 <title>Receipt</title>
 </head>
 <body>
 	<?
 	//print the page
-	echo "<html><head><link rel='icon' type='image/png' href='http://tsidisaster.net/favicon.ico'></head><body><h1>Thank you for turning in your recap for today.</h1>
+	echo "<h1>Thank you for turning in your recap for today.</h1>
 	<h2>Recap Receipt for " . $day . " " . $_POST['Month'] . "-" . $_POST['Day'] . "-" . $_POST['Year'] . "</h2>
 	 <h4>A copy of your recap is below, and has been emailed to " . $email . " as a receipt. <br>if there are errors in your recap, please reply to the email sent to you with the corrections.</h4>";
 	echo $message;
@@ -538,7 +547,14 @@
 	
 	$message = $summary . $planning . $problems . $discipline . $recognition . "<hr>" . $message;
 	
-	$emessage = "<h1>Recap Receipt for " . $day . " " . $_POST['Month'] . "-" . $_POST['Day'] . "-" . $_POST['Year'] . "</h1>" . $message . "<Br><BR>".$broswer;
+	$emessage = "
+		<head><style>
+			legend{
+				color: #25ACC1;
+				font-size: 18px;
+			}
+		</style></head>
+	<h1>Recap Receipt for " . $day . " " . $_POST['Month'] . "-" . $_POST['Day'] . "-" . $_POST['Year'] . "</h1>" . $message . "<Br><BR>".$broswer;
 	//!email message & DATA into database
 	
 	$headers = "MIME-Version: 1.0" . "\r\n";

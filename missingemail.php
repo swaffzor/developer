@@ -27,8 +27,6 @@
 	}
 
 	$phours = 1 + getWeeklyHours("Jeremy Swafford", $fromDate);
-	$esql = "INSERT INTO Hours (Submitted, Date, Name, Job, Hours, Submitter, WeeklyHours) VALUES (' ', '$fromDate', 'Jeremy Swafford', '99', '1', 'Jeremy Swafford', '$phours')";
-	mysqli_query($con, $esql);
 	
 	$jobString = "";
 	$empString = "";

@@ -48,6 +48,16 @@
 	}
 	
 	$_SESSION['linkblock'] = $linkBlock;
+	
+	$browser = "";
+	$brows = strpos($_SERVER['HTTP_USER_AGENT'],"iPhone");
+    if ($brows == true){
+	    $browser = 'ios';
+	}
+	$brows = strpos($_SERVER['HTTP_USER_AGENT'],"iPad");
+    if ($brows == true){
+	    $browser = 'ios';
+	}
 ?>
 	<html>
 
@@ -72,6 +82,18 @@
 			#pics{
 			    width: 50%;
 			    height: auto;
+			}
+			fieldset {
+			    min-width: 0; 
+			    width: 100%; 
+			}
+			legend{
+				color: #25ACC1;
+				font-size: 18px;
+				<? if($browser == "ios"){
+					echo "font-size: xx-large;";
+				} ?>
+				
 			}
 		</style>
 		
@@ -604,7 +626,7 @@
 					}
 				}			  
 				echo "<hr style='color: #0000FF;
-					background-color: #66ccff;
+					background-color: #25ACC1;
 					height: 5px;'>";
 			}
 			echo "Total hours today: " . $totalHours;
