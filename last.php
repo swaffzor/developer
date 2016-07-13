@@ -6,7 +6,7 @@
 		exit();
 	}*/
 	
-	$pword = "brucewayne";
+	$pword = "beachboys";
 	$expire = time() + (60*60*24*90); // 3 months
 	
 	if($_POST['remember'] == "on" && $_POST['pword'] == $pword){

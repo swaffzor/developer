@@ -2,12 +2,12 @@
 	
 	include("nav.php");
 	session_start();
-	if($_SESSION['LoggedIn'] != 1){
+	/*if($_SESSION['LoggedIn'] != 1){
 		echo '<meta http-equiv="refresh" content="0;login.php?sender=index.php">';
 		exit();
-	}
+	}*/
 	
-	$pword = "brucewayne";
+	$pword = "beachboys";
 	$expire = time() + (60*60*24*90); // 3 months
 	
 	if($_POST['remember'] == "on" && $_POST['pword'] == $pword){
