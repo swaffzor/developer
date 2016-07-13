@@ -752,13 +752,13 @@
 			<div id="cHours" class="hide">
 				<? //! Crew Hours
 					for ($i=1; $i<11; $i++){
-						echo "<select name='employee".$i."' id='employee".$i."' value='".$_POST['employee'.$i.'']."'>";
+						echo "<select name='employee".$i."' id='employee".$i."' value='".$_POST['employee'.$i.'']."'>"; //!todo: js to show hours
 							for ($j=0; $j<count($emps); $j++){
 								if($_POST['employee'.$i.''] == $emps[$j]){
-									echo "<option selected value='" . $emps[$j] . "' ".$disabled[$j].">" . $emps[$j] . "</option>";
+									echo "<option selected value='" . $emps[$j] . "'>" . $emps[$j] . "</option>";
 								}
 								else{
-									echo "<option value='" . $emps[$j] . "' ".$disabled[$j].">" . $emps[$j] . "</option>";
+									echo "<option value='" . $emps[$j] . "'>" . $emps[$j] . "</option>";
 								}
 							}
 						echo "</select>";
@@ -779,10 +779,10 @@
 								echo "<select name='employee".$i."' id='employee".$i."' value='".$_POST['employee'.$i.'']."'>";
 									for ($j=0; $j<count($emps); $j++){
 										if($_POST['employee'.$i.''] == $emps[$j]){
-											echo "<option selected value='" . $emps[$j] . "' ".$disabled[$j].">" . $emps[$j] . "</option>";
+											echo "<option selected value='" . $emps[$j] . "'>" . $emps[$j] . "</option>";
 										}
 										else{
-											echo "<option value='" . $emps[$j] . "' ".$disabled[$j].">" . $emps[$j] . "</option>";
+											echo "<option value='" . $emps[$j] . "'>" . $emps[$j] . "</option>";
 										}
 									}
 								echo "</select>";
@@ -807,10 +807,10 @@
 						echo "<select name='semployee".$i."' id='semployee".$i."' value='".$_POST['semployee'.$i.'']."'>";
 							for ($j=0; $j<count($subEmps); $j++){
 								if($_POST['employee'.$i.''] == $subEmps[$j]){
-									echo "<option selected value='" . $subEmps[$j] . "' ".$subDisabled[$j].">" . $subEmps[$j] . "</option>";
+									echo "<option selected value='" . $subEmps[$j] . "'>" . $subEmps[$j] . "</option>";
 								}
 								else{
-									echo "<option value='" . $subEmps[$j] . "' ".$subDisabled[$j].">" . $subEmps[$j] . "</option>";
+									echo "<option value='" . $subEmps[$j] . "'>" . $subEmps[$j] . "</option>";
 								}
 							}
 						echo "</select>";
@@ -833,10 +833,10 @@
 								echo "<select name='semployee".$i."' id='semployee".$i."' value='".$_POST['semployee'.$i.'']."'>";
 									for ($j=0; $j<count($subEmps); $j++){
 										if($_POST['employee'.$i.''] == $subEmps[$j]){
-											echo "<option selected value='" . $subEmps[$j] . "' ".$subDisabled[$j].">" . $subEmps[$j] . "</option>";
+											echo "<option selected value='" . $subEmps[$j] . "'>" . $subEmps[$j] . "</option>";
 										}
 										else{
-											echo "<option value='" . $subEmps[$j] . "' ".$subDisabled[$j].">" . $subEmps[$j] . "</option>";
+											echo "<option value='" . $subEmps[$j] . "'>" . $subEmps[$j] . "</option>";
 										}
 									}
 								echo "</select>";
