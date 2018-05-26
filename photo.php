@@ -1,8 +1,15 @@
 <?
 	include("database.php");
+	include_once("functions.php");
 	include("nav2.php");
+	session_start();
+	if($_SESSION['LoggedIn'] != 1){
+		echo '<meta http-equiv="refresh" content="0;login.php?sender='.$URL.'">';
+		exit();
+	}
 ?>
 <html><head>
+<link rel="stylesheet" href="mystyle.css">
 	
 <script type="text/javascript">
 	

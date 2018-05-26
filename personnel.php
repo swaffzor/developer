@@ -1,11 +1,12 @@
 <?		
-	
-	include("nav.php");
+	include_once("functions.php");
+	require_once("database.php");
+	include("nav2.php");
 	session_start();
-	/*if($_SESSION['LoggedIn'] != 1){
+	if($_SESSION['LoggedIn'] != 1){
 		echo '<meta http-equiv="refresh" content="0;login.php?sender=index.php">';
 		exit();
-	}*/
+	}
 	
 	$pword = "beachboys";
 	$expire = time() + (60*60*24*90); // 3 months
@@ -59,6 +60,7 @@
 <html>
 
 	<head>
+		<link rel='stylesheet' href='mystyle.css'>
 		<style>
 			Body{
 				Background-color: ;

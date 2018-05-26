@@ -147,16 +147,7 @@
 		<input type="radio" name="shift" id="shiftno"><label for="shiftno">No</label><br>
 		<br>
 		If No, please state any limitations<br>
-		<input type="text" size="42"><br>
-		<br>
-		
-		If applicable, are you available to work overtime?<br>
-		<input type="radio" name="overtime" id="overtimeyes"><label for="overtimeyes">Yes</label><br>
-		<input type="radio" name="overtime" id="overtimeno"><label for="overtimeno">No</label><br>
-		<br>
-		
-		When is your available start date?<br>
-		
+		<input type="text" size="42">
 		
 		
 		

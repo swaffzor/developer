@@ -1,15 +1,21 @@
 <?php
 	session_start();
-	
+
 	require_once("database.php");
 	include_once("functions.php");
 	include_once("globals.php");
+	require_once("classes.php");
 	
-	session_start();
-	/*if($_SESSION['LoggedIn'] != 1){
-		echo '<meta http-equiv="refresh" content="0;login.php?sender=index.php">';
+	if($_SESSION['LoggedIn'] != 1){
+		echo '<meta http-equiv="refresh" content="0;login.php?sender='.$URL.'">';
 		exit();
-	}*/
+	}
+	else if($_SESSION['LoggedIn'] == 1){
+		//initialize the object with the user's data from the employees table
+		$tsiemp = new TSIemployee();
+		$tsiemp->SetEmployeeData($_SESSION['User'], $con);
+	}
+	
 	date_default_timezone_set ("America/New_York");
 	
 	$now = date("Y-m-d g:i:s a");
@@ -147,7 +153,6 @@
 				showHide('cHours', 'cHoursb');
 				showHide('cHours2', 'cHoursb2');
 				showHide('odo', 'odoc');
-				showHide('expenses2', 'box2');
 				showHide('moreHours', 'multhours');
 			}
 			
@@ -176,19 +181,6 @@
 					if (document.getElementById("nameDrop").value == names[i]){
 						document.getElementById("email").value = emails[i];
 					}
-				}
-			}
-			
-			function showHideName(){
-				if (document.getElementById("noList").checked){
-					document.getElementById("nameDrop").style.display = 'none';
-					document.getElementById("name").style.display = 'inline';
-					document.getElementById("email").disabled = false;
-				}
-				else{
-					document.getElementById("nameDrop").style.display = 'inline';
-					document.getElementById("name").style.display = 'none';	
-					document.getElementById("email").disabled = true;				
 				}
 			}
 			
@@ -290,27 +282,13 @@
 				clicks++;
 				//document.getElementById("upload").disabled = true;	//disable button to reduce duplicates
 			
-				if(document.getElementById("name").value == "" && document.getElementById("noList").checked){
-					message = "Fill out your name";
-					success = 0;
-				}
-				else if(document.getElementById("noList").checked == false && document.getElementById("nameDrop").value == "---Select Name---"){
-					message = "Select your name";
-					document.getElementById("nameDrop").focus();
-					success = 0;
-				}
-				else if(document.getElementById("email").value == ""){
-					message = "Fill out your email";
-					document.getElementById("email").focus();
-					success = 0;
-				}
-				else if(document.getElementById("hours").value == ""){
+				if(document.getElementById("hours").value == ""){
 					message = "Fill out your hours";
 					document.getElementById("hours").focus();	
 					success = 0;
 				}
-				else if(document.getElementById("hours").value > 24){
-					message = "Too many hours, there just isn't enough time in the Day. Let's fix that.";
+				else if(document.getElementById("hours").value > 24 || document.getElementById("hours").value < 0){
+					message = "Invalid time entered.";
 					document.getElementById("hours").focus();	
 					success = 0;
 				}
@@ -326,19 +304,19 @@
 					success = 0;
 				}
 				for (i=1; i<=FIELD_COUNT; i++) {
-					if(document.getElementById("hours" + i).value > 24){
-						message = "Too many hours, there just isn't enough time in the Day. Let's fix that.";
+					if(document.getElementById("hours" + i).value > 24 || document.getElementById("hours" + i).value < 0){
+						message = "Invalid time entered.";
 						document.getElementById("hours" + i).focus();	
 						success = 0;
 					}
-					if(document.getElementById("sub" + i).value > 24){
-						message = "Too many hours, there just isn't enough time in the Day. Let's fix that.";
+					if(document.getElementById("sub" + i).value > 24 || document.getElementById("sub" + i).value < 0){
+						message = "Invalid time entered.";
 						document.getElementById("sub" + i).focus();	
 						success = 0;
 					}
 					if (i< <? echo $SUP_MULT_HOUR_COUNT; ?>){
-						if(document.getElementById("hoursm" + i).value > 24){
-							message = "Too many hours, there just isn't enough time in the Day. Let's fix that.";
+						if(document.getElementById("hoursm" + i).value > 24 || document.getElementById("hoursm" + i).value < 0){
+							message = "Invalid time entered.";
 							document.getElementById("hoursm" + i).focus();	
 							success = 0;
 						}
@@ -384,7 +362,7 @@
 					success = 0;
 				}
 				if (document.getElementById("endodo").value == document.getElementById("startodo").value && document.getElementById("startodo").value != 0 && document.getElementById("endodo").value != 0){
-					message = "What spacecraft did you drive today? Your starting and end odometer are the same.";
+					message = "Your starting and ending odometer are the same.";
 					document.getElementById("startodo").focus();
 					success = 0;
 				}
@@ -409,24 +387,6 @@
 					}
 				}
 				
-				//check for full name
-				var spaceCount = 0;
-				var x = document.getElementById("name").value;
-				var boolSwitch = true;
-				for(i = 0; i < x.length; i++){
-					if(x[i] == ' '){
-						boolSwitch = false;
-						spaceCount++;
-					}
-				}
-				
-				
-				
-				if(boolSwitch == true && document.getElementById("noList").checked){
-					message = "Please enter full name";
-					document.getElementById("name").focus();
-					success = 0;
-				}
 				//if validation fails, show the message, return false and enable the button for retry
 				if(success == 0){
 					alert(message);
@@ -446,14 +406,7 @@
 				//document.getElementById("theButton").style.left = '-9999px';
 							
 			}
-			//Capitalize 1st letter in name
-			function nameFix(){
-				var eName = document.getElementById("name").value;
-				document.getElementById("name").value = toTitleCase(eName);
-				function toTitleCase(str){
-				    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-				}
-			}
+			
 			function makeSameJob(){
 				//alert("making same job");
 				//if(document.getElementById("sameJob").checked){
@@ -478,13 +431,22 @@
 						document.getElementById("thedata").checked = false;
 						showHide("kensingtonData", "thedata");
 					}
-					if(theJob == 195){
+					if(theJob == 195 || theJob == 227){
 						document.getElementById("thedata").checked = true;
-						showHide("scarboroughData", "thedata");
+						showHide("WetlandData", "thedata");
 					}
 					else{
 						document.getElementById("thedata").checked = false;
-						showHide("scarboroughData", "thedata");
+						showHide("WetlandData", "thedata");
+					}
+					
+					if(theJob == 200){
+						document.getElementById("unit0").style.position = 'relative';
+						document.getElementById("unit0").style.left = '0px';
+					}
+					else{
+						document.getElementById("unit0").style.position = 'absolute';
+						document.getElementById("unit0").style.left = '-9999px';
 					}
 					
 				//}
@@ -561,25 +523,52 @@
 				}
 			}
 			
+			function showUnitID(sender){
+				var num = sender.id.slice(-1);
+				if(sender.value == 200){
+					if(num == 'b'){
+						document.getElementById("unit0").style.position = 'relative';
+						document.getElementById("unit0").style.left = '0px';
+					}
+					else{
+						document.getElementById("unit" + num).style.position = 'relative';
+						document.getElementById("unit" + num).style.left = '0px';
+					}
+				}
+				else{
+					if(num == 'b'){
+						document.getElementById("unit0").style.position = 'absolute';
+						document.getElementById("unit0").style.left = '-9999px';
+					}
+					else{
+						document.getElementById("unit" + num).style.position = 'absolute';
+						document.getElementById("unit" + num).style.left = '-9999px';
+					}
+				}
+			}
+			
 		</script>		
-		<style>
-			body{
-				font-family: sans-serif;
-			}
-			.hide{
-				position: absolute;
-				left: -9999px;
-			}
-		</style>
+		<link rel="stylesheet" href="mystyle.css">
 	</head>
 	<body onload="start();">
-		<? include_once("nav2.php"); ?>
+		<? 
+		include_once("nav2.php"); 
+		include_once 'weekview.php';
+/*
+		echo "<pre>POST ";
+		print_r($_POST);
+		echo "<br>SESSION ";
+		print_r($_SESSION);
+		echo "</pre>";
+*/
+		?>
 		
-	<table cellspacing="15px"><tr><td valign="top">
-		<form action="recap.php" name="recapForm" method="post" enctype="multipart/form-data">
+		
+	<form action="recap.php" name="recapForm" method="post" enctype="multipart/form-data">
+		<table cellspacing="15px"><tr><td valign="top">
 		
 		
-		<?
+		<? //!Date
 			//if page contains past.php then display other date code
 			if (strpos($_SERVER['REQUEST_URI'], "past.php") !== false){
 				echo "<table><th>Month</th><th>Day</th><th>Year</th>
@@ -607,7 +596,7 @@
 			}
 			else{
 				echo "<table>
-					<th>Month</th><th>Day</th><th>Year</th><th></th>
+					<th>Month</th><th>Day</th><th>Year</th>
 					<tr><td><select name='Month' id='Month' onchange='dateCheck(); showStyle()' selected='". $_POST['Month']."'>
 						<option value='01'>01</option>
 						<option value='02'>02</option>
@@ -684,27 +673,12 @@
 					echo "<p id='message_yesterday' style='color: red; font-size: 20;'>Yesterday's Date</p>";
 				}
 			?>
-			<select onchange="insertEmail(this.value)" id="nameDrop" name="nameDrop" style="display: inline">
-				<option>---Select Name---</option>
-				<?php
-					$tmp = mysqli_query($con,"SELECT Name FROM employees where recap != '' ORDER BY Name");
-					while($row = mysqli_fetch_array($tmp)) {
-						echo "<option value ='" . $row['Name']."'";
-						
-						if($row["Name"] == $_COOKIE["name"]){
-							echo " selected";
-						}
-						
-						echo ">" . $row['Name']."</option>";
-					}
-				?>
+			<select id="nameDrop" name="nameDrop" style="display: inline">
+				<option value="<? echo $tsiemp->idNumber; ?>"><? echo $tsiemp->name; ?></option>
 			</select>
-			<input placeholder="Name" name="name" id="name" type="text" onchange="nameFix()" required value="<?php echo $_POST['name'] ?>" style="display: none"/>
-			<input type="email" name="email" id="email" placeholder="email" disabled="true" required value="<?php echo $_COOKIE['email'] ?>">
-			
-			<input type="checkbox" id="noList" name="noList" onchange="showHideName()"><label for="noList">Name Not Listed</label><br />
+			<input type="email" name="email" id="email" placeholder="email" disabled="true" required value="<?php echo $tsiemp->email; ?>"><br>
 
-			 <input placeholder="Hours" name="hours" id="hours" type="number" step="any" required value="<?php echo $_POST['hours']; ?>"/>
+			 <input placeholder="Hours" name="hours" id="hours" type="number" step="any" style="width: 50px" required value="<?php echo $_POST['hours']; ?>"/>
 
 			<select name="job" id="job" onchange="makeSameJob()">
 				<?php
@@ -726,197 +700,18 @@
 					}?>
 			</select> 
 			
-			<textarea name="summary" id="summary" rows="10" cols="50" required placeholder="Today's work summary and progress"><?php echo $_POST['summary'] ?></textarea><br />
+			<!equipment unit id>
+			<input type="number" name="unit0" id="unit0" placeholder='unit #' style="width: 50px" class="hide" value="<? echo $_POST['unit0']; ?>">
 			
-			<input type="checkbox" <?php if(isset($_POST['multhours']) == 1){echo "checked";} ?> value="value1" name ="multhours" id="multhours" onclick="showHide('moreHours', 'multhours')"><label for="multhours">Multiple jobs</label><br />
-			
-			
-			<div id="moreHours" class="hide">
-				<? //!Multiple Hours
-					for ($i=1; $i<$SUP_MULT_HOUR_COUNT; $i++){
-						//multiple hours
-						echo "<input placeholder='Hours' name='hoursm".$i."' id='hoursm".$i."' type='number' step='any'  value='".$_POST['hoursm'.$i.'']."'>";
-						//multiple job select
-						echo "<select name='jobm".$i."' id='jobm".$i."' onchange='ShowBox(this)'>";
-							foreach($jobs as $number=> $name){
-								echo "<option value='" . $number . "'>" . $number . " " . $name . "</option>";
-							}
-						echo "</select><br>";
-						echo "<textarea name='summary".$i."' id='summary".$i."' style='display:none' rows='10' cols='50' placeholder=''></textarea><br />";
-					}
-				?>
-			</div>
-			
-			<!CREW HOURS>
-				 <input type="checkbox" name="cHoursb" <?php if(isset($_POST['cHoursb']) == 1){echo "checked";} ?> id="cHoursb" onclick="showHide('cHours', 'cHoursb')"><label for="cHoursb">Crew Hours</label>
-			<div id="cHours" class="hide">
-				<? //! Crew Hours
-					for ($i=1; $i<11; $i++){
-						echo "<select name='employee".$i."' id='employee".$i."' value='".$_POST['employee'.$i.'']."'>"; //!todo: js to show hours
-							for ($j=0; $j<count($emps); $j++){
-								if($_POST['employee'.$i.''] == $emps[$j]){
-									echo "<option selected value='" . $emps[$j] . "'>" . $emps[$j] . "</option>";
-								}
-								else{
-									echo "<option value='" . $emps[$j] . "'>" . $emps[$j] . "</option>";
-								}
-							}
-						echo "</select>";
-		
-						echo "<input placeholder='Employee ".$i." hours' type='number' step='any' name='hours".$i."' id='hours".$i."' value='".$_POST['hours'.$i.'']."'>";
-						echo "<select name='job".$i."' id='job".$i."'>";
-						foreach($jobs as $number=> $name){
-								echo "<option value='" . $number . "'>" . $number . " " . $name . "</option>";
-							}
-						echo "</select><br />";
-					}
-				?>
-			
-			<input type="checkbox" name="cHoursb2" <?php if(isset($_POST['cHoursb2']) == 1){echo "checked";} ?> id="cHoursb2" onclick="showHide('cHours2', 'cHoursb2')"><label for="cHoursb2">More Crew Hours</label>
-					<div id="cHours2" class="hide">
-						<? //!Extra Employees
-							for ($i=11; $i<31; $i++){
-								echo "<select name='employee".$i."' id='employee".$i."' value='".$_POST['employee'.$i.'']."'>";
-									for ($j=0; $j<count($emps); $j++){
-										if($_POST['employee'.$i.''] == $emps[$j]){
-											echo "<option selected value='" . $emps[$j] . "'>" . $emps[$j] . "</option>";
-										}
-										else{
-											echo "<option value='" . $emps[$j] . "'>" . $emps[$j] . "</option>";
-										}
-									}
-								echo "</select>";
-				
-								echo "<input placeholder='Employee ".$i." hours' type='number' step='any' name='hours".$i."' id='hours".$i."' value='".$_POST['hours'.$i.'']."'>";
-								echo "<select name='job".$i."' id='job".$i."'>";
-								foreach($jobs as $number=> $name){
-									echo "<option value='" . $number . "'>" . $number . " " . $name . "</option>";
-								}
-								echo "</select><br />";
-							}
-							
-						?>
-					</div>
-			</div><br />
-
-			<input type="checkbox" name="ssubb" <?php if(isset($_POST['ssubb']) == 1){echo "checked";} ?> id="ssubb" onclick="showHide('ssub', 'ssubb')"><label for="ssubb">Sub Hours</label>
-			<div id="ssub" class="hide">
-				<? //!Subs
-					
-					for ($i=1; $i<11; $i++){
-						echo "<select name='semployee".$i."' id='semployee".$i."' value='".$_POST['semployee'.$i.'']."'>";
-							for ($j=0; $j<count($subEmps); $j++){
-								if($_POST['employee'.$i.''] == $subEmps[$j]){
-									echo "<option selected value='" . $subEmps[$j] . "'>" . $subEmps[$j] . "</option>";
-								}
-								else{
-									echo "<option value='" . $subEmps[$j] . "'>" . $subEmps[$j] . "</option>";
-								}
-							}
-						echo "</select>";
-		
-						echo "<input placeholder='Sub ".$i." hours' type='number' step='any' name='sub".$i."' id='sub".$i."' value='".$_POST['sub'.$i.'']."'>";
-						echo "<select name='sjob".$i."' id='sjob".$i."'>";
-							foreach($jobs as $number=> $name){
-								echo "<option value='" . $number . "'>" . $number . " " . $name . "</option>";
-							}
-						echo "</select><br />";
-					}
-					
-				?>
-					
-					<input type="checkbox" name="ssubb2" <?php if(isset($_POST['csubb2']) == 1){echo "checked";} ?> id="ssubb2" onclick="showHide('ssub2', 'ssubb2')"><label for="ssubb2">More Sub Hours</label>
-					<div id="ssub2" class="hide">
-						<? //!More Subs
-					
-							for ($i=11; $i<31; $i++){
-								echo "<select name='semployee".$i."' id='semployee".$i."' value='".$_POST['semployee'.$i.'']."'>";
-									for ($j=0; $j<count($subEmps); $j++){
-										if($_POST['employee'.$i.''] == $subEmps[$j]){
-											echo "<option selected value='" . $subEmps[$j] . "'>" . $subEmps[$j] . "</option>";
-										}
-										else{
-											echo "<option value='" . $subEmps[$j] . "'>" . $subEmps[$j] . "</option>";
-										}
-									}
-								echo "</select>";
-				
-								echo "<input placeholder='Sub ".$i." hours' type='number' step='any' name='sub".$i."' id='sub".$i."' value='".$_POST['sub'.$i.'']."'>";
-								echo "<select name='sjob".$i."' id='sjob".$i."'>";
-								foreach($jobs as $number=> $name){
-									echo "<option value='" . $number . "'>" . $number . " " . $name . "</option>";
-								}
-								echo "</select><br />";
-							}
-							
-						?>
-					</div>
-			</div><br />
-			
-			<input type="checkbox" name="odoc" <?php if(isset($_POST['odoc']) == 1){echo "checked";} ?> id="odoc" onclick="showHide('odo', 'odoc')"><label for="odoc">Odometer</label>
-			<div id="odo" class="hide">
-				<table cellspacing="10">
-					<th>ID</th><th>Year</th><th align="left">Make/Model</th><th>Tag Number</th>
-					<tr><td>101</td><td>1997</td><td>Dodge Ram 3500</td><td>M074AX</td></tr>
-					<tr><td>102</td><td>2008</td><td>Ford F550 SRW</td><td>521WCN</td></tr>
-					<tr><td>103</td><td>2000</td><td>Ford F350 Super Duty</td><td>N846CC</td></tr>
-					<tr><td>107</td><td>2001</td><td>Ford Van</td><td>907QAN</td></tr>
-					<tr><td>108</td><td>2005</td><td>Saturn Vue</td><td>092PVI</td></tr>
-					<tr><td>109</td><td>2013</td><td>Ford F150</td><td>BRDK01</td></tr>
-					<tr><td>110</td><td>2013</td><td>Ford F150</td><td>BRDK02</td></tr>
-					<tr><td>111</td><td>2014</td><td>Ford F250 SD</td><td>CFNX20</td></tr>
-					<tr><td>112</td><td>2014</td><td>Ford F250 SD</td><td></td></tr>
-					<tr><td>113</td><td>2004</td><td>Chevrolet C1500 TA</td><td>838WTT</td></tr>
-					<tr><td>114</td><td>2008</td><td>Ford Expedition</td><td>BZTT68</td></tr>
-					<tr><td>115</td><td>1998</td><td>Chevy Truck</td><td>CPTF62</td></tr>
-					<tr><td>117</td><td>1994</td><td>GMC Van</td><td>907QAN</td></tr>
-					<tr><td>119</td><td>1997</td><td>Ford F350</td><td>203MCK</td></tr>
-					<tr><td>120</td><td>1988</td><td>Chevrolet Pickup</td><td>N104TB</td></tr>
-					<tr><td>121</td><td>2014</td><td>Ford F550</td><td>CXGS63</td></tr>
-				</table>
-				Please input the ID number of your company vehicle <br>
-				<input type="text" name="vid" id="vid" placeholder="Company Vehicle Id">
-				<input placeholder="Starting odometer" type="number" step="any" name="startodo" id="startodo" value="<?php echo $_POST['startodo'] ?>">
-				<input placeholder="Ending odometer" type="number" step="any" name="endodo" id="endodo" value="<?php echo $_POST['endodo'] ?>"><br />
-			</div><br />
-			
-			<input type="checkbox" id="box" name="box" <?php if(isset($_POST['box']) == 1){echo "checked";} ?> onclick="showHide('expenses', 'box')"><label for="box">Expenses</label>
-			<div id='expenses' class="hide">
-				<? //! Expenses
-					for ($i=1; $i<11; $i++){
-						echo "<input type='text' name='expense".$i."' id='expense".$i."' placeholder='Expense ".$i."' value='".$_POST['expense'.$i.'']."'>";
-						echo "<input placeholder='Cost' type='number' step='any' name='cost".$i."' id='cost".$i."' value='".$_POST['cost'.$i.'']."'>";
-						echo "<select name='ejob".$i."' id='ejob".$i."'>";
-						$job = mysqli_query($con,"SELECT * FROM Jobs ORDER BY Number");
-						while($row = mysqli_fetch_array($job)) {
-							echo "<option value='" . $row['Number'] . "'>" . $row['Number'] . " " . $row['Name'] . "</option>";
-						}
-						echo "</select><br />";
-					}
-				?>
-			</div><br />
-
-			<textarea name="planning" id="planning" cols="50" placeholder="Next day planning"><?php echo $_POST['planning'] ?></textarea><br>
-			<textarea name="problems" id="problems" cols="50" placeholder="List any problems, delays, reasons for downtime, or change orders"><?php echo $_POST['problems'] ?></textarea><br>
-			<textarea name="discipline" id="discipline" cols="50" placeholder="List any disciplinary actions including name and offense"><?php echo $_POST['discipline'] ?></textarea><br>
-			<textarea name="recognition" id="recognition" cols="50" placeholder="List (if any) employees that have demonstrated exceptional work or employees that deserve recognition"><?php echo $_POST['recognition'] ?></textarea>
-			
-			<p>Technical Difficulties</p>
-			<textarea name="technicalDifficulties" id="technicalDifficulties" cols="50" rows="4" placeholder="If you are having technical difficulties with this page or anything with the recap system (like needing to add an employee not listed in a drop down,) list those here to create a ticket. NOTE: This area will not be seen by the Managing Members."><?php echo $_POST['technicalDifficulties'] ?></textarea>
-			<!input type="file" name="userfile" id="file"> <br />
-
-			<div id="theButton" style="position: relative; left: 0px;">
-			<input type="button" id="upload" onclick="validate()" value="Submit" style="color: #f61c1c;">
-			</div>
-			 
-		<? //include("recap.php"); ?>
+			<br>
+			<textarea name="summary" id="summary" rows="15" cols="50" required placeholder="Today's work summary and progress"><?php echo $_POST['summary'] ?></textarea><br />
 		</td>
-		<td valign="top" style="width:500">
-				
+		<td>
+			<? //!extra data for wetland and lake bank restoration  ?>
 			<input type="checkbox" name="thedata" id="thedata" class="hide">
 			
-			<div id="scarboroughData" name="scarboroughData" class="hide">
-				<h2 style="color:red;">Scarborough Data Required</h2>
+			<div id="WetlandData" name="WetlandData" class="hide">
+				<h2 style="color:red;">Additional Data Required</h2>
 				<input type="number" name="dike" id="dike" placeholder="Dike" value="<? echo $_POST['dike']; ?>">Truckloads<br>
 				<input type="number" name="landSmoothing" id="landSmoothing" placeholder="Land Smoothing" value="<? echo $_POST['landSmoothing']; ?>">1/4 mile intervals<br>
 				<input type="number" name="siltFencePlaced" id="siltFencePlaced" placeholder="Silt Fence Placed" value="<? echo $_POST['siltFencePlaced']; ?>">Truckloads<br>
@@ -968,12 +763,201 @@
 				<input type="hidden" name="load_time" id="load_time" value="<? echo $now; ?>">
 				</form>
 			</div>
-			
-			<? //! project leadership chart ?>
-			<a href="http://tsidisaster.net/images/Project_Leadership_Chart.jpg" target="_blank"><img src="http://tsidisaster.net/images/Project_Leadership_Chart.jpg" width="500px"></a><br>
 		</td>
-		<td>
-			<!insert exception request here>	
+		<td>			
+			<? //! project leadership chart ?>
+			<!-- a href="http://tsidisaster.net/images/Project_Leadership_Chart.jpg" target="_blank"><img src="http://tsidisaster.net/images/Project_Leadership_Chart.jpg" width="500px" ></a><br-->
+		</td>-
+		</tr>
+		<tr><td colspan="3">
+			
+			
+			<input type="checkbox" <?php if(isset($_POST['multhours']) == 1){echo "checked";} ?> value="value1" name ="multhours" id="multhours" onclick="showHide('moreHours', 'multhours')"><label for="multhours">Multiple jobs</label><br />
+			
+			
+			<div id="moreHours" class="hide">
+				<? //!Multiple Hours
+					for ($i=1; $i<$SUP_MULT_HOUR_COUNT; $i++){
+						//multiple hours
+						echo "<input placeholder='Hours' name='hoursm".$i."' id='hoursm".$i."' type='number' step='any' style='width: 50px' value='".$_POST['hoursm'.$i.'']."'>";
+						//multiple job select
+						echo "<select name='jobm".$i."' id='jobm".$i."' onchange='ShowBox(this); showUnitID(this);'>";
+							foreach($jobs as $number=> $name){
+								echo "<option value='" . $number . "'>" . $number . " " . $name . "</option>";
+							}
+						echo "</select>
+						
+						<input type='number' name='unit".$i."' id='unit".$i."' placeholder='unit #' style='width: 50px' class='hide' value='".$_POST['unit'.$i]."'>
+						
+						<br>";
+						echo "<textarea name='summary".$i."' id='summary".$i."' style='display:none' rows='10' cols='50' placeholder=''></textarea><br />";
+					}
+				?>
+			</div>
+			
+			<!CREW HOURS>
+				 <input type="checkbox" name="cHoursb" <?php if(isset($_POST['cHoursb']) == 1){echo "checked";} ?> id="cHoursb" onclick="showHide('cHours', 'cHoursb')"><label for="cHoursb">Crew Hours</label>
+			<div id="cHours" class="hide">
+				<? //! Crew Hours
+					for ($i=1; $i<11; $i++){
+						echo "<select name='employee".$i."' id='employee".$i."' value='".$_POST['employee'.$i.'']."'>"; //!todo: js to show hours
+							for ($j=0; $j<count($emps); $j++){
+								if($_POST['employee'.$i.''] == $emps[$j]){
+									echo "<option selected value='" . $emps[$j] . "'>" . $emps[$j] . "</option>";
+								}
+								else{
+									echo "<option value='" . $emps[$j] . "'>" . $emps[$j] . "</option>";
+								}
+							}
+						echo "</select>";
+		
+						echo "<input placeholder='Hours' type='number' step='any' name='hours".$i."' id='hours".$i."' style='width: 50px' value='".$_POST['hours'.$i.'']."'>";
+						echo "<select name='job".$i."' id='job".$i."'>";
+						foreach($jobs as $number=> $name){
+								echo "<option value='" . $number . "'>" . $number . " " . $name . "</option>";
+							}
+						echo "</select><br />";
+					}
+				?>
+			
+			<input type="checkbox" name="cHoursb2" <?php if(isset($_POST['cHoursb2']) == 1){echo "checked";} ?> id="cHoursb2" onclick="showHide('cHours2', 'cHoursb2')"><label for="cHoursb2">More Crew Hours</label>
+					<div id="cHours2" class="hide">
+						<? //!Extra Employees
+							for ($i=11; $i<31; $i++){
+								echo "<select name='employee".$i."' id='employee".$i."' value='".$_POST['employee'.$i.'']."'>";
+									for ($j=0; $j<count($emps); $j++){
+										if($_POST['employee'.$i.''] == $emps[$j]){
+											echo "<option selected value='" . $emps[$j] . "'>" . $emps[$j] . "</option>";
+										}
+										else{
+											echo "<option value='" . $emps[$j] . "'>" . $emps[$j] . "</option>";
+										}
+									}
+								echo "</select>";
+				
+								echo "<input placeholder='Hours' type='number' step='any' name='hours".$i."' id='hours".$i."' style='width: 50px' value='".$_POST['hours'.$i.'']."'>";
+								echo "<select name='job".$i."' id='job".$i."'>";
+								foreach($jobs as $number=> $name){
+									echo "<option value='" . $number . "'>" . $number . " " . $name . "</option>";
+								}
+								echo "</select><br />";
+							}
+							
+						?>
+					</div>
+			</div><br />
+
+			<input type="checkbox" name="ssubb" <?php if(isset($_POST['ssubb']) == 1){echo "checked";} ?> id="ssubb" onclick="showHide('ssub', 'ssubb')"><label for="ssubb">Sub Hours</label>
+			<div id="ssub" class="hide">
+				<? //!Subs
+					
+					for ($i=1; $i<11; $i++){
+						echo "<select name='semployee".$i."' id='semployee".$i."' value='".$_POST['semployee'.$i.'']."'>";
+							for ($j=0; $j<count($subEmps); $j++){
+								if($_POST['employee'.$i.''] == $subEmps[$j]){
+									echo "<option selected value='" . $subEmps[$j] . "'>" . $subEmps[$j] . "</option>";
+								}
+								else{
+									echo "<option value='" . $subEmps[$j] . "'>" . $subEmps[$j] . "</option>";
+								}
+							}
+						echo "</select>";
+		
+						echo "<input placeholder='Hours' type='number' step='any' name='sub".$i."' id='sub".$i."' style='width: 50px' value='".$_POST['sub'.$i.'']."'>";
+						echo "<select name='sjob".$i."' id='sjob".$i."'>";
+							foreach($jobs as $number=> $name){
+								echo "<option value='" . $number . "'>" . $number . " " . $name . "</option>";
+							}
+						echo "</select><br />";
+					}
+					
+				?>
+					
+					<input type="checkbox" name="ssubb2" <?php if(isset($_POST['csubb2']) == 1){echo "checked";} ?> id="ssubb2" onclick="showHide('ssub2', 'ssubb2')"><label for="ssubb2">More Sub Hours</label>
+					<div id="ssub2" class="hide">
+						<? //!More Subs
+					
+							for ($i=11; $i<31; $i++){
+								echo "<select name='semployee".$i."' id='semployee".$i."' value='".$_POST['semployee'.$i.'']."'>";
+									for ($j=0; $j<count($subEmps); $j++){
+										if($_POST['employee'.$i.''] == $subEmps[$j]){
+											echo "<option selected value='" . $subEmps[$j] . "'>" . $subEmps[$j] . "</option>";
+										}
+										else{
+											echo "<option value='" . $subEmps[$j] . "'>" . $subEmps[$j] . "</option>";
+										}
+									}
+								echo "</select>";
+				
+								echo "<input placeholder='Hours' type='number' step='any' name='sub".$i."' id='sub".$i."' style='width: 50px' value='".$_POST['sub'.$i.'']."'>";
+								echo "<select name='sjob".$i."' id='sjob".$i."'>";
+								foreach($jobs as $number=> $name){
+									echo "<option value='" . $number . "'>" . $number . " " . $name . "</option>";
+								}
+								echo "</select><br />";
+							}
+							
+						?>
+					</div>
+			</div><br />
+			
+			<input type="checkbox" name="odoc" <?php if(isset($_POST['odoc']) == 1){echo "checked";} ?> id="odoc" onclick="showHide('odo', 'odoc')"><label for="odoc">Odometer</label>
+			<div id="odo" class="hide">
+				<table cellspacing="10">
+					<th>ID</th><th>Year</th><th align="left">Make/Model</th><th>Tag Number</th>
+					<tr><td>101</td><td>1997</td><td>Dodge Ram 3500</td><td>M074AX</td></tr>
+					<tr><td>102</td><td>2008</td><td>Ford F550 SRW</td><td>521WCN</td></tr>
+					<tr><td>103</td><td>2000</td><td>Ford F350 Super Duty</td><td>N846CC</td></tr>
+					<tr><td>107</td><td>2001</td><td>Ford Van</td><td>907QAN</td></tr>
+					<tr><td>108</td><td>2005</td><td>Saturn Vue</td><td>092PVI</td></tr>
+					<tr><td>109</td><td>2013</td><td>Ford F150</td><td>BRDK01</td></tr>
+					<tr><td>110</td><td>2013</td><td>Ford F150</td><td>BRDK02</td></tr>
+					<tr><td>111</td><td>2014</td><td>Ford F250 SD</td><td>CFNX20</td></tr>
+					<tr><td>112</td><td>2014</td><td>Ford F250 SD</td><td></td></tr>
+					<tr><td>113</td><td>2004</td><td>Chevrolet C1500 TA</td><td>838WTT</td></tr>
+					<tr><td>114</td><td>2008</td><td>Ford Expedition</td><td>BZTT68</td></tr>
+					<tr><td>115</td><td>1998</td><td>Chevy Truck</td><td>CPTF62</td></tr>
+					<tr><td>117</td><td>1994</td><td>GMC Van</td><td>907QAN</td></tr>
+					<tr><td>119</td><td>1997</td><td>Ford F350</td><td>203MCK</td></tr>
+					<tr><td>120</td><td>1988</td><td>Chevrolet Pickup</td><td>N104TB</td></tr>
+					<tr><td>121</td><td>2014</td><td>Ford F550</td><td>CXGS63</td></tr>
+				</table>
+				Please input the ID number of your company vehicle <br>
+				<input type="text" name="vid" id="vid" placeholder="Company Vehicle Id" value="<?php echo $_POST['vid'] ?>">
+				<input placeholder="Starting odometer" type="number" step="any" name="startodo" id="startodo" value="<?php echo $_POST['startodo'] ?>">
+				<input placeholder="Ending odometer" type="number" step="any" name="endodo" id="endodo" value="<?php echo $_POST['endodo'] ?>"><br />
+			</div><br />
+			
+			<input type="checkbox" id="box" name="box" <?php if(isset($_POST['box']) == 1){echo "checked";} ?> onclick="showHide('expenses', 'box')"><label for="box">Expenses</label>
+			<div id='expenses' class="hide">
+				<? //! Expenses
+					for ($i=1; $i<11; $i++){
+						echo "<input type='text' name='expense".$i."' id='expense".$i."' placeholder='Expense ".$i."' value='".$_POST['expense'.$i.'']."'>";
+						echo "<input placeholder='Cost' type='number' step='any' name='cost".$i."' id='cost".$i."' value='".$_POST['cost'.$i.'']."'>";
+						echo "<select name='ejob".$i."' id='ejob".$i."'>";
+						$job = mysqli_query($con,"SELECT * FROM Jobs ORDER BY Number");
+						while($row = mysqli_fetch_array($job)) {
+							echo "<option value='" . $row['Number'] . "'>" . $row['Number'] . " " . $row['Name'] . "</option>";
+						}
+						echo "</select><br />";
+					}
+				?>
+			</div><br />
+
+			<textarea name="planning" id="planning" cols="50" placeholder="Next day planning"><?php echo $_POST['planning'] ?></textarea><br>
+			<textarea name="problems" id="problems" cols="50" placeholder="List any problems, delays, reasons for downtime, or change orders"><?php echo $_POST['problems'] ?></textarea><br>
+			<textarea name="discipline" id="discipline" cols="50" placeholder="List any disciplinary actions including name and offense"><?php echo $_POST['discipline'] ?></textarea><br>
+			<textarea name="recognition" id="recognition" cols="50" placeholder="List (if any) employees that have demonstrated exceptional work or employees that deserve recognition"><?php echo $_POST['recognition'] ?></textarea>
+			
+			<p>Technical Difficulties</p>
+			<textarea name="technicalDifficulties" id="technicalDifficulties" cols="50" rows="4" placeholder="If you are having technical difficulties with this page or anything with the recap system (like needing to add an employee not listed in a drop down,) list those here to create a ticket. NOTE: This area will not be seen by the Managing Members."><?php echo $_POST['technicalDifficulties'] ?></textarea>
+			<!input type="file" name="userfile" id="file"> <br />
+
+			<div id="theButton" style="position: relative; left: 0px;">
+			<input type="button" id="upload" onclick="validate()" value="Submit" style="color: #f61c1c;">
+			</div>
+			 
+		<? //include("recap.php"); ?>
 		</td>
 		</tr>
 		</table>

@@ -4,8 +4,9 @@
 		echo '<meta http-equiv="refresh" content="0;login.php?sender=index.php">';
 		exit();
 	}
-	include_once 'nav.php';
 	require_once 'database.php';
+	include_once("functions.php");
+	include_once 'nav2.php';
 	
 	date_default_timezone_set ("America/New_York");
 	
@@ -74,7 +75,7 @@
 		ORDER BY Date, Submitter";
 	}
 	else{
-		$sql = "SELECT * FROM EquipmentInspections ORDER BY Date, Submitter";
+		$sql = "SELECT * FROM EquipmentInspections ORDER BY Date DESC, Submitter";
 	}
 	$tmp = mysqli_query($eqcon, $sql);
 
@@ -93,6 +94,7 @@
 	?>
 	<html>
 	<head>
+		<link rel="stylesheet" href="mystyle.css">
 		<style>
 			Body{
 				Background-color: ;

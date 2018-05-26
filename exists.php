@@ -1,10 +1,14 @@
 <html>
-	<head></head>
+	<head>
+		
+		<link rel='stylesheet' href='mystyle.css'>
+	</head>
 	<body>
 		
 		<?
-			include("nav2.php");
-			include("database.php");
+			include_once("database.php");
+			include_once("functions.php");
+			include_once("nav2.php");
 		?>
 		<h1>A Recap for this date has already been submitted</h1>
 		<?	
@@ -17,7 +21,6 @@
 				echo $row['Summary'];
 			}
 			
-			include_once("index2.php");
 		?>
 	</body>
 </html>

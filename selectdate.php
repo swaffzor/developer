@@ -1,17 +1,19 @@
 <?
-	/*include_once 'nav.php';
+	require_once("database.php");
+	include_once("functions.php");
+	include_once 'nav2.php';
 	session_start();
 	if($_SESSION['LoggedIn'] != 1){
 		echo '<meta http-equiv="refresh" content="0;login.php?sender=index.php">';
 		exit();
-	}*/
+	}
 	
-	include_once 'nav.php';
 ?>
 <!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN' 'http://www.w3.org/TR/html4/loose.dtd'>
 <html>
 
 	<head>
+		<link rel="stylesheet" href="mystyle.css">
 		<title>Recap Report</title>
 		<link rel="apple-touch-icon-precomposed" href="http://tsidisaster.net/report-touch-icon-114.png">
 		<script type="text/javascript">

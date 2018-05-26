@@ -1,17 +1,14 @@
 <? 
 	include("database.php");
+	include_once("functions.php");
 	
 	date_default_timezone_set ("America/New_York");
 	$now = date("F j, Y @ g:i a");
-	/*
-		//! To do list
-			-php backend processing
-			-stand alone page to view
-			
-			Done
-			-validate form data	
-			-equipment id number fill in both ways
-	*/
+	session_start();
+	if($_SESSION['LoggedIn'] != 1){
+		echo '<meta http-equiv="refresh" content="0;login.php?sender='.$URL.'">';
+		exit();
+	}
 	
 	
 	$tmp = mysqli_query($eqcon,"SELECT * FROM Equipment ORDER BY MakeModel");
@@ -32,7 +29,7 @@
 			$mileshours[] = $row['MilesHours'];
 		}
 		
-		
+		include("nav2.php"); 
 	?>
 	
 <html>
@@ -450,7 +447,8 @@
 			}
 			
 		</script>
-		
+				
+		<link rel="stylesheet" href="mystyle.css">
 		<style>
 			body{
 				font-family: sans-serif;
@@ -476,7 +474,7 @@
 	</head>
 	<body onload="putToDay();">
 
-		<? include("nav2.php"); 
+		<? 
 			
 			//! BACK END
 			
@@ -703,7 +701,7 @@
 				
 				$headers = "MIME-Version: 1.0" . "\r\n";
 				$headers .= "Content-type:text/html;charset=iso-8859-1" . "\r\n";
-				$headers .= "From: robot@tsidisaster.net\r\n" . "Bcc: jeremy@tsidisaster.com, skinny@tsidisaster.com";
+				$headers .= "From: robot@tsidisaster.net\r\n" . "Bcc: jeremy@tsidisaster.com, christina@tsidisaster.com, robert@tsidisaster.com";
 				$message = wordwrap($message, 70, "\r\n");
 				if(mail($emailTo, "Equipment Inspection Confirmation", $message, $headers)){
 					echo "<h2>An email has been successfully sent</h2>";

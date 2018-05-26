@@ -7,7 +7,7 @@ Upcoming features
 	  --[ ]auto fill name and email
 	[x]mark submitted recaps off reminder list
 	[x]auto email reminder at 8pm
-	[x]auto email at 11:59pm and report in db
+	[ ]auto email at 11:59pm and report in db
 	[?]create tables for each day ??unnecessary???
 	[x]generate report
 	[x]form validation
@@ -18,8 +18,8 @@ Upcoming features
 	[x]figure out something for job numbers  (repeating)
 	[ ]add a photo
 	[ ]weeks progress for employee on recap.php
-	[x]validate when somebody's name is selected and no input is entered for hours
-	[x]check for duplicate names in page
+	[ ]validate when somebody's name is selected and no input is entered for hours
+	[ ]check for duplicate names in page
 	[ ]people who have not turned in recap in personnel report
 	[x]page for last recap -june 5
 	[ ]timesheet (checkbox, onclick=(form action=timesheet.php)) | multiple jobs in same day
@@ -32,20 +32,9 @@ Upcoming features
 	[x]add links to top -June 7
 	[x]add problems and other boxes -June 11
 	[x]expense by job chart -june 13
-	[x]figure out better most recent recap algorithm 
-	
-	[ ]add person not in list(database) textbox with radios(employee, sub)
+	[ ]figure out better most recent recap algorithm 
 
 ALTER TABLE users ADD id int NOT NULL AUTO_INCREMENT primary key
-
-UPDATE Hours
-SET Name='Jessica Paul'
-WHERE Name='jessica paul';
-
-select Name,Date, count(*)
-  from Hours
-  group by Name,Date
-  having count(*) > 1
 
 admin conference feature requests
 	[x]track hours submitter -June 27

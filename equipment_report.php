@@ -37,7 +37,7 @@
 				<td valign="top" align="center">
 					<a href='equipment_landing.php'><button>Reset Links</button></a>
 				</td>
-				<td rowspan="2">
+				<td rowspan="2"  style="vertical-align:top;">
 					<?
 						if($_GET['ID'] != ""){							
 							echo $rawHTML;
@@ -46,7 +46,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td valign="top">
+				<td>
 					<?
 						echo $_SESSION['links'];
 					?>
