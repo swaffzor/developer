@@ -37,7 +37,7 @@
 			date_default_timezone_set ("America/New_York");
 			
 			include("database.php");
-			include("nav.php");
+			include("nav.html");
 
 			
 			$sql = "SELECT * FROM Data WHERE Date = '".$_GET['Date']."'";

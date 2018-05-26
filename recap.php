@@ -63,15 +63,13 @@
 	$expire = time() + (60*60*24*90); // add seconds for a week
 	
 	//supervisor info
-	/* if 'Name Not Listed' is checked then empName is what was manually entered */
-	if(isset($_POST['noList']) == "on"){
-		$eList->name[0] = $_POST['name'];
-		$empName[0] = $_POST['name'];
+	$superName = $_POST['nameDrop'];
+	$query = mysqli_query($con,"SELECT Name FROM employees WHERE id = $superName"); //TODO: need '' here?
+	while($row = mysqli_fetch_array($query)) {
+		$superName = $row['Name'];
 	}
-	else{
-		$eList->name[0] = $_POST['nameDrop'];
-		$empName[0] = $_POST['nameDrop'];
-	}
+	$eList->name[0] = $superName;
+	$empName[0] = $superName;
 	
 	if ($empName[0] == ""){
 		exit("Something went wrong, press back");
@@ -186,21 +184,38 @@
 	}
 	$supHourTotal += $empHours[0];
 	
+	$unit[0] = "";
+	if($empJob[0] == 200){
+		$unit[0] = $_POST['unit0'];
+	}
+	
 	//compose message
 	//make table for employee hours
 	if($update == 0){
-		setHours($empName[0], $date, $empJob[0], $empHours[0], $empName[0]);
+		setHours($empName[0], $date, $empJob[0], $empHours[0], $empName[0], $unit[0]);
 	}
-	$message .= "<table><th>Name</th><th>hours</th><th>job</th><th>week hours</th>";
-	$message .= "<tr><td align='center'>".$eList->name[0] . "</td><td align='center'>" . $eList->hours[0] . "</td><td>#" . $eList->job[0] ."</td>";
-	if (getWeeklyHours($empName[0], $date) > 40){
-		$message .= "<td align='center' bgcolor='#FF0000'><b>".getWeeklyHours($empName[0], $date)."</b></td></tr>";
-	}
-	else if(getWeeklyHours($empName[0], $date) > 30 && getWeeklyHours($empName[0], $date) <= 40){
-		$message .= "<td align='center' bgcolor='#FFFF00'><b>".getWeeklyHours($empName[0], $date)."</b></td></tr>";
+	
+	if($unit[0] != ""){
+		$result = mysqli_query($eqcon,"SELECT * FROM Equipment WHERE EquipmentID ='".$unit[0]."'");
+		while($row = mysqli_fetch_array($result)) {
+			$uDescription[0] = " " . $row['MakeModel'] . " " . $row['Description'];
+		}
+		$unit[0] = " " . $unit[0];
 	}
 	else{
-		$message .= "<td align='center'>".getWeeklyHours($empName[0], $date)."</td></tr>";
+		$uDescription[0] = "";
+	}
+	
+	$message .= "<table><th>Name</th><th>hours</th><th>job</th><th>week hours</th>";
+	$message .= "<tr><td  align='center'>".$eList->name[0] . "</td><td  align='center'>" . $eList->hours[0] . "</td><td  align='center'>#" . $eList->job[0] . $unit[0] ."</td>";
+	if (getWeeklyHours($empName[0], $date) > 40){
+		$message .= "<td  align='center' bgcolor='#FF0000'><b>".getWeeklyHours($empName[0], $date)."</b></td></tr>";
+	}
+	else if(getWeeklyHours($empName[0], $date) > 30 && getWeeklyHours($empName[0], $date) <= 40){
+		$message .= "<td  align='center' bgcolor='#FFFF00'><b>".getWeeklyHours($empName[0], $date)."</b></td></tr>";
+	}
+	else{
+		$message .= "<td  align='center'>".getWeeklyHours($empName[0], $date)."</td></tr>";
 	}
 	$totalHours = $eList->hours[0];
 	//!supervisor portion
@@ -222,18 +237,38 @@
 	}*/
 	for ($i=1; $i <= $SUP_MULT_HOUR_COUNT; $i++){
 		if ($supMultHour[$i] > 0){
-			if($update == 0){
-				setHours($empName[0], $date, $supMultJob[$i], $supMultHour[$i], $empName[0]);
-			}
-			$message .= "<tr><td align='center'>" . $empName[0] . "</td><td align='center'>" . $supMultHour[$i] . "</td><td align='center'>#" . $supMultJob[$i] ."</td>";
-			if (getWeeklyHours($eList->name[0], $date) > 40){
-				$message .= "<td align='center' bgcolor='#FF0000'><b>".getWeeklyHours($eList->name[0], $date)."</b></td></tr>";
-			}
-			else if(getWeeklyHours($eList->name[0], $date) > 30 && getWeeklyHours($eList->name[0], $date) <= 40){
-				$message .= "<td align='center' bgcolor='#FFFF00'><b>".getWeeklyHours($eList->name[0], $date)."</b></td></tr>";
+			
+			if($supMultJob[$i] == 200){
+				$unit[$i] = $_POST['unit'.$i];
 			}
 			else{
-				$message .= "<td align='center'>".getWeeklyHours($eList->name[0], $date)."</td></tr>";
+				$unit[$i] = "";
+			}
+			
+			if($update == 0){
+				setHours($empName[0], $date, $supMultJob[$i], $supMultHour[$i], $empName[0], $unit[$i]);
+			}
+			
+			if($unit[$i] != ""){
+				$result = mysqli_query($eqcon,"SELECT * FROM Equipment WHERE EquipmentID ='".$unit[$i]."'");
+				while($row = mysqli_fetch_array($result)) {
+					$uDescription[$i] = " " . $row['MakeModel'] . " " . $row['Description'];
+				}
+				$unit[$i] = " " . $unit[$i];
+			}
+			else{
+				$uDescription[$i] = "";
+			}
+			
+			$message .= "<tr><td  align='center'>" . $empName[0] . "</td><td  align='center'>" . $supMultHour[$i] . "</td><td  align='center'>#" . $supMultJob[$i] . $unit[$i] ."</td>";
+			if (getWeeklyHours($eList->name[0], $date) > 40){
+				$message .= "<td  align='center' bgcolor='#FF0000'><b>".getWeeklyHours($eList->name[0], $date)."</b></td></tr>";
+			}
+			else if(getWeeklyHours($eList->name[0], $date) > 30 && getWeeklyHours($eList->name[0], $date) <= 40){
+				$message .= "<td  align='center' bgcolor='#FFFF00'><b>".getWeeklyHours($eList->name[0], $date)."</b></td></tr>";
+			}
+			else{
+				$message .= "<td  align='center'>".getWeeklyHours($eList->name[0], $date)."</td></tr>";
 			}
 			$totalHours += $supMultHour[$i];
 		}
@@ -248,27 +283,27 @@
 			if($update == 0){
 				setHours($empName[$i], $date, $empJob[$i], $empHours[$i], $empName[0]);
 			}
-			$message .= "<tr><td align='center'>" . $empName[$i] . "</td><td align='center'>" . $empHours[$i] . "</td><td align='center'>#" . $empJob[$i] ."</td>";
+			$message .= "<tr><td  align='center'>" . $empName[$i] . "</td><td  align='center'>" . $empHours[$i] . "</td><td  align='center'>#" . $empJob[$i] ."</td>";
 			if (getWeeklyHours($eList->name[$i], $date) > 40){
-				$message .= "<td align='center' bgcolor='#FF0000'><b>".getWeeklyHours($eList->name[$i], $date)."</b></td></tr>";
+				$message .= "<td  align='center' bgcolor='#FF0000'><b>".getWeeklyHours($eList->name[$i], $date)."</b></td></tr>";
 			}
 			else if(getWeeklyHours($eList->name[$i], $date) > 30 && getWeeklyHours($eList->name[$i], $date) <= 40){
-				$message .= "<td align='center' bgcolor='#FFFF00'><b>".getWeeklyHours($eList->name[$i], $date)."</b></td></tr>";
+				$message .= "<td  align='center' bgcolor='#FFFF00'><b>".getWeeklyHours($eList->name[$i], $date)."</b></td></tr>";
 			}
 			else{
-				$message .= "<td align='center'>".getWeeklyHours($eList->name[$i], $date)."</td></tr>";
+				$message .= "<td  align='center'>".getWeeklyHours($eList->name[$i], $date)."</td></tr>";
 			}
 			$count++;
 			$totalHours += $eList->hours[$i];
 		}
 	}
 	
-	$message .= "<tr><td colspan='4'><b>Total Hours for ".$count." employee(s): " . $totalHours . "</b></td></tr>";
+	$message .= "<tr><td  align='center' colspan='4'><b>Total Hours for ".$count." employee(s): " . $totalHours . "</b></td></tr>";
 	
 	//------========---------Subs-----------========---------==========----------
 	//!subs
 	if($subName[1] != "" && $subName[$i] != "---Select Employee---"){
-		$message .= "<tr><td colspan='4'><hr></td></tr>";
+		$message .= "<tr><td  align='center' colspan='4'><hr></td></tr>";
 	}
 	$scount = 0;
 	for ($i=1; $i<=$E_COUNT; $i++){
@@ -276,15 +311,15 @@
 			if($update == 0){
 				setHours($subName[$i], $date, $subJob[$i], $subHours[$i], $empName[0]);
 			}
-			$message .= "<tr><td align='center'>" . $subName[$i] . "</td><td align='center'>" . $subHours[$i] . "</td><td align='center'>#" . $subJob[$i] ."</td>";
+			$message .= "<tr><td  align='center'>" . $subName[$i] . "</td><td  align='center'>" . $subHours[$i] . "</td><td  align='center'>#" . $subJob[$i] ."</td>";
 			if (getWeeklyHours($subName[$i], $date) > 40){
-				$message .= "<td align='center' bgcolor='#FF0000'><b>".getWeeklyHours($subName[$i], $date)."</b></td></tr>";
+				$message .= "<td  align='center' bgcolor='#FF0000'><b>".getWeeklyHours($subName[$i], $date)."</b></td></tr>";
 			}
 			else if(getWeeklyHours($subName[$i], $date) > 30 && getWeeklyHours($subName[$i], $date) <= 40){
-				$message .= "<td align='center' bgcolor='#FFFF00'><b>".getWeeklyHours($subName[$i], $date)."</b></td></tr>";
+				$message .= "<td  align='center' bgcolor='#FFFF00'><b>".getWeeklyHours($subName[$i], $date)."</b></td></tr>";
 			}
 			else{
-				$message .= "<td align='center'>".getWeeklyHours($subName[$i], $date)."</td></tr>";
+				$message .= "<td  align='center'>".getWeeklyHours($subName[$i], $date)."</td></tr>";
 			}
 			$scount++;
 			$count++;
@@ -344,12 +379,12 @@
 	$technicalDifficulties = str_replace($illegals, $replacements, $_POST['technicalDifficulties']);
 	
 	//accumulate job summaries
-	$summary = "<fieldset><legend>" . $empJob[0] . ": " . $jobs[$empJob[0]] . "</legend>" . $summary. "</fieldset><Br>";
+	$summary = "<fieldset><legend>" . $empJob[0] . ": " . $jobs[$empJob[0]] ." ". $unit[0] ." ". $uDescription[0] . "</legend>" . $summary. "</fieldset><Br>";
 	for($i=1;$i<$SUP_MULT_HOUR_COUNT;$i++){
 		$temp = "summary" . $i;
 		if($supMultJob[$i] > 90){
 			$tempsummary = str_replace($illegals, $replacements, $_POST[$temp]);
-			$summary .= "<fieldset><legend>" . $supMultJob[$i] . ": " . $jobs[$supMultJob[$i]] . "</legend>" . $tempsummary . "</fieldset><Br>";
+			$summary .= "<fieldset><legend>" . $supMultJob[$i] . ": " . $jobs[$supMultJob[$i]] ." ". $unit[$i] ." ". $uDescription[$i] . "</legend>" . $tempsummary . "</fieldset><Br>";
 		}
 	}
 	
@@ -366,6 +401,7 @@
 		$recognition = "<hr><h4>Recognition</h4>" . $recognition;
 	}
 	
+	//output started here
 	//! Technical Difficulties
 	if($technicalDifficulties != ""){
 		echo "Technical Difficulties:<br>$technicalDifficulties<Br>";
@@ -497,7 +533,7 @@
 		
 		$message.= $scarData;
 		
-		$sql = "INSERT INTO Scarborough (
+		$sql = "INSERT INTO WetlandData (
 				submitter, 
 				Date, 
 				submittedOn, 
@@ -525,11 +561,13 @@
 <html>
 <head>
 	
+	<link rel='stylesheet' href='mystyle.css'>
 	<style>
 		legend{
 			color: #25ACC1;
 			font-size: 18px;
 		}
+
 	</style>
 		
 <title>Receipt</title>
@@ -576,6 +614,7 @@
 	}
 	
 	$emessage = wordwrap($emessage, 70, "\r\n");
+
 
 	if(mail($email, "Recap Receipt", $emessage, $headers)){
 		echo "<h2>An email has been successfully sent</h2>";

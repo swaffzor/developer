@@ -1,0 +1,84 @@
+<style>
+	Body{
+		font-family: sans-serif;
+		Color: black;
+		padding: 5px 50px 10px 50px;
+	}	
+	h1, h2{
+		Color: black;
+	}		
+	h3{
+		Font-style: italic;
+	}
+	.hide{
+		position: absolute;
+		left: -9999px;
+	}
+	a:link {
+	    text-decoration: none;
+	}
+	
+	ul {
+	    list-style-type: none;
+	    margin: 0;
+	    padding: 0;
+	    overflow: hidden;
+	    background-color: #333;
+	}
+	
+	li {
+	    float: left;
+	}
+	
+	li a, .dropbtn {
+	    display: inline-block;
+	    color: white;
+	    text-align: center;
+	    padding: 14px 16px;
+	    text-decoration: none;
+	}
+	
+	li a:hover, .dropdown:hover .dropbtn {
+	    background-color: red;
+	}
+	
+	li.dropdown {
+	    display: inline-block;
+	}
+	
+	.dropdown-content {
+	    display: none;
+	    position: absolute;
+	    background-color: #f9f9f9;
+	    min-width: 160px;
+	    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	}
+	
+	.dropdown-content a {
+	    color: black;
+	    padding: 12px 16px;
+	    text-decoration: none;
+	    display: block;
+	    text-align: left;
+	}
+	
+	.dropdown-content a:hover {background-color: #f1f1f1}
+	
+	.dropdown:hover .dropdown-content {
+	    display: block;
+	}
+	
+
+	#pics{
+	    width: 50%;
+	    height: auto;
+	}
+	fieldset {
+	    min-width: 0; 
+	    width: 100%; 
+	}
+	legend{
+		color: #25ACC1;
+		font-size: 18px;
+	}
+</style>

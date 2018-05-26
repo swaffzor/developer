@@ -543,7 +543,7 @@
 	<body>
 		
 		<?php
-			include("nav.php");
+			include("nav.html");
 		// check for empty submissions & nix them
 		
 			$now = date("F j, Y @ g:i a");

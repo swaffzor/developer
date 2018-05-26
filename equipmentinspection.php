@@ -350,7 +350,7 @@
 	</head>
 	<body onload="checkChecks(); putToDay();">
 
-		<? include("nav2.php"); 
+		<? include("nav2.html"); 
 			echo "<pre>";
 			print_r($_COOKIE);
 			

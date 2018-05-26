@@ -17,7 +17,7 @@
 	$count = 1;
 	
 	
-	include("nav.php");
+	include("nav.html");
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -51,12 +51,12 @@
 				//seperate people
 				if($i == 0){}
 				elseif($name[$i] != $prevName){
-					echo "<tr><td colspan='3' align='right'>Job</td><td>Hours</td></tr>";	//headers for job breakdown
-					ksort($theJob);	//sort the array by index (key)
+					echo "<tr><td colspan='3' align='right'>Job</td><td>Hours</td></tr>";
+					ksort($theJob);
 					foreach($theJob as $j=>$val){
-						echo "<tr><td colspan='3' align='right'>".$j."</td><td>".$val."</td></tr>";	//print the weekly job totals
+						echo "<tr><td colspan='3' align='right'>".$j."</td><td>".$val."</td></tr>";
 					}
-					unset($theJob);	//clear the array for the next week
+					unset($theJob);
 					echo "<tr><td colspan='5' align='center'>".$prevName."'s 2nd Week Hours: ".$weekTotal;	//print person's 2nd week hours
 					echo "<tr><td colspan='5' align='center'><h3>".$prevName."'s Total Hours: ".$personTotal."</h3>";	//person name Total Hours: #
 					echo "<tr><td colspan='5'>Signature/Date (Firma y Fecha):</td></tr>
@@ -77,12 +77,12 @@
 				}
 				//seperate weeks
 				if(weekTest($startDate, $date[$i]) == false){
-					echo "<tr><td colspan='3' align='right'>Job</td><td>Hours</td></tr>";	//headers for job breakdown
-					ksort($theJob);	//sort the array by index (key)
+					echo "<tr><td colspan='3' align='right'>Job</td><td>Hours</td></tr>";
+					ksort($theJob);
 					foreach($theJob as $j=>$val){
-						echo "<tr><td colspan='3' align='right'>".$j."</td><td>".$val."</td></tr>";	//print the weekly job totals
+						echo "<tr><td colspan='3' align='right'>".$j."</td><td>".$val."</td></tr>";
 					}
-					unset($theJob);	//clear the array for the next week
+					unset($theJob);
 					echo "<tr><td colspan='5' align='center'>".$prevName."'s 1st Week Hours: ".$weekTotal;	//show 1st weeks hours
 					echo "<tr><td colspan='5'><hr style='color: #0000FF;
 						background-color: black;
