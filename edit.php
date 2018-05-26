@@ -4,7 +4,7 @@
 		date_default_timezone_set ("America/New_York");
 		include("database.php");
 		include("functions.php");
-		include("nav.php");
+		include("nav.html");
 		
 		//----------------------------------------------------------------------------
 		//! Back end

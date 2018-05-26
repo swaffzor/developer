@@ -1,10 +1,15 @@
-<html>
-	<?php
-		
+	<?
+		session_start();
+		require("classes.php");
+		require_once("database.php");
+		include_once("functions.php");
+
+		if($_SESSION['LoggedIn'] != 1){
+			echo '<meta http-equiv="refresh" content="0;login.php?sender='.$URL.'">';
+			exit();
+		}
 		date_default_timezone_set ("America/New_York");
-		include("database.php");
-		include("functions.php");
-		include("nav.php");
+		
 		
 		//! Backend
 			if(isset($_POST['firstname'])){
@@ -21,23 +26,7 @@
 					$_POST[$key] = str_replace($illegals, $replacements, $value);
 				}
 				
-				/**
-				* Employee
-				*/
-				class TSIemployee {
 				
-					public $name;
-					public $status;
-					public $company;
-					public $recap;
-					public $email;
-					public $exempt;
-					public $daysMissing;
-					public $reportsTo;
-					public $firstName;
-					public $sqlId;
-				
-				}
 				
 				$newb = new TSIemployee();
 				
@@ -149,6 +138,7 @@
 			
 		
 	<head>
+		<link rel='stylesheet' href='mystyle.css'>
 		<style>
 			table{
 				table-layout: fixed;
@@ -160,7 +150,6 @@
 				width: 33%; 
 			}
 		</style>
-		
 		<script type='text/javascript'>
 			
 			var eName = [<?
@@ -348,6 +337,8 @@
 	</head>
 	<body>
 		<?
+			include_once 'nav2.php';
+			
 			echo "<select id='nameDrop' onchange=Populate(this.value)>";
 			for($i=0;$i<$eCount;$i++){
 				echo "<option value='".$i."'>" . $name[$i] . "</option>";

@@ -1,15 +1,27 @@
 <?
 	
 	require_once 'database.php';
+	include_once("functions.php");
+	include("nav2.php");
 	include("javascript.php");
 	date_default_timezone_set ("America/New_York");
+	
+	session_start();
+	if($_SESSION['LoggedIn'] != 1){
+		echo '<meta http-equiv="refresh" content="0;login.php?sender='.$URL.'">';
+		exit();
+	}
+	
 	$now = date("F j, Y @ g:i a");
 	$m = date("m");
 	$y = date("Y");
 	$d = date("d");
-	include("nav2.php");
 ?>
-	
+<html>
+	<head>
+		<link rel="stylesheet" href="mystyle.css">
+	</head>
+	<body>
 	Turn off email notifications for the selected day <br>
 	<form action="exception.php" method="post">
 	<select onchange="insertEmail(this, 'exemail')" id="exnameDrop" name="exnameDrop" style="display: inline">
@@ -110,4 +122,5 @@
 			}
 		}
 	?>
-
+	</body>
+</html>

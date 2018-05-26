@@ -469,7 +469,7 @@
 		</style>
 	</head>
 	<body onload="start();">
-		<? include_once("nav2.php"); 		?>
+		<? include_once("nav2.html"); 		?>
 	<table cellspacing="15px"><tr><td valign="top" width="500px">
 		<form action="recap.php" name="recapForm" method="post" enctype="multipart/form-data">
 		<table>

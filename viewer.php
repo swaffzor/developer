@@ -1,9 +1,10 @@
 <?
-	session_start();
+
+	include("database.php");
 	include("functions.php");
+	include("nav2.php");
 	date_default_timezone_set ("America/New_York");
 	
-	include("database.php");
 	
 	$flag_date_given = false;	
 	foreach($_POST as $key => $value){
@@ -64,39 +65,14 @@
 	<head>
 		<title>Last Recap Report</title>
 		<link rel="apple-touch-icon-precomposed" href="http://tsidisaster.net/report-touch-recap_report.png">
-		<style>
-			Body{
-				Font-family: sans-serif;
-				Color: black;
-				padding: 5px 50px 10px 50px;
-			}
-				
-			h1, h2{
-				Color: black;
-			}
-					
-			h3{
-				Font-style: italic;
-			}
-				
-			#pics{
-			    width: 50%;
-			    height: auto;
-			}
-			fieldset {
-			    min-width: 0; 
-			    width: 100%; 
-			}
-			legend{
-				color: #25ACC1;
-				font-size: 18px;
-				<? if($browser == "ios"){
+		<link rel="stylesheet" href="mystyle.css">
+		<style> 
+			<? 
+				if($browser == "ios"){
 					echo "font-size: xx-large;";
-				} ?>
-				
-			}
+				} 
+			?>
 		</style>
-		
 		<?php			
 			
 			//get hours from db
@@ -573,7 +549,6 @@
 
 
 		<?php
-			include("nav.php");
 			// Check connection
 			if (mysqli_connect_errno()) {
 			  echo "Failed to connect to MySQL: " . mysqli_connect_error();

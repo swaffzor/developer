@@ -16,7 +16,7 @@
 	$empString = "";
 	
 	if($job > 0){
-		$jobString = "AND Job = '" . $job . "'";
+		$jobString = "AND INSTR(Summary, '#$job') > 0";
 	}
 	else{
 		$jobString = "";
@@ -32,16 +32,29 @@
 	if($fromDate == "--"){
 		$fromDate = $toDate;
 	}
-	$result = mysqli_query($con,"SELECT * FROM Data 
+	
+	$sql = "SELECT * FROM Data WHERE 
+			Date BETWEEN '$fromDate' AND '$toDate' 
+			$jobString
+			$empString
+			 ORDER BY Date ASC";
+	echo $sql."<br>";
+	
+	$result = mysqli_query($con, $sql);
+	echo "<pre>";
+	print_r(($result));
+	echo "</pre>";
+	
+	/*$result = mysqli_query($con,"SELECT * FROM Data 
 		WHERE Date BETWEEN '$fromDate' AND '$toDate' 
 		".$empString."
 		ORDER BY Date, Name");
-		
+	*/	
 	$count = 1;
 	$dateCount = 1;
 	
 	
-	include("nav.php");
+	include("nav.html");
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -59,10 +72,10 @@
 			
 			while($row = mysqli_fetch_array($result)) {
 				//insert line after new date
-				if($d1 != $row['Date'] && $count > 1){
+				//if($d1 != $row['Date'] && $count > 1){
 					echo "<tr><td colspan='5'><hr></td></tr>";
 					$dateCount++;
-				}
+				//}
 				$d1 = $row['Date'];
 				echo "<tr><td>" . $row['Name'] . "</td><td align='center'>" . strftime("%A",strtotime($row['Date'])) ." ".$row['Date'] . "</td><td>" . $row['Summary'] ."</td></tr>\n";
 				$totalHours += $row['Hours'];
