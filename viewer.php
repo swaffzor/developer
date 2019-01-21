@@ -255,14 +255,18 @@
 			while($row = mysqli_fetch_array($result)){
 				$testJ[$row['Job']] = $row['SUM(Hours)'];	//dump the results into array
 			}
-			arsort($testJ);	//sort the results by largest hours by job
-			foreach($testJ as $key=>$value){
-				$jobarr[] = $key;	//get rid of large index numbers replace with low
+			if($testJ != null){
+				arsort($testJ);	//sort the results by largest hours by job
+				foreach($testJ as $key=>$value){
+					$jobarr[] = $key;	//get rid of large index numbers replace with low
+				}
 			}
-			foreach($theJob as $num=>$name){
-				foreach($jobarr as $key=>$jnum){
-					if($num == $jnum){
-						$jobC[$key] = $name;	//match job number to index and assign job names
+			if(sizeOf($theJob) > 0 && sizeof($jobarr) > 0){
+				foreach($theJob as $num=>$name){
+					foreach($jobarr as $key=>$jnum){
+						if($num == $jnum){
+							$jobC[$key] = $name;	//match job number to index and assign job names
+						}
 					}
 				}
 			}
@@ -547,7 +551,6 @@
 	</head>
 	<body>
 
-
 		<?php
 			// Check connection
 			if (mysqli_connect_errno()) {
@@ -555,8 +558,6 @@
 			}
 			
 			$result = mysqli_query($con,"SELECT * FROM Data WHERE Date ='$date'");
-			
-			
 			
 			echo "Report Generated on " . $now . "<br><h1>Recap for " .$day ." " . $date . "</h1>";
 
@@ -587,6 +588,8 @@
 			echo "</td></tr></table><br>";
 			echo "<a href='#chart_div'><button style='background-color:#66ccff; width:100px; height:50px;'>Charts</button></a>";
 			
+			include('date-picker-component.php');
+
 			//! recaps
 			while($row = mysqli_fetch_array($result)) {
 				echo "<h3>" . $row['Name'] . "</h3> ";
