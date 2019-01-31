@@ -1,8 +1,58 @@
+# PHP CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-php/ for more details
+#
 version: 2
 jobs:
-  build:
+  # build:
+  #   docker:
+  #     # specify the version you desire here
+  #     - image: circleci/php:7.1-browsers
+      
+  #     # Specify service dependencies here if necessary
+  #     # CircleCI maintains a library of pre-built images
+  #     # documented at https://circleci.com/docs/2.0/circleci-images/
+  #     # - image: circleci/mysql:9.4
+
+  #   working_directory: ~/repo
+
+  #   steps:
+  #     - checkout
+
+  #     # Download and cache dependencies
+  #     - restore_cache:
+  #         keys:
+  #         - v1-dependencies-{{ checksum "composer.json" }}
+  #         # fallback to using the latest cache if no exact match is found
+  #         - v1-dependencies-
+
+  #     - run: composer install -n --prefer-dist
+
+  #     - save_cache:
+  #         paths:
+  #           - ./vendor
+  #         key: v1-dependencies-{{ checksum "composer.json" }}
+        
+  #     # run tests!
+  #     - run: phpunit
+  one:
     docker:
-      - image: circleci/ruby:2.4.1
+      - image: circleci/php:7.1-browsers
     steps:
       - checkout
-      - run: notacommand
+      - run: echo "A first hello"
+      - run: sleep 25
+  two:
+    docker:
+      - image: circleci/php:7.1-browsers
+    steps:
+      - checkout
+      - run: echo "A more familiar hi"
+      - run: sleep 15
+    
+workflows:
+  version: 2
+  one_and_two:
+    jobs:
+      - one
+      - two
