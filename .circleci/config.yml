@@ -68,6 +68,13 @@ jobs:
           else
             echo "Nope!"; exit 1
           fi
+
+  deployment:
+    production:
+      branch: development
+      commands:
+        - scp -r tsi-recap/* swafford@192.254.232.54:/public_html/
+        
 workflows:
   version: 2
   one_and_two:
