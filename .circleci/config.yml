@@ -96,13 +96,13 @@ workflows:
         requires:
           - build
       - deploy-staging:
-          requires:
-            - build
-          filters:
-            branches:
-              only: development
+        requires:
+          - build
+        filters:
+          branches:
+            only: development
       - hold-prod:
-          type: approval
+        type: approval
           requires: 
             - build
           filters:
