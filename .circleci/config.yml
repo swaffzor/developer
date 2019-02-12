@@ -75,10 +75,11 @@ jobs:
       machine:
         enabled: true
       steps:
+        - checkout
         - run:
-            name: Deploy Over SSH
+            name: Deploy Over SSH to Staging
             command: |
-              scp -r tsi-recap/* swafford@192.254.232.54:/public_html/
+              scp -r -P 2222 ~/project/* swafford@192.254.232.54:/home2/swafford/public_html/staging
 
 workflows:
   version: 2
