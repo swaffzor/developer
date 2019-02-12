@@ -72,10 +72,10 @@ jobs:
             - ./node_modules
       - persist_to_workspace:
           # Must be an absolute path, or relative path from working_directory
-          root: tsi-recap
+          root: project
           # Must be relative path from root
           paths:
-            - build/* 
+            - tsi-recap/* 
 
   deploy:
       machine:
