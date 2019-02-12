@@ -70,15 +70,23 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - ./node_modules
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory
+          root: tsi-recap
+          # Must be relative path from root
+          paths:
+            - build/* 
 
   deploy:
       machine:
         enabled: true
       steps:
+        - attach_workspace:
+          at: /tsi-recap/build
         - run:
             name: Deploy Over SSH to Staging
             command: |
-              scp -r -P 2222 /tsi-recap/* swafford@192.254.232.54:/public_html/staging
+              scp -r -P 2222 /tsi-recap/build/* swafford@192.254.232.54:/public_html/staging
 
 workflows:
   version: 2
