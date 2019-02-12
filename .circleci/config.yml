@@ -37,21 +37,7 @@
   #     - run: phpunit
 
 version: 2
-jobs:
-  one:
-    docker:
-      - image: circleci/ruby:2.4.1
-    steps:
-      - checkout
-      - run: echo "A first hello"
-      - run: mkdir -p my_workspace
-      - run: echo "Trying out workspaces" > my_workspace/echo-output
-      - persist_to_workspace:
-          # Must be an absolute path, or relative path from working_directory
-          root: my_workspace
-          # Must be relative path from root
-          paths:
-            - echo-output      
+jobs:    
   build:
     docker:
         - image: circleci/node:8.10.0
@@ -71,7 +57,17 @@ jobs:
           paths:
             - ./node_modules
 
-  deploy:
+  deploy-dev:
+      machine:
+        enabled: true
+      steps:
+        - checkout
+        - run:
+            name: Deploy Over SSH to Staging
+            command: |
+              scp -r -P 2222 ~/project/* swafford@192.254.232.54:/home2/swafford/public_html/dev
+
+  deploy-staging:
       machine:
         enabled: true
       steps:
@@ -81,14 +77,40 @@ jobs:
             command: |
               scp -r -P 2222 ~/project/* swafford@192.254.232.54:/home2/swafford/public_html/staging
 
+  deploy-prod:
+      machine:
+        enabled: true
+      steps:
+        - checkout
+        - run:
+            name: Deploy Over SSH to Staging
+            command: |
+              scp -r -P 2222 ~/project/* swafford@192.254.232.54:/home2/swafford/public_html/prod # todo: remove /prod when ready to actually deploy to prod
+
 workflows:
   version: 2
   build-and-deploy:
     jobs:
       - build
-      - deploy:
+      - deploy-dev:
           requires:
             - build
+      - deploy-staging:
+          requires:
+            - build
+          filters:
+            branches:
+              only: development
+      - hold-prod:
+          type: approval
+          requires: 
+            - build
+          filters:
+            branches:
+              only: development
+      - deploy-prod:
+          requires:
+            - hold-prod
           filters:
             branches:
               only: development
