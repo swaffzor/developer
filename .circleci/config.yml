@@ -52,34 +52,42 @@ jobs:
           # Must be relative path from root
           paths:
             - echo-output      
-  two:
+  build:
     docker:
-      - image: circleci/ruby:2.4.1
-    steps:
-      - checkout
-      - run: echo "A more familiar hi"  
-      - attach_workspace:
-          # Must be absolute path or relative path from working_directory
-          at: my_workspace
+        - image: circleci/node:8.10.0
+    steps: # a collection of executable commands
+      - checkout # special step to check out source code to working directory
+      - run:
+          name: update-npm
+          command: 'sudo npm install -g npm@latest'
+      - restore_cache: # special step to restore the dependency cache
+          # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: install-npm
+          command: npm install
+      - save_cache: # special step to save the dependency cache
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
 
-      - run: |
-          if [[ $(cat my_workspace/echo-output) == "Trying out workspaces" ]]; then
-            echo "It worked!";
-          else
-            echo "Nope!"; exit 1
-          fi
+  deploy:
+      machine:
+        enabled: true
+      steps:
+        - run:
+            name: Deploy Over SSH
+            command: |
+              scp -r tsi-recap/* swafford@192.254.232.54:/public_html/
 
-  deployment:
-    production:
-      branch: development
-      commands:
-        - scp -r tsi-recap/* swafford@192.254.232.54:/public_html/
-        
 workflows:
   version: 2
-  one_and_two:
+  build-and-deploy:
     jobs:
-      - one
-      - two:
+      - build
+      - deploy:
           requires:
-            - one
+            - build
+          filters:
+            branches:
+              only: development
