@@ -74,8 +74,8 @@ jobs:
           # Must be an absolute path, or relative path from working_directory
           root: project
           # Must be relative path from root
-          paths:
-            - * 
+          # paths:
+          #   - * 
 
   deploy:
       machine:
