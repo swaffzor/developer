@@ -1,0 +1,15 @@
+{
+  "name": "tsi-recap",
+  "version": "2.0.0",
+  "description": "",
+  "main": "test.js",
+  "dependencies": {
+    "express": "^4.16.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Jeremy Swafford",
+  "license": "MIT"
+}
