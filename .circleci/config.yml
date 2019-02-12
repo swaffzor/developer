@@ -78,7 +78,7 @@ jobs:
         - run:
             name: Deploy Over SSH
             command: |
-              scp -r tsi-recap/* swafford@192.254.232.54:/public_html/
+              scp -r -P 2222 tsi-recap/* swafford@192.254.232.54:/public_html/
 
 workflows:
   version: 2
@@ -88,6 +88,6 @@ workflows:
       - deploy:
           requires:
             - build
-          filters:
-            branches:
-              only: development
+          # filters:
+          #   branches:
+          #     only: development
