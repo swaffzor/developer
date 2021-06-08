@@ -47,6 +47,7 @@
 	}
 	
 	.dropdown-content {
+		z-index: 2;
 	    display: none;
 	    position: absolute;
 	    background-color: #f9f9f9;
