@@ -243,7 +243,7 @@
 		while($row = mysqli_fetch_array($queryresults)) {
 			$permissions = $row['Permissions'];
 		}
-		$permArray = split(",", $permissions);
+		$permArray = explode(",", $permissions);
 // 		$navBar = '<img src="http://tsidisaster.net/developer/old/images/square.png" width="30">&nbsp;&nbsp;';
 		$queryresults = mysqli_query($con, "SELECT * FROM Permissions ORDER BY AuthLevel, ID");
 		while($row = mysqli_fetch_array($queryresults)) {

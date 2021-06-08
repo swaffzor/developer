@@ -9,7 +9,7 @@
 	echo "</pre>";
 */
 	
-	$perms = split(",", $_SESSION['Permissions']);
+	$perms = explode(",", $_SESSION['Permissions']);
 	$allowed = 0;
 	foreach($perms as $key => $value){
 		if($value == $thisPagePermission){
