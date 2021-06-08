@@ -6,11 +6,12 @@
 	include_once("globals.php");
 	require_once("classes.php");
 	
-	if($_SESSION['LoggedIn'] != 1){
-		echo '<meta http-equiv="refresh" content="0;login.php?sender='.$URL.'">';
-		exit();
-	}
-	else if($_SESSION['LoggedIn'] == 1){
+	// if($_SESSION['LoggedIn'] != 1){
+	// 	echo '<meta http-equiv="refresh" content="0;login.php?sender='.$URL.'">';
+	// 	exit();
+	// }
+	// else 
+	if($_SESSION['LoggedIn'] == 1){
 		//initialize the object with the user's data from the employees table
 		$tsiemp = new TSIemployee();
 		$tsiemp->SetEmployeeData($_SESSION['User'], $con);
@@ -678,12 +679,20 @@
 					echo "<p id='message_yesterday' style='color: red; font-size: 20;'>Yesterday's Date</p>";
 				}
 			?>
-			<select id="nameDrop" name="nameDrop" style="display: inline">
-				<option value="<? echo $tsiemp->idNumber; ?>"><? echo $tsiemp->name; ?></option>
+			<select id="nameDrop" name="nameDrop" style="display: inline" onchange="insertEmail(this)">
+				<?php
+					if ($tsiemp->idNumber > 0) {
+						echo '<option value="'.$tsiemp->idNumber.'">'.$tsiemp->name.'</option>';
+					} else {
+						foreach ($emps as &$employee) {
+							echo '<option value="'.$employee.'">'.$employee.'</option>';
+						}
+					}
+				?>
 			</select>
 			<input type="email" name="email" id="email" placeholder="email" disabled="true" required value="<?php echo $tsiemp->email; ?>"><br>
 
-			 <input placeholder="Hours" name="hours" id="hours" type="number" step="any" style="width: 50px" required value="<?php echo $_POST['hours']; ?>"/>
+			<input placeholder="Hours" name="hours" id="hours" type="number" step="any" style="width: 50px" required value="<?php echo $_POST['hours']; ?>"/>
 
 			<select name="job" id="job" onchange="makeSameJob()">
 				<?php
